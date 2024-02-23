@@ -1,4 +1,4 @@
-import { fn } from "@storybook/test";
+import { fn, within, expect, userEvent } from "@storybook/test";
 
 import { AuthTextField } from "./AuthTextField";
 
@@ -32,5 +32,19 @@ export const Email: Story = {
 export const Password: Story = {
   args: {
     type: "password"
+  }
+};
+
+export const Filled: Story = {
+  args: {
+    type: "username"
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByLabelText("Username");
+    await expect(input).toBeInTheDocument();
+    await userEvent.type(input, "test");
+    await userEvent.tab();
+    await expect(input).toHaveClass("filled");
   }
 };
