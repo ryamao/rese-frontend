@@ -17,4 +17,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Username: Story = {
+  args: {
+    type: "username"
+  }
+};
+
+export const Email: Story = {
+  args: {
+    type: "email"
+  }
+};
+
+export const Password: Story = {
+  args: {
+    type: "password"
+  }
+};

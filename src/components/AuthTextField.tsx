@@ -3,23 +3,59 @@ import { useRef, useState } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
-import { FaUser } from "react-icons/fa";
+import { MdEmail, MdLock, MdPerson } from "react-icons/md";
+
+export type AuthTextFieldType = "username" | "email" | "password";
 
 export interface AuthTextFieldProps {
+  type: AuthTextFieldType;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onBlur?: () => void;
   ref?: React.RefObject<HTMLInputElement>;
   name?: string;
 }
 
-const iconStyle = css`
-  width: 1.5rem;
-  height: 1.5rem;
+function getIcon(type: AuthTextFieldType) {
+  switch (type) {
+    case "username":
+      return MdPerson;
+    case "email":
+      return MdEmail;
+    case "password":
+      return MdLock;
+  }
+}
+
+function getInputType(type: AuthTextFieldType) {
+  switch (type) {
+    case "username":
+      return "text";
+    case "email":
+      return "email";
+    case "password":
+      return "password";
+  }
+}
+
+function getLabelText(type: AuthTextFieldType) {
+  switch (type) {
+    case "username":
+      return "Username";
+    case "email":
+      return "Email";
+    case "password":
+      return "Password";
+  }
+}
+
+const iconClass = css`
+  width: 2.25rem;
+  height: 2.25rem;
 `;
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: top;
+  align-items: center;
 
   & > * + * {
     margin-left: 0.5rem;
@@ -57,7 +93,7 @@ const Input = styled.input`
   }
 `;
 
-export function AuthTextField(props: AuthTextFieldProps) {
+export function AuthTextField({ type, ...props }: AuthTextFieldProps) {
   let ref = useRef<HTMLInputElement>(null);
   ref = props.ref || ref;
 
@@ -68,19 +104,21 @@ export function AuthTextField(props: AuthTextFieldProps) {
     props.onBlur?.();
   };
 
+  const Icon = getIcon(type);
+
   return (
     <Wrapper>
-      <FaUser className={iconStyle} />
+      <Icon type={type} className={iconClass} />
       <Layout>
         <Input
-          type="text"
+          type={getInputType(type)}
           id={props.name}
           className={filled ? "filled" : ""}
           {...props}
           onBlur={onBlur}
           ref={ref}
         />
-        <Label htmlFor={props.name}>Username</Label>
+        <Label htmlFor={props.name}>{getLabelText(type)}</Label>
       </Layout>
     </Wrapper>
   );
