@@ -49,8 +49,9 @@ function getLabelText(type: AuthTextFieldType) {
 }
 
 const iconClass = css`
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
+  color: #4b4b4b;
 `;
 
 const Wrapper = styled.div`
@@ -69,15 +70,15 @@ const Layout = styled.div`
   & input:focus + label,
   & input.filled + label {
     top: -1rem;
-    font-size: 0.75rem;
+    font-size: 0.6rem;
   }
 `;
 
 const Label = styled.label`
   position: absolute;
   top: 0;
-  color: #888;
-  font-size: 1rem;
+  color: #6b6b6b;
+  font-size: 0.9rem;
   transition: 0.15s;
   pointer-events: none;
 `;
@@ -86,7 +87,7 @@ const Input = styled.input`
   width: 100%;
   border: none;
   border-bottom: 1px solid #000;
-  font-size: 1rem;
+  padding: 0 0.125rem;
 
   &:focus-visible {
     outline: none;

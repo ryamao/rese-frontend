@@ -5,7 +5,7 @@ const Button = styled.button`
   border-radius: 0.25rem;
   background-color: #315dff;
   color: #fff;
-  padding: 0.35rem 0.85rem;
+  padding: 0.35rem 0.9rem;
 `;
 
 export interface NormalButtonProps {
