@@ -7,6 +7,10 @@ export default defineConfig({
     globals: true,
     environment: "happy-dom",
     setupFiles: ["src/vitest-setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"]
+    include: ["src/**/*.test.{ts,tsx}"],
+    coverage: {
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/vite-env.d.ts"]
+    }
   }
 });

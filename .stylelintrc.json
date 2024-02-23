@@ -6,5 +6,5 @@
       "customSyntax": "postcss-lit"
     }
   ],
-  "ignoreFiles": "**/node_modules/**"
+  "ignoreFiles": ["**/node_modules/**", "coverage/**", ".storybook/**"]
 }

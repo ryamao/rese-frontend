@@ -1,6 +1,8 @@
 {
-  "root": true,
-  "env": { "browser": true, "es2020": true },
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -8,22 +10,21 @@
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:vitest/recommended"
+    "plugin:vitest/recommended",
+    "plugin:storybook/recommended"
   ],
   "ignorePatterns": ["dist", ".eslintrc.json"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["react-refresh", "import", "jsx-a11y"],
-  "settings": {
-    "react": { "version": "detect" }
-  },
+  "root": true,
   "rules": {
-    "react-refresh/only-export-components": [
-      "warn",
-      { "allowConstantExport": true }
-    ],
     "import/order": [
       "warn",
       {
+        "alphabetize": {
+          "caseInsensitive": true,
+          "order": "asc"
+        },
         "groups": [
           "builtin",
           "external",
@@ -34,16 +35,26 @@
           "index"
         ],
         "newlines-between": "always",
-        "pathGroupsExcludedImportTypes": ["builtin"],
-        "alphabetize": { "order": "asc", "caseInsensitive": true },
         "pathGroups": [
           {
-            "pattern": "react",
             "group": "external",
+            "pattern": "react",
             "position": "before"
           }
-        ]
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"]
+      }
+    ],
+    "react-refresh/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
       }
     ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
