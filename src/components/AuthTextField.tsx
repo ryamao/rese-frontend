@@ -111,14 +111,15 @@ export function AuthTextField({ type, ...props }: AuthTextFieldProps) {
       <Icon type={type} className={iconClass} />
       <Layout>
         <Input
+          data-testid={`input-${type}`}
           type={getInputType(type)}
-          id={props.name}
+          id={type}
           className={filled ? "filled" : ""}
           {...props}
           onBlur={onBlur}
           ref={ref}
         />
-        <Label htmlFor={props.name}>{getLabelText(type)}</Label>
+        <Label htmlFor={type}>{getLabelText(type)}</Label>
       </Layout>
     </Wrapper>
   );

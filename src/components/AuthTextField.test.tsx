@@ -3,17 +3,11 @@ import { userEvent } from "@testing-library/user-event";
 
 import { AuthTextField } from "./AuthTextField";
 
-describe("AuthTextField", () => {
+describe("AuthTextField with username", () => {
   test("renders input field", () => {
     render(<AuthTextField type="username" />);
-    const input = screen.getByRole("textbox");
+    const input = screen.getByLabelText("Username");
     expect(input).toBeInTheDocument();
-  });
-
-  test("renders input field with label", () => {
-    render(<AuthTextField type="username" />);
-    const label = screen.getByText("Username");
-    expect(label).toBeInTheDocument();
   });
 
   test("filled class is added when input is filled", async () => {
@@ -41,5 +35,21 @@ describe("AuthTextField", () => {
     await userEvent.type(input, "test");
     await userEvent.tab();
     expect(onBlur).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("AuthTextField with email", () => {
+  test("renders input field", () => {
+    render(<AuthTextField type="email" />);
+    const input = screen.getByLabelText("Email");
+    expect(input).toBeInTheDocument();
+  });
+});
+
+describe("AuthTextField with password", () => {
+  test("renders input field", () => {
+    render(<AuthTextField type="password" />);
+    const input = screen.getByLabelText("Password");
+    expect(input).toBeInTheDocument();
   });
 });
