@@ -25,7 +25,8 @@
     "@emotion/css": "^11.11.2",
     "@emotion/styled": "^11.11.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.1.9",
