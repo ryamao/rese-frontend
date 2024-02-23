@@ -5,7 +5,7 @@ import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaUser } from "react-icons/fa";
 
-export interface UsernameInputFieldProps {
+export interface AuthTextFieldProps {
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onBlur?: () => void;
   ref?: React.RefObject<HTMLInputElement>;
@@ -57,7 +57,7 @@ const Input = styled.input`
   }
 `;
 
-export function UsernameInputField(props: UsernameInputFieldProps) {
+export function AuthTextField(props: AuthTextFieldProps) {
   let ref = useRef<HTMLInputElement>(null);
   ref = props.ref || ref;
 

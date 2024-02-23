@@ -1,18 +1,18 @@
 import { fn } from "@storybook/test";
 
-import { UsernameInputField } from "./UsernameInputField";
+import { AuthTextField } from "./AuthTextField";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Rese/UsernameInputField",
-  component: UsernameInputField,
+  title: "Rese/AuthTextField",
+  component: AuthTextField,
   tags: ["autodocs"],
   args: {
     onChange: fn(),
     onBlur: fn()
   }
-} satisfies Meta<typeof UsernameInputField>;
+} satisfies Meta<typeof AuthTextField>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
