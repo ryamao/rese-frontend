@@ -1,6 +1,43 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 
+const menuSvgStyle = css`
+  width: 75%;
+  height: 75%;
+`;
+
+const menuSvg = (
+  <svg
+    width="40"
+    height="30"
+    viewBox="0 0 40 30"
+    xmlns="http://www.w3.org/2000/svg"
+    className={menuSvgStyle}
+  >
+    <path d="M0,0 L20,0" stroke="white" strokeWidth="2" />
+    <path d="M0,15 L40,15" stroke="white" strokeWidth="2" />
+    <path d="M0,30 L10,30" stroke="white" strokeWidth="2" />
+  </svg>
+);
+
+const closeSvgStyle = css`
+  width: 50%;
+  height: 50%;
+`;
+
+const closeSvg = (
+  <svg
+    width="30"
+    height="30"
+    viewBox="0 0 30 30"
+    xmlns="http://www.w3.org/2000/svg"
+    className={closeSvgStyle}
+  >
+    <path d="M0,0 L30,30" stroke="white" strokeWidth="2" />
+    <path d="M30,0 L0,30" stroke="white" strokeWidth="2" />
+  </svg>
+);
+
 const Button = styled.button`
   width: 2.5rem;
   height: 2.5rem;
@@ -13,29 +50,11 @@ const Button = styled.button`
   align-items: center;
 `;
 
-const iconStyle = css`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 export interface MenuButtonProps {
+  isMenuOpened?: boolean;
   onClick?: () => void;
 }
 
-export function MenuButton({ onClick }: MenuButtonProps) {
-  return (
-    <Button onClick={onClick}>
-      <svg
-        width="40"
-        height="30"
-        viewBox="0 0 40 30"
-        xmlns="http://www.w3.org/2000/svg"
-        className={iconStyle}
-      >
-        <rect x="0" y="0" width="20" height="1.5" fill="white" />
-        <rect x="0" y="15" width="40" height="1.5" fill="white" />
-        <rect x="0" y="30" width="10" height="1.5" fill="white" />
-      </svg>
-    </Button>
-  );
+export function MenuButton({ isMenuOpened = false, onClick }: MenuButtonProps) {
+  return <Button onClick={onClick}>{isMenuOpened ? closeSvg : menuSvg}</Button>;
 }

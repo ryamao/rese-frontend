@@ -11,4 +11,12 @@ describe("MenuButton", () => {
     await userEvent.click(button);
     expect(onClick).toHaveBeenCalled();
   });
+
+  test("menu opened", async () => {
+    const onClick = vitest.fn();
+    render(<MenuButton isMenuOpened={true} onClick={onClick} />);
+    const button = screen.getByRole("button");
+    await userEvent.click(button);
+    expect(onClick).toHaveBeenCalled();
+  });
 });
