@@ -1,4 +1,10 @@
 import styled from "@emotion/styled";
+import {
+  FieldErrors,
+  SubmitErrorHandler,
+  SubmitHandler,
+  useForm
+} from "react-hook-form";
 
 import { AuthTextField } from "./AuthTextField";
 import { NormalButton } from "./NormalButton";
@@ -39,18 +45,51 @@ const ButtonLayout = styled.div`
   justify-content: right;
 `;
 
-export function RegisterForm() {
+export interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface RegisterFormProps {
+  onSubmit: (data: RegisterFormValues) => void;
+  onError: (errors: FieldErrors<RegisterFormValues>) => void;
+}
+
+export function RegisterForm({ onSubmit, onError }: RegisterFormProps) {
+  const { register, handleSubmit } = useForm<RegisterFormValues>();
+
+  const onValid: SubmitHandler<RegisterFormValues> = (data) => {
+    onSubmit(data);
+  };
+
+  const onInvalid: SubmitErrorHandler<RegisterFormValues> = (error) => {
+    onError(error);
+  };
+
   return (
     <FormLayout>
       <Heading>Registration</Heading>
-      <FormBody>
+      <FormBody onSubmit={handleSubmit(onValid, onInvalid)} noValidate>
         <TextFieldLayout>
-          <AuthTextField type="username" />
-          <AuthTextField type="email" />
-          <AuthTextField type="password" />
+          <AuthTextField
+            registerReturn={register("name", {
+              required: "名前を入力してください"
+            })}
+          />
+          <AuthTextField
+            registerReturn={register("email", {
+              required: "メールアドレスを入力してください"
+            })}
+          />
+          <AuthTextField
+            registerReturn={register("password", {
+              required: "パスワードを入力してください"
+            })}
+          />
         </TextFieldLayout>
         <ButtonLayout>
-          <NormalButton text="登録" />
+          <NormalButton type="submit" text="登録" />
         </ButtonLayout>
       </FormBody>
     </FormLayout>

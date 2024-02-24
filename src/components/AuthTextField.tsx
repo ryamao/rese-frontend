@@ -1,52 +1,10 @@
-import { ChangeEventHandler } from "react";
-import { useRef, useState } from "react";
+import { FocusEventHandler, InputHTMLAttributes } from "react";
+import { useState } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
+import { UseFormRegisterReturn } from "react-hook-form";
 import { MdEmail, MdLock, MdPerson } from "react-icons/md";
-
-export type AuthTextFieldType = "username" | "email" | "password";
-
-export interface AuthTextFieldProps {
-  type: AuthTextFieldType;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-  onBlur?: () => void;
-  ref?: React.RefObject<HTMLInputElement>;
-  name?: string;
-}
-
-function getIcon(type: AuthTextFieldType) {
-  switch (type) {
-    case "username":
-      return MdPerson;
-    case "email":
-      return MdEmail;
-    case "password":
-      return MdLock;
-  }
-}
-
-function getInputType(type: AuthTextFieldType) {
-  switch (type) {
-    case "username":
-      return "text";
-    case "email":
-      return "email";
-    case "password":
-      return "password";
-  }
-}
-
-function getLabelText(type: AuthTextFieldType) {
-  switch (type) {
-    case "username":
-      return "Username";
-    case "email":
-      return "Email";
-    case "password":
-      return "Password";
-  }
-}
 
 const iconClass = css`
   width: 2rem;
@@ -94,33 +52,78 @@ const Input = styled.input`
   }
 `;
 
-export function AuthTextField({ type, ...props }: AuthTextFieldProps) {
-  let ref = useRef<HTMLInputElement>(null);
-  ref = props.ref || ref;
+export type AuthTextFieldType = "name" | "email" | "password";
 
+export interface AuthTextFieldProps
+  extends InputHTMLAttributes<HTMLInputElement> {
+  fieldType?: AuthTextFieldType;
+  registerReturn?: UseFormRegisterReturn<AuthTextFieldType>;
+}
+
+function getIcon(type: AuthTextFieldType) {
+  switch (type) {
+    case "name":
+      return MdPerson;
+    case "email":
+      return MdEmail;
+    case "password":
+      return MdLock;
+  }
+}
+
+function getInputType(type: AuthTextFieldType) {
+  switch (type) {
+    case "name":
+      return "text";
+    case "email":
+      return "email";
+    case "password":
+      return "password";
+  }
+}
+
+function getLabelText(type: AuthTextFieldType) {
+  switch (type) {
+    case "name":
+      return "Username";
+    case "email":
+      return "Email";
+    case "password":
+      return "Password";
+  }
+}
+
+export function AuthTextField({
+  fieldType,
+  registerReturn,
+  ...props
+}: AuthTextFieldProps) {
   const [filled, setFilled] = useState(false);
 
-  const onBlur = () => {
-    setFilled(!!ref.current?.value);
-    props.onBlur?.();
+  const onBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    setFilled(!!event.target.value);
+    registerReturn?.onBlur(event);
   };
 
-  const Icon = getIcon(type);
+  const name = fieldType || registerReturn?.name || "name";
+
+  const Icon = getIcon(name);
+
+  const inputProps = {
+    ...props,
+    type: getInputType(name),
+    id: name,
+    className: filled ? "filled" : "",
+    ...registerReturn,
+    onBlur
+  };
 
   return (
     <Wrapper>
-      <Icon type={type} className={iconClass} />
+      <Icon type={name} className={iconClass} />
       <Layout>
-        <Input
-          data-testid={`input-${type}`}
-          type={getInputType(type)}
-          id={type}
-          className={filled ? "filled" : ""}
-          {...props}
-          onBlur={onBlur}
-          ref={ref}
-        />
-        <Label htmlFor={type}>{getLabelText(type)}</Label>
+        <Input {...inputProps} />
+        <Label htmlFor={name}>{getLabelText(name)}</Label>
       </Layout>
     </Wrapper>
   );

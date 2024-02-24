@@ -1,3 +1,5 @@
+import { ButtonHTMLAttributes } from "react";
+
 import styled from "@emotion/styled";
 
 const Button = styled.button`
@@ -8,11 +10,11 @@ const Button = styled.button`
   padding: 0.35rem 0.9rem;
 `;
 
-export interface NormalButtonProps {
+export interface NormalButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
-  onClick?: () => void;
 }
 
-export function NormalButton({ text, onClick }: NormalButtonProps) {
-  return <Button onClick={onClick}>{text}</Button>;
+export function NormalButton({ text, ...props }: NormalButtonProps) {
+  return <Button {...props}>{text}</Button>;
 }
