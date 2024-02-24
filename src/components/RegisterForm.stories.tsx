@@ -20,10 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Filled: Story = {
-  args: {
-    onSubmit: fn(),
-    onError: fn()
-  },
   play: async ({ canvasElement, args }) => {
     const { onSubmit, onError } = args;
     const canvas = within(canvasElement);
@@ -33,5 +29,25 @@ export const Filled: Story = {
     await userEvent.click(canvas.getByText("登録"));
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
     await waitFor(() => expect(onError).not.toHaveBeenCalled());
+  }
+};
+
+export const Invalid: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText("登録"));
+    await waitFor(() =>
+      expect(canvas.getByText("名前を入力してください")).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByText("メールアドレスを入力してください")
+      ).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByText("パスワードを入力してください")
+      ).toBeInTheDocument()
+    );
   }
 };

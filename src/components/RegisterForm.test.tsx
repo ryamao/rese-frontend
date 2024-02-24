@@ -5,7 +5,7 @@ import { RegisterForm } from "./RegisterForm";
 
 describe("RegisterForm", () => {
   test("renders", () => {
-    render(<RegisterForm onSubmit={() => {}} onError={() => {}} />);
+    render(<RegisterForm />);
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
@@ -14,7 +14,7 @@ describe("RegisterForm", () => {
 
   test("calls onSubmit with form data", async () => {
     const onSubmit = vitest.fn();
-    render(<RegisterForm onSubmit={onSubmit} onError={() => {}} />);
+    render(<RegisterForm onSubmit={onSubmit} />);
     const username = screen.getByLabelText("Username");
     const email = screen.getByLabelText("Email");
     const password = screen.getByLabelText("Password");
@@ -32,29 +32,25 @@ describe("RegisterForm", () => {
   });
 
   test("未入力時にバリデーションエラーが発生する", async () => {
-    const onError = vitest.fn((errors) => ({
-      name: errors.name?.message,
-      email: errors.email?.message,
-      password: errors.password?.message
-    }));
-    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    render(<RegisterForm />);
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
-      expect(onError).toHaveReturnedWith({
-        name: "名前を入力してください",
-        email: "メールアドレスを入力してください",
-        password: "パスワードを入力してください"
-      })
+      expect(screen.getByText("名前を入力してください")).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText("メールアドレスを入力してください")
+      ).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText("パスワードを入力してください")
+      ).toBeInTheDocument()
     );
   });
 
   test("100文字より多い場合にバリデーションエラーが発生する", async () => {
-    const onError = vitest.fn((errors) => ({
-      name: errors.name?.message,
-      email: errors.email?.message,
-      password: errors.password?.message
-    }));
-    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    render(<RegisterForm />);
     const username = screen.getByLabelText("Username");
     const email = screen.getByLabelText("Email");
     const password = screen.getByLabelText("Password");
@@ -66,41 +62,43 @@ describe("RegisterForm", () => {
     await userEvent.type(password, "a".repeat(101));
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
-      expect(onError).toHaveReturnedWith({
-        name: "名前は100文字以内で入力してください",
-        email: "メールアドレスは100文字以内で入力してください",
-        password: "パスワードは100文字以内で入力してください"
-      })
+      expect(
+        screen.getByText("名前は100文字以内で入力してください")
+      ).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText("メールアドレスは100文字以内で入力してください")
+      ).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText("パスワードは100文字以内で入力してください")
+      ).toBeInTheDocument()
     );
   });
 
   test("メールアドレスの形式が正しくない場合にバリデーションエラーが発生する", async () => {
-    const onError = vitest.fn((errors) => ({
-      email: errors.email?.message
-    }));
-    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    render(<RegisterForm />);
     const email = screen.getByLabelText("Email");
     await userEvent.type(email, "test");
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
-      expect(onError).toHaveReturnedWith({
-        email: "メールアドレスの形式が正しくありません"
-      })
+      expect(
+        screen.getByText("メールアドレスの形式が正しくありません")
+      ).toBeInTheDocument()
     );
   });
 
   test("パスワードが8文字未満の場合にバリデーションエラーが発生する", async () => {
-    const onError = vitest.fn((errors) => ({
-      password: errors.password?.message
-    }));
-    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    render(<RegisterForm />);
     const password = screen.getByLabelText("Password");
     await userEvent.type(password, "pass");
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
-      expect(onError).toHaveReturnedWith({
-        password: "パスワードは8文字以上で入力してください"
-      })
+      expect(
+        screen.getByText("パスワードは8文字以上で入力してください")
+      ).toBeInTheDocument()
     );
   });
 });

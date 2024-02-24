@@ -1,11 +1,6 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  FieldErrors,
-  SubmitErrorHandler,
-  SubmitHandler,
-  useForm
-} from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
@@ -35,10 +30,22 @@ const FormBody = styled.form`
   }
 `;
 
-const TextFieldLayout = styled.div`
+const TextFieldList = styled.ul`
+  padding: 0;
+
   & > * + * {
     margin-top: 0.75rem;
   }
+`;
+
+const TextFieldListItem = styled.li`
+  list-style: none;
+`;
+
+const ErrorMessage = styled.p`
+  color: #ff0000;
+  font-size: 0.75rem;
+  margin: 0;
 `;
 
 const ButtonLayout = styled.div`
@@ -54,8 +61,8 @@ export interface RegisterFormValues {
 }
 
 export interface RegisterFormProps {
-  onSubmit: (data: RegisterFormValues) => void;
-  onError: (errors: FieldErrors<RegisterFormValues>) => void;
+  onSubmit?: (data: RegisterFormValues) => void;
+  onError?: (errors: FieldErrors<RegisterFormValues>) => void;
 }
 
 const registerFormSchema = z.object({
@@ -75,28 +82,37 @@ const registerFormSchema = z.object({
     .max(100, "パスワードは100文字以内で入力してください")
 });
 
-export function RegisterForm({ onSubmit, onError }: RegisterFormProps) {
-  const { register, handleSubmit } = useForm<RegisterFormValues>({
+export function RegisterForm({ onSubmit }: RegisterFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema)
   });
 
   const onValid: SubmitHandler<RegisterFormValues> = (data) => {
-    onSubmit(data);
-  };
-
-  const onInvalid: SubmitErrorHandler<RegisterFormValues> = (error) => {
-    onError(error);
+    onSubmit?.(data);
   };
 
   return (
     <FormLayout>
       <Heading>Registration</Heading>
-      <FormBody onSubmit={handleSubmit(onValid, onInvalid)} noValidate>
-        <TextFieldLayout>
-          <AuthTextField registerReturn={register("name")} />
-          <AuthTextField registerReturn={register("email")} />
-          <AuthTextField registerReturn={register("password")} />
-        </TextFieldLayout>
+      <FormBody onSubmit={handleSubmit(onValid)} noValidate>
+        <TextFieldList>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("name")} />
+            <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("email")} />
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("password")} />
+            <ErrorMessage>{errors.password?.message}</ErrorMessage>
+          </TextFieldListItem>
+        </TextFieldList>
         <ButtonLayout>
           <NormalButton type="submit" text="登録" />
         </ButtonLayout>
