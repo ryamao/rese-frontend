@@ -1,12 +1,20 @@
 import React from "react";
 
+import { Global, css } from "@emotion/react";
 import ReactDOM from "react-dom/client";
 
-import App from "./App.tsx";
-import "./index.css";
+import { RegisterPage } from "./pages/RegisterPage.tsx";
+
+const global = css`
+  body {
+    background-color: #eee;
+    margin: 0;
+  }
+`;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <Global styles={global} />
+    <RegisterPage />
   </React.StrictMode>
 );
