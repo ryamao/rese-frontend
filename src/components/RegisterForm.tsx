@@ -5,12 +5,10 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import { NormalButton } from "./NormalButton";
+import * as styles from "./styles";
 
 const FormLayout = styled.div`
-  width: 22rem;
-  background-color: #fff;
-  border-radius: 0.25rem;
-  box-shadow: 0.125rem 0.125rem 0.25rem #888;
+  width: 24rem;
 `;
 
 const Heading = styled.h2`
@@ -24,7 +22,7 @@ const Heading = styled.h2`
 `;
 
 const FormBody = styled.form`
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem 2rem;
 
   & > * + * {
     margin-top: 1.25rem;
@@ -97,7 +95,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
   };
 
   return (
-    <FormLayout>
+    <FormLayout className={styles.whitePanel}>
       <Heading>Registration</Heading>
       <FormBody onSubmit={handleSubmit(onValid)} noValidate>
         <TextFieldList>
