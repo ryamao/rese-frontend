@@ -1,0 +1,70 @@
+name: Lint and Test
+
+on: push
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - id: cache-restore-dev-depends
+        uses: actions/cache/restore@v4
+        with:
+          path: "**/node_modules"
+          key: dev-depends-node20-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.cache-restore-dev-depends.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - if: steps.cache-restore-dev-depends.outputs.cache-hit != 'true'
+        id: cache-save-dev-depends
+        uses: actions/cache/save@v4
+        with:
+          path: "**/node_modules"
+          key: dev-depends-node20-${{ hashFiles('package-lock.json') }}
+
+  lint:
+    needs: install
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - id: cache-restore-dev-depends
+        uses: actions/cache/restore@v4
+        with:
+          path: "**/node_modules"
+          key: dev-depends-node20-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run lint
+
+  test:
+    needs: install
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - id: cache-restore-dev-depends
+        uses: actions/cache/restore@v4
+        with:
+          path: "**/node_modules"
+          key: dev-depends-node20-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run test
