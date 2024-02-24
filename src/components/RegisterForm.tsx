@@ -8,19 +8,19 @@ import { NormalButton } from "./NormalButton";
 
 const FormLayout = styled.div`
   width: 22rem;
+  background-color: #fff;
   border-radius: 0.25rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
-  background-color: #fff;
 `;
 
 const Heading = styled.h2`
-  background-color: #315dff;
-  color: #fff;
+  padding: 1rem;
+  margin: 0;
   font-size: 1rem;
   font-weight: normal;
+  color: #fff;
+  background-color: #315dff;
   border-radius: 0.25rem 0.25rem 0 0;
-  margin: 0;
-  padding: 1rem;
 `;
 
 const FormBody = styled.form`
@@ -44,15 +44,15 @@ const TextFieldListItem = styled.li`
 `;
 
 const ErrorMessage = styled.p`
-  color: #ff0000;
-  font-size: 0.75rem;
   margin: 0;
+  font-size: 0.75rem;
+  color: #f00;
 `;
 
 const ButtonLayout = styled.div`
-  width: 100%;
   display: flex;
   justify-content: right;
+  width: 100%;
 `;
 
 export interface RegisterFormValues {

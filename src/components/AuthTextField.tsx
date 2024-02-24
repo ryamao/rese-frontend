@@ -35,17 +35,17 @@ const Layout = styled.div`
 const Label = styled.label`
   position: absolute;
   top: 0;
-  color: #6b6b6b;
   font-size: 0.9rem;
-  transition: 0.15s;
+  color: #6b6b6b;
   pointer-events: none;
+  transition: 0.15s;
 `;
 
 const Input = styled.input`
   width: 100%;
+  padding: 0 0.125rem;
   border: none;
   border-bottom: 1px solid #000;
-  padding: 0 0.125rem;
 
   &:focus-visible {
     outline: none;

@@ -7,8 +7,8 @@ import { RegisterPage } from "./pages/RegisterPage.tsx";
 
 const global = css`
   body {
-    background-color: #eee;
     margin: 0;
+    background-color: #eee;
   }
 `;
 
