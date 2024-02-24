@@ -10,6 +10,7 @@ const FormLayout = styled.div`
   width: 22rem;
   border-radius: 0.25rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
+  background-color: #fff;
 `;
 
 const Heading = styled.h2`
