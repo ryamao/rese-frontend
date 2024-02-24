@@ -3,7 +3,7 @@
   "overrides": [
     {
       "files": ["**/*.{js,jsx,ts,tsx}"],
-      "customSyntax": "postcss-lit"
+      "customSyntax": "postcss-styled-syntax"
     }
   ],
   "ignoreFiles": ["**/node_modules/**", "coverage/**", ".storybook/**"]

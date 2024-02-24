@@ -39,15 +39,15 @@ const closeSvg = (
 );
 
 const Button = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
+  background-color: #315dff;
   border: none;
   border-radius: 0.5rem;
-  background-color: #315dff;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export interface MenuButtonProps {
