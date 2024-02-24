@@ -1,43 +1,41 @@
+import { ButtonHTMLAttributes, FC } from "react";
+
 import { fn } from "@storybook/test";
 
-import { NormalButton } from "./NormalButton";
+import * as styles from "./styles";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
+const Button: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
+  return <button className={styles.blueButton} {...props}></button>;
+};
+
 const meta = {
-  title: "Rese/NormalButton",
-  component: NormalButton,
+  title: "Rese/BlueButton",
+  component: Button,
   tags: ["autodocs"],
   args: { onClick: fn() }
-} satisfies Meta<typeof NormalButton>;
+} satisfies Meta<typeof Button>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Register: Story = {
-  args: { text: "登録" }
+  args: { children: "登録" }
 };
 
 export const Thanks: Story = {
-  args: { text: "ログインする" }
+  args: { children: "ログインする" }
 };
 
 export const Login: Story = {
-  args: { text: "ログイン" }
+  args: { children: "ログイン" }
 };
 
 export const Detail: Story = {
-  args: { text: "詳しくみる" }
-};
-
-export const Reserve: Story = {
-  args: { text: "予約する" }
-};
-
-export const LoginAndReserve: Story = {
-  args: { text: "ログインして予約する" }
+  args: { children: "詳しくみる" }
 };
 
 export const Back: Story = {
-  args: { text: "戻る" }
+  args: { children: "戻る" }
 };
