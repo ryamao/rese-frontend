@@ -1,10 +1,12 @@
 import styled from "@emotion/styled";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FieldErrors,
   SubmitErrorHandler,
   SubmitHandler,
   useForm
 } from "react-hook-form";
+import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import { NormalButton } from "./NormalButton";
@@ -56,8 +58,27 @@ export interface RegisterFormProps {
   onError: (errors: FieldErrors<RegisterFormValues>) => void;
 }
 
+const registerFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "名前を入力してください")
+    .max(100, "名前は100文字以内で入力してください"),
+  email: z
+    .string()
+    .min(1, "メールアドレスを入力してください")
+    .max(100, "メールアドレスは100文字以内で入力してください")
+    .email("メールアドレスの形式が正しくありません"),
+  password: z
+    .string()
+    .min(1, "パスワードを入力してください")
+    .min(8, "パスワードは8文字以上で入力してください")
+    .max(100, "パスワードは100文字以内で入力してください")
+});
+
 export function RegisterForm({ onSubmit, onError }: RegisterFormProps) {
-  const { register, handleSubmit } = useForm<RegisterFormValues>();
+  const { register, handleSubmit } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema)
+  });
 
   const onValid: SubmitHandler<RegisterFormValues> = (data) => {
     onSubmit(data);
@@ -72,21 +93,9 @@ export function RegisterForm({ onSubmit, onError }: RegisterFormProps) {
       <Heading>Registration</Heading>
       <FormBody onSubmit={handleSubmit(onValid, onInvalid)} noValidate>
         <TextFieldLayout>
-          <AuthTextField
-            registerReturn={register("name", {
-              required: "名前を入力してください"
-            })}
-          />
-          <AuthTextField
-            registerReturn={register("email", {
-              required: "メールアドレスを入力してください"
-            })}
-          />
-          <AuthTextField
-            registerReturn={register("password", {
-              required: "パスワードを入力してください"
-            })}
-          />
+          <AuthTextField registerReturn={register("name")} />
+          <AuthTextField registerReturn={register("email")} />
+          <AuthTextField registerReturn={register("password")} />
         </TextFieldLayout>
         <ButtonLayout>
           <NormalButton type="submit" text="登録" />

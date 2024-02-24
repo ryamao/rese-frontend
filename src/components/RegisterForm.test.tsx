@@ -31,10 +31,76 @@ describe("RegisterForm", () => {
     );
   });
 
-  test("calls onError with form errors", async () => {
-    const onError = vitest.fn();
+  test("未入力時にバリデーションエラーが発生する", async () => {
+    const onError = vitest.fn((errors) => ({
+      name: errors.name?.message,
+      email: errors.email?.message,
+      password: errors.password?.message
+    }));
     render(<RegisterForm onSubmit={() => {}} onError={onError} />);
     await userEvent.click(screen.getByText("登録"));
-    await waitFor(() => expect(onError).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(onError).toHaveReturnedWith({
+        name: "名前を入力してください",
+        email: "メールアドレスを入力してください",
+        password: "パスワードを入力してください"
+      })
+    );
+  });
+
+  test("100文字より多い場合にバリデーションエラーが発生する", async () => {
+    const onError = vitest.fn((errors) => ({
+      name: errors.name?.message,
+      email: errors.email?.message,
+      password: errors.password?.message
+    }));
+    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    const username = screen.getByLabelText("Username");
+    const email = screen.getByLabelText("Email");
+    const password = screen.getByLabelText("Password");
+    await userEvent.type(username, "a".repeat(101));
+    await userEvent.type(
+      email,
+      "a".repeat(50) + "@" + "a".repeat(50 - 4) + ".com"
+    );
+    await userEvent.type(password, "a".repeat(101));
+    await userEvent.click(screen.getByText("登録"));
+    await waitFor(() =>
+      expect(onError).toHaveReturnedWith({
+        name: "名前は100文字以内で入力してください",
+        email: "メールアドレスは100文字以内で入力してください",
+        password: "パスワードは100文字以内で入力してください"
+      })
+    );
+  });
+
+  test("メールアドレスの形式が正しくない場合にバリデーションエラーが発生する", async () => {
+    const onError = vitest.fn((errors) => ({
+      email: errors.email?.message
+    }));
+    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    const email = screen.getByLabelText("Email");
+    await userEvent.type(email, "test");
+    await userEvent.click(screen.getByText("登録"));
+    await waitFor(() =>
+      expect(onError).toHaveReturnedWith({
+        email: "メールアドレスの形式が正しくありません"
+      })
+    );
+  });
+
+  test("パスワードが8文字未満の場合にバリデーションエラーが発生する", async () => {
+    const onError = vitest.fn((errors) => ({
+      password: errors.password?.message
+    }));
+    render(<RegisterForm onSubmit={() => {}} onError={onError} />);
+    const password = screen.getByLabelText("Password");
+    await userEvent.type(password, "pass");
+    await userEvent.click(screen.getByText("登録"));
+    await waitFor(() =>
+      expect(onError).toHaveReturnedWith({
+        password: "パスワードは8文字以上で入力してください"
+      })
+    );
   });
 });
