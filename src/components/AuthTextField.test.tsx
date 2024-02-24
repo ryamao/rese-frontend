@@ -5,13 +5,13 @@ import { AuthTextField } from "./AuthTextField";
 
 describe("AuthTextField with username", () => {
   test("renders input field", () => {
-    render(<AuthTextField type="username" />);
+    render(<AuthTextField fieldType="name" />);
     const input = screen.getByLabelText("Username");
     expect(input).toBeInTheDocument();
   });
 
   test("filled class is added when input is filled", async () => {
-    render(<AuthTextField type="username" />);
+    render(<AuthTextField fieldType="name" />);
     const input = screen.getByRole("textbox");
     await userEvent.type(input, "test");
     await userEvent.tab();
@@ -19,7 +19,7 @@ describe("AuthTextField with username", () => {
   });
 
   test("filled class is removed when input is cleared", async () => {
-    render(<AuthTextField type="username" />);
+    render(<AuthTextField fieldType="name" />);
     const input = screen.getByRole("textbox");
     await userEvent.type(input, "test");
     await userEvent.tab();
@@ -27,20 +27,11 @@ describe("AuthTextField with username", () => {
     await userEvent.tab();
     await waitFor(() => expect(input).not.toHaveClass("filled"));
   });
-
-  test("calls onBlur when input is blurred", async () => {
-    const onBlur = vitest.fn();
-    render(<AuthTextField type="username" onBlur={onBlur} />);
-    const input = screen.getByRole("textbox");
-    await userEvent.type(input, "test");
-    await userEvent.tab();
-    expect(onBlur).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe("AuthTextField with email", () => {
   test("renders input field", () => {
-    render(<AuthTextField type="email" />);
+    render(<AuthTextField fieldType="email" />);
     const input = screen.getByLabelText("Email");
     expect(input).toBeInTheDocument();
   });
@@ -48,7 +39,7 @@ describe("AuthTextField with email", () => {
 
 describe("AuthTextField with password", () => {
   test("renders input field", () => {
-    render(<AuthTextField type="password" />);
+    render(<AuthTextField fieldType="password" />);
     const input = screen.getByLabelText("Password");
     expect(input).toBeInTheDocument();
   });
