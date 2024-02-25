@@ -5,7 +5,7 @@ import { RegisterForm } from "./RegisterForm";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Rese/RegisterForm",
+  title: "Rese/Register/RegisterForm",
   component: RegisterForm,
   tags: ["autodocs"],
   args: {
