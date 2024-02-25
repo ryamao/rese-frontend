@@ -10,7 +10,11 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,tsx}"],
     coverage: {
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/vite-env.d.ts", "src/**/*.stories.{ts,tsx}"]
+      exclude: [
+        "src/vite-env.d.ts",
+        "src/main.tsx",
+        "src/**/*.stories.{ts,tsx}"
+      ]
     }
   }
 });
