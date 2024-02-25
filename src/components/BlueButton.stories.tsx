@@ -11,7 +11,7 @@ const Button: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
 };
 
 const meta = {
-  title: "Rese/BlueButton",
+  title: "Components/Common/BlueButton",
   component: Button,
   tags: ["autodocs"],
   args: { onClick: fn() }

@@ -4,7 +4,7 @@ import { fn } from "@storybook/test";
 import { ThanksPanel } from "./ThanksPanel";
 
 const meta = {
-  title: "Rese/Thanks/ThanksPanel",
+  title: "Components/Thanks/ThanksPanel",
   component: ThanksPanel,
   tags: ["autodocs"],
   args: {
