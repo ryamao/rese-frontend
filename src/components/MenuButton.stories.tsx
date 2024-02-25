@@ -5,7 +5,7 @@ import { MenuButton } from "./MenuButton";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Rese/MenuButton",
+  title: "Components/Common/MenuButton",
   component: MenuButton,
   tags: ["autodocs"],
   args: { onClick: fn() }

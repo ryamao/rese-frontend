@@ -5,7 +5,7 @@ import { AuthTextField } from "./AuthTextField";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Rese/AuthTextField",
+  title: "Components/Register/AuthTextField",
   component: AuthTextField,
   tags: ["autodocs"],
   args: {

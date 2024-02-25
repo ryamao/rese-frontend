@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import { RegisterPage } from "./RegisterPage";
 
 const meta = {
-  title: "Rese/RegisterPage",
+  title: "Pages/RegisterPage",
   component: RegisterPage,
   tags: ["autodocs"]
 } satisfies Meta<typeof RegisterPage>;
