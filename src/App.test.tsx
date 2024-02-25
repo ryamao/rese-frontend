@@ -1,22 +1,33 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 
 import App from "./App";
 
 describe("App", () => {
   test("has title", () => {
-    render(<App />);
-    const heading = screen.getByRole("heading", { name: "Vite + React" });
+    render(<App />, { wrapper: MemoryRouter });
+    const heading = screen.getByRole("heading", { name: "Rese" });
     expect(heading).toBeInTheDocument();
   });
 
-  test("button increments count", async () => {
-    const user = userEvent.setup();
-    render(<App />);
-    const button = screen.getByRole("button", { name: "count is 0" });
-    user.click(button);
+  test("has register form", () => {
+    render(<App />, { wrapper: MemoryRouter });
+    expect(
+      screen.getByRole("heading", { name: "Registration" })
+    ).toBeInTheDocument();
+  });
+
+  test("transitions to thanks page", async () => {
+    render(<App />, { wrapper: MemoryRouter });
+    await userEvent.type(screen.getByLabelText("Username"), "Test User");
+    await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "password");
+    await userEvent.click(screen.getByText("登録"));
     await waitFor(() => {
-      expect(button).toHaveTextContent("count is 1");
+      expect(
+        screen.getByText("会員登録ありがとうございます")
+      ).toBeInTheDocument();
     });
   });
 });
