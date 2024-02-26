@@ -1,10 +1,12 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
+import { getCookieValue } from "../utils";
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -58,9 +60,13 @@ export interface RegisterFormValues {
   password: string;
 }
 
-export interface RegisterFormProps {
-  onSubmit?: (data: RegisterFormValues) => void;
-  onError?: (errors: FieldErrors<RegisterFormValues>) => void;
+export interface RegisterFormErrors {
+  message: string;
+  errors: {
+    name?: string[];
+    email?: string[];
+    password?: string[];
+  };
 }
 
 const registerFormSchema = z.object({
@@ -80,17 +86,62 @@ const registerFormSchema = z.object({
     .max(100, "パスワードは100文字以内で入力してください")
 });
 
-export function RegisterForm({ onSubmit }: RegisterFormProps) {
+async function fetchCsrfToken(): Promise<string | null> {
+  await fetch(import.meta.env.VITE_API_URL + "/sanctum/csrf-cookie");
+  return getCookieValue("XSRF-TOKEN");
+}
+
+function registerUser(
+  data: RegisterFormValues,
+  csrfToken: string
+): Promise<Response> {
+  return fetch(import.meta.env.VITE_API_URL + "/auth/register", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-XSRF-TOKEN": csrfToken
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema)
   });
 
-  const onValid: SubmitHandler<RegisterFormValues> = (data) => {
-    onSubmit?.(data);
+  const navigate = useNavigate();
+
+  const onValid: SubmitHandler<RegisterFormValues> = async (data) => {
+    try {
+      const csrfToken = await fetchCsrfToken();
+      if (csrfToken === null) {
+        alert("TODO: CSRFトークンの取得に失敗した場合の処理を追加する");
+        return;
+      }
+
+      const response = await registerUser(data, csrfToken);
+
+      if (response.ok) {
+        navigate("/thanks");
+      } else {
+        const error = (await response.json()) as RegisterFormErrors;
+        setError("email", {
+          type: "manual",
+          message: error.message
+        });
+      }
+    } catch (error) {
+      alert("TODO: エラーが発生した場合の処理を追加する");
+      console.error(error);
+    }
   };
 
   return (
