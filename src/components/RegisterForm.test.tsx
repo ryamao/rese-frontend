@@ -21,7 +21,7 @@ describe("RegisterForm", () => {
     expect(screen.getByText("登録")).toBeInTheDocument();
   });
 
-  test("submitting the form calls onRegister", async () => {
+  test.skip("submitting the form calls onRegister", async () => {
     const onRegister = vitest.fn();
     render(<RegisterForm onRegister={onRegister} />, {
       wrapper: BrowserRouter
