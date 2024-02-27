@@ -1,23 +1,22 @@
-import { fn, userEvent, within, expect, waitFor } from "@storybook/test";
+import { Meta, StoryObj } from "@storybook/react";
+import { fn, userEvent, waitFor, within, expect } from "@storybook/test";
 
-import { RegisterForm } from "./RegisterForm";
+import { LoginForm } from "./LoginForm";
 import { handlers } from "../mocks/handlers";
 
-import type { Meta, StoryObj } from "@storybook/react";
-
 const meta = {
-  title: "Components/Auth/RegisterForm",
-  component: RegisterForm,
+  title: "Components/Auth/LoginForm",
+  component: LoginForm,
   tags: ["autodocs"],
   args: {
-    onRegister: fn()
+    onLogin: fn()
   },
   parameters: {
     msw: {
       handlers
     }
   }
-} satisfies Meta<typeof RegisterForm>;
+} satisfies Meta<typeof LoginForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -27,12 +26,11 @@ export const Default: Story = {};
 export const Filled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.type(canvas.getByLabelText("Username"), "test");
     await userEvent.type(canvas.getByLabelText("Email"), "test@example.com");
     await userEvent.type(canvas.getByLabelText("Password"), "password");
-    await userEvent.click(canvas.getByText("登録"));
+    await userEvent.click(canvas.getByText("ログイン"));
     await waitFor(() => {
-      expect(args.onRegister).toHaveBeenCalled();
+      expect(args.onLogin).toHaveBeenCalled();
     });
   }
 };
@@ -40,9 +38,8 @@ export const Filled: Story = {
 export const Error: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByText("登録"));
+    await userEvent.click(canvas.getByText("ログイン"));
     await waitFor(() => {
-      expect(canvas.getByText("名前を入力してください")).toBeInTheDocument();
       expect(
         canvas.getByText("メールアドレスを入力してください")
       ).toBeInTheDocument();
