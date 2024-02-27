@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
@@ -54,6 +53,10 @@ const ButtonLayout = styled.div`
   width: 100%;
 `;
 
+export interface RegisterFormProps {
+  onRegister?: () => void;
+}
+
 export interface RegisterFormValues {
   name: string;
   email: string;
@@ -87,15 +90,25 @@ const registerFormSchema = z.object({
 });
 
 async function fetchCsrfToken(): Promise<string | null> {
-  await fetch(import.meta.env.VITE_API_URL + "/sanctum/csrf-cookie");
-  return getCookieValue("XSRF-TOKEN");
+  const response = await fetch(
+    new URL("/sanctum/csrf-cookie", import.meta.env.VITE_API_URL),
+    {
+      credentials: "include"
+    }
+  );
+
+  if (response.ok) {
+    return getCookieValue("XSRF-TOKEN");
+  } else {
+    return null;
+  }
 }
 
 function registerUser(
   data: RegisterFormValues,
   csrfToken: string
 ): Promise<Response> {
-  return fetch(import.meta.env.VITE_API_URL + "/auth/register", {
+  return fetch(new URL("/auth/register", import.meta.env.VITE_API_URL), {
     method: "POST",
     credentials: "include",
     headers: {
@@ -107,7 +120,7 @@ function registerUser(
   });
 }
 
-export function RegisterForm() {
+export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -116,8 +129,6 @@ export function RegisterForm() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema)
   });
-
-  const navigate = useNavigate();
 
   const onValid: SubmitHandler<RegisterFormValues> = async (data) => {
     try {
@@ -130,7 +141,7 @@ export function RegisterForm() {
       const response = await registerUser(data, csrfToken);
 
       if (response.ok) {
-        navigate("/thanks");
+        onRegister?.();
       } else {
         const error = (await response.json()) as RegisterFormErrors;
         setError("email", {
