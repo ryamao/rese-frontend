@@ -3,9 +3,6 @@ import styled from "@emotion/styled";
 import { MenuButton } from "../components/MenuButton";
 
 const Header = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
   display: flex;
   justify-content: center;
   width: 100%;
@@ -28,10 +25,8 @@ const Title = styled.h1`
 
 const Main = styled.main`
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-width: 100%;
-  min-height: 100vh;
+  align-items: center;
 `;
 
 export interface PageBaseProps {
