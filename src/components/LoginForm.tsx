@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
 import { fetchCsrfToken } from "../fetch";
-import { PostAuthLogin422Response, PostAuthRegisterBody } from "../models";
+import { PostAuthLogin422Response, PostAuthLoginBody } from "../models";
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -54,32 +54,16 @@ const ButtonLayout = styled.div`
   width: 100%;
 `;
 
-export interface RegisterFormProps {
-  onRegister?: () => void;
-}
-
-const registerFormSchema = z.object({
-  name: z
-    .string()
-    .min(1, "名前を入力してください")
-    .max(100, "名前は100文字以内で入力してください"),
-  email: z
-    .string()
-    .min(1, "メールアドレスを入力してください")
-    .max(100, "メールアドレスは100文字以内で入力してください")
-    .email("メールアドレスの形式が正しくありません"),
-  password: z
-    .string()
-    .min(1, "パスワードを入力してください")
-    .min(8, "パスワードは8文字以上で入力してください")
-    .max(100, "パスワードは100文字以内で入力してください")
+const loginFormSchema = z.object({
+  email: z.string().min(1, "メールアドレスを入力してください"),
+  password: z.string().min(1, "パスワードを入力してください")
 });
 
-function registerUser(
-  data: PostAuthRegisterBody,
+function loginUser(
+  data: PostAuthLoginBody,
   csrfToken: string
 ): Promise<Response> {
-  return fetch(new URL("/auth/register", import.meta.env.VITE_API_URL), {
+  return fetch(new URL("/auth/login", import.meta.env.VITE_API_URL), {
     method: "POST",
     credentials: "include",
     headers: {
@@ -91,17 +75,21 @@ function registerUser(
   });
 }
 
-export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
+export interface LoginFormProps {
+  onLogin?: () => void;
+}
+
+export function LoginForm({ onLogin }: LoginFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError
-  } = useForm<PostAuthRegisterBody>({
-    resolver: zodResolver(registerFormSchema)
+  } = useForm<PostAuthLoginBody>({
+    resolver: zodResolver(loginFormSchema)
   });
 
-  const onValid: SubmitHandler<PostAuthRegisterBody> = async (data) => {
+  async function onValid(data: PostAuthLoginBody) {
     try {
       const csrfToken = await fetchCsrfToken();
       if (csrfToken === null) {
@@ -109,10 +97,10 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
         return;
       }
 
-      const response = await registerUser(data, csrfToken);
+      const response = await loginUser(data, csrfToken);
 
       if (response.ok) {
-        onRegister?.();
+        onLogin?.();
       } else {
         const error = (await response.json()) as PostAuthLogin422Response;
         setError("email", {
@@ -124,17 +112,13 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
       alert("TODO: エラーが発生した場合の処理を追加する");
       console.error(error);
     }
-  };
+  }
 
   return (
     <FormLayout className={styles.whitePanel}>
-      <Heading>Registration</Heading>
+      <Heading>Login</Heading>
       <FormBody onSubmit={handleSubmit(onValid)} noValidate>
         <TextFieldList>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("name")} />
-            <ErrorMessage>{errors.name?.message}</ErrorMessage>
-          </TextFieldListItem>
           <TextFieldListItem>
             <AuthTextField registerReturn={register("email")} />
             <ErrorMessage>{errors.email?.message}</ErrorMessage>
@@ -146,7 +130,7 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
         </TextFieldList>
         <ButtonLayout>
           <button type="submit" className={styles.blueButton}>
-            登録
+            ログイン
           </button>
         </ButtonLayout>
       </FormBody>

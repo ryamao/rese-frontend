@@ -13,7 +13,9 @@ export default defineConfig({
       exclude: [
         "src/vite-env.d.ts",
         "src/main.tsx",
-        "src/**/*.stories.{ts,tsx}"
+        "src/**/*.stories.{ts,tsx}",
+        "src/models/**/*.ts",
+        "src/mocks/**/*.ts"
       ]
     }
   }

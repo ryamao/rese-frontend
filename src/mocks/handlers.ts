@@ -8,6 +8,9 @@ export const handlers = [
     });
   }),
   http.post("*/auth/register", async () => {
-    return HttpResponse.json(null, { status: 201 });
+    return HttpResponse.text(null, { status: 201 });
+  }),
+  http.post("*/auth/login", async () => {
+    return HttpResponse.text(null, { status: 204 });
   })
 ];

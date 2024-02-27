@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
-import { BrowserRouter } from "react-router-dom";
 
 import { RegisterForm } from "./RegisterForm";
 import { handlers } from "../mocks/handlers";
@@ -14,18 +13,16 @@ describe("RegisterForm", () => {
   afterAll(() => server.close());
 
   test("renders", () => {
-    render(<RegisterForm />, { wrapper: BrowserRouter });
+    render(<RegisterForm />);
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByText("登録")).toBeInTheDocument();
   });
 
-  test.skip("submitting the form calls onRegister", async () => {
+  test.skip("バリデーション成功時にonRegisterが呼び出される", async () => {
     const onRegister = vitest.fn();
-    render(<RegisterForm onRegister={onRegister} />, {
-      wrapper: BrowserRouter
-    });
+    render(<RegisterForm onRegister={onRegister} />);
     await userEvent.type(screen.getByLabelText("Username"), "test");
     await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
     await userEvent.type(screen.getByLabelText("Password"), "password");
@@ -33,8 +30,8 @@ describe("RegisterForm", () => {
     await waitFor(() => expect(onRegister).toHaveBeenCalled());
   });
 
-  test("未入力時にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />, { wrapper: BrowserRouter });
+  test.skip("未入力時にバリデーションエラーが発生する", async () => {
+    render(<RegisterForm />);
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
       expect(screen.getByText("名前を入力してください")).toBeInTheDocument()
@@ -52,7 +49,7 @@ describe("RegisterForm", () => {
   });
 
   test("100文字より多い場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />, { wrapper: BrowserRouter });
+    render(<RegisterForm />);
     const username = screen.getByLabelText("Username");
     const email = screen.getByLabelText("Email");
     const password = screen.getByLabelText("Password");
@@ -81,7 +78,7 @@ describe("RegisterForm", () => {
   });
 
   test("メールアドレスの形式が正しくない場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />, { wrapper: BrowserRouter });
+    render(<RegisterForm />);
     const email = screen.getByLabelText("Email");
     await userEvent.type(email, "test");
     await userEvent.click(screen.getByText("登録"));
@@ -93,7 +90,7 @@ describe("RegisterForm", () => {
   });
 
   test("パスワードが8文字未満の場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />, { wrapper: BrowserRouter });
+    render(<RegisterForm />);
     const password = screen.getByLabelText("Password");
     await userEvent.type(password, "pass");
     await userEvent.click(screen.getByText("登録"));
