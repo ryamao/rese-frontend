@@ -23,3 +23,5 @@ export * from "./postAuthRegisterBody";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from './postAuthLogin422ResponseErrors';
+export * from './postAuthRegister422ResponseErrors';
