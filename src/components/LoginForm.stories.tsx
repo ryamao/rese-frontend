@@ -9,7 +9,7 @@ const meta = {
   component: LoginForm,
   tags: ["autodocs"],
   args: {
-    client: new Client(),
+    client: new Client("http://localhost:12345"),
     onLogin: fn()
   }
 } satisfies Meta<typeof LoginForm>;
