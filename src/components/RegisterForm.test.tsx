@@ -1,23 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { BrowserRouter } from "react-router-dom";
 
 import { RegisterForm } from "./RegisterForm";
+import { handlers } from "../mocks/handlers";
 
 describe("RegisterForm", () => {
-  const server = setupServer(
-    http.get("*/sanctum/csrf-cookie", async () => {
-      return HttpResponse.json(null, {
-        status: 204,
-        headers: { "Set-Cookie": "XSRF-TOKEN=123" }
-      });
-    }),
-    http.post("*/auth/register", async () => {
-      return HttpResponse.json(null, { status: 201 });
-    })
-  );
+  const server = setupServer(...handlers);
 
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
@@ -29,6 +19,18 @@ describe("RegisterForm", () => {
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByText("登録")).toBeInTheDocument();
+  });
+
+  test("submitting the form calls onRegister", async () => {
+    const onRegister = vitest.fn();
+    render(<RegisterForm onRegister={onRegister} />, {
+      wrapper: BrowserRouter
+    });
+    await userEvent.type(screen.getByLabelText("Username"), "test");
+    await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "password");
+    await userEvent.click(screen.getByText("登録"));
+    await waitFor(() => expect(onRegister).toHaveBeenCalled());
   });
 
   test("未入力時にバリデーションエラーが発生する", async () => {
