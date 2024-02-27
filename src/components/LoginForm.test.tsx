@@ -1,35 +1,41 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { setupServer } from "msw/node";
 
 import { LoginForm } from "./LoginForm";
-import { handlers } from "../mocks/handlers";
+import { Client } from "../Client";
 
 describe("LoginForm", () => {
-  const server = setupServer(...handlers);
-
-  beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
   test("renders", () => {
-    render(<LoginForm />);
+    render(<LoginForm client={new Client("http://localhost:12345")} />);
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByText("ログイン")).toBeInTheDocument();
   });
 
-  test.skip("バリデーション成功時にonLoginが呼び出される", async () => {
+  test("ログイン成功", async () => {
+    const spy = vitest
+      .spyOn(Client.prototype, "postAuthLogin")
+      .mockImplementation(() => Promise.resolve({ status: 200 }));
     const onLogin = vitest.fn();
-    render(<LoginForm onLogin={onLogin} />);
+    render(
+      <LoginForm
+        client={new Client("http://localhost:12345")}
+        onLogin={onLogin}
+      />
+    );
     await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
     await userEvent.type(screen.getByLabelText("Password"), "password");
     await userEvent.click(screen.getByText("ログイン"));
+    expect(spy).toHaveBeenCalledWith({
+      email: "test@example.com",
+      password: "password"
+    });
     await waitFor(() => expect(onLogin).toHaveBeenCalled());
   });
 
-  test("未入力時にバリデーションエラーが発生する", async () => {
-    render(<LoginForm />);
+  test("バリデーション失敗", async () => {
+    const spy = vitest.spyOn(Client.prototype, "postAuthLogin");
+    render(<LoginForm client={new Client("http://localhost:12345")} />);
     await userEvent.click(screen.getByText("ログイン"));
     await waitFor(() =>
       expect(
@@ -41,5 +47,48 @@ describe("LoginForm", () => {
         screen.getByText("パスワードを入力してください")
       ).toBeInTheDocument()
     );
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  test("ログイン失敗 (認証失敗)", async () => {
+    const spy = vitest
+      .spyOn(Client.prototype, "postAuthLogin")
+      .mockImplementation(() =>
+        Promise.resolve({
+          status: 422,
+          json: {
+            message: "サンプルテキスト1",
+            errors: {
+              email: ["サンプルテキスト2"],
+              password: ["サンプルテキスト3"]
+            }
+          }
+        })
+      );
+    render(<LoginForm client={new Client("http://localhost:12345")} />);
+    await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "password");
+    await userEvent.click(screen.getByText("ログイン"));
+    await waitFor(() =>
+      expect(screen.getByText("サンプルテキスト2")).toBeInTheDocument()
+    );
+    await waitFor(() =>
+      expect(screen.getByText("サンプルテキスト3")).toBeInTheDocument()
+    );
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test("ログイン失敗（その他のエラー）", async () => {
+    const spy = vitest
+      .spyOn(Client.prototype, "postAuthLogin")
+      .mockImplementation(() =>
+        Promise.resolve({ status: 500, error: "error" })
+      );
+    render(<LoginForm client={new Client("http://localhost:12345")} />);
+    await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "password");
+    await userEvent.click(screen.getByText("ログイン"));
+    await waitFor(() => expect(screen.getByText("error")).toBeInTheDocument());
+    expect(spy).toHaveBeenCalled();
   });
 });
