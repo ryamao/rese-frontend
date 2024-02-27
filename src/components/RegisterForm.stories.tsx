@@ -1,4 +1,4 @@
-import { fn, userEvent, within, expect, waitFor } from "@storybook/test";
+import { fn, userEvent, within, expect, waitFor, spyOn } from "@storybook/test";
 
 import { RegisterForm } from "./RegisterForm";
 import { Client, PostAuthRegisterResult } from "../Client";
@@ -54,7 +54,7 @@ export const Error: Story = {
 };
 
 function spyPostAuthRegister(response: PostAuthRegisterResult) {
-  return vitest
-    .spyOn(Client.prototype, "postAuthRegister")
-    .mockImplementation(() => Promise.resolve(response));
+  return spyOn(Client.prototype, "postAuthRegister").mockImplementation(() =>
+    Promise.resolve(response)
+  );
 }

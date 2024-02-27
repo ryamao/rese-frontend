@@ -19,25 +19,25 @@ type Story = StoryObj<typeof meta>;
 
 export const Username: Story = {
   args: {
-    type: "username"
+    fieldType: "name"
   }
 };
 
 export const Email: Story = {
   args: {
-    type: "email"
+    fieldType: "email"
   }
 };
 
 export const Password: Story = {
   args: {
-    type: "password"
+    fieldType: "password"
   }
 };
 
 export const Filled: Story = {
   args: {
-    type: "username"
+    fieldType: "name"
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
