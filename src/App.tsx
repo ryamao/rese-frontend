@@ -1,6 +1,7 @@
 import { Global, css } from "@emotion/react";
 import { Route, Routes } from "react-router-dom";
 
+import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ThanksPage } from "./pages/ThanksPage";
 
@@ -21,6 +22,7 @@ function App() {
 
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/thanks" element={<ThanksPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </>
   );
