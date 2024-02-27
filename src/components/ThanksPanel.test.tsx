@@ -12,11 +12,11 @@ describe("ThanksPanel", () => {
     ).toBeInTheDocument();
   });
 
-  test("renders with onClick", async () => {
-    const onClick = vitest.fn();
-    render(<ThanksPanel onClick={onClick} />);
+  test("renders with onConfirm", async () => {
+    const onConfirm = vitest.fn();
+    render(<ThanksPanel onConfirm={onConfirm} />);
     const button = screen.getByRole("button", { name: "ログインする" });
     await userEvent.click(button);
-    await waitFor(() => expect(onClick).toHaveBeenCalled());
+    await waitFor(() => expect(onConfirm).toHaveBeenCalled());
   });
 });
