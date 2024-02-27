@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { fetchCsrfToken } from "../fetch";
-import { PostAuthLogin422Response, PostAuthLoginBody } from "../models";
+import { Client } from "../Client";
+import { PostAuthLoginBody } from "../models";
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -59,27 +59,12 @@ const loginFormSchema = z.object({
   password: z.string().min(1, "パスワードを入力してください")
 });
 
-function loginUser(
-  data: PostAuthLoginBody,
-  csrfToken: string
-): Promise<Response> {
-  return fetch(new URL("/auth/login", import.meta.env.VITE_API_URL), {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-XSRF-TOKEN": csrfToken
-    },
-    body: JSON.stringify(data)
-  });
-}
-
 export interface LoginFormProps {
+  client: Client;
   onLogin?: () => void;
 }
 
-export function LoginForm({ onLogin }: LoginFormProps) {
+export function LoginForm({ client, onLogin }: LoginFormProps) {
   const {
     register,
     handleSubmit,
@@ -90,27 +75,18 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   });
 
   async function onValid(data: PostAuthLoginBody) {
-    try {
-      const csrfToken = await fetchCsrfToken();
-      if (csrfToken === null) {
-        alert("TODO: CSRFトークンの取得に失敗した場合の処理を追加する");
-        return;
-      }
-
-      const response = await loginUser(data, csrfToken);
-
-      if (response.ok) {
+    const result = await client.postAuthLogin(data);
+    switch (result.status) {
+      case 200:
         onLogin?.();
-      } else {
-        const error = (await response.json()) as PostAuthLogin422Response;
-        setError("email", {
-          type: "manual",
-          message: error.message
-        });
-      }
-    } catch (error) {
-      alert("TODO: エラーが発生した場合の処理を追加する");
-      console.error(error);
+        break;
+      case 422:
+        setError("email", { message: result.json.errors.email?.[0] });
+        setError("password", { message: result.json.errors.password?.[0] });
+        break;
+      default:
+        setError("email", { message: String(result.error) });
+        break;
     }
   }
 
