@@ -1,7 +1,11 @@
 import type { Preview } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 
-initialize();
+import { handlers } from "../src/mocks/handlers";
+
+initialize({
+  onUnhandledRequest: "bypass"
+});
 
 const preview: Preview = {
   parameters: {
@@ -10,6 +14,9 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i
       }
+    },
+    msw: {
+      handlers
     }
   },
   loaders: [mswLoader]

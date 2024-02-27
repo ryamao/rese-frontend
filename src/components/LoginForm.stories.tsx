@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn, userEvent, waitFor, within, expect } from "@storybook/test";
+import { fn, userEvent, waitFor, within, expect, spyOn } from "@storybook/test";
 
 import { LoginForm } from "./LoginForm";
 import { Client, PostAuthLoginResult } from "../Client";
@@ -9,7 +9,7 @@ const meta = {
   component: LoginForm,
   tags: ["autodocs"],
   args: {
-    client: new Client("http://localhost:12345"),
+    client: new Client(),
     onLogin: fn()
   }
 } satisfies Meta<typeof LoginForm>;
@@ -26,7 +26,7 @@ export const Filled: Story = {
     await userEvent.type(canvas.getByLabelText("Email"), "test@example.com");
     await userEvent.type(canvas.getByLabelText("Password"), "password");
     await userEvent.click(canvas.getByText("ログイン"));
-    expect(spy).toHaveBeenCalled();
+    await expect(spy).toHaveBeenCalled();
     await waitFor(() => {
       expect(args.onLogin).toHaveBeenCalled();
     });
@@ -51,7 +51,7 @@ export const Invalid: Story = {
 };
 
 function spyPostAuthLogin(response: PostAuthLoginResult) {
-  return vitest
-    .spyOn(Client.prototype, "postAuthLogin")
-    .mockImplementation(() => Promise.resolve(response));
+  return spyOn(Client.prototype, "postAuthLogin").mockImplementation(() =>
+    Promise.resolve(response)
+  );
 }
