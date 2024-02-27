@@ -1,4 +1,5 @@
 import { PageBase } from "./PageBase";
+import { Client } from "../Client";
 import { LoginForm } from "../components/LoginForm";
 
 export function LoginPage() {
@@ -10,9 +11,11 @@ export function LoginPage() {
     alert("TODO: ログイン処理");
   }
 
+  const client = new Client(import.meta.env.VITE_API_URL);
+
   return (
     <PageBase onMenuButtonClick={handleMenuButtonClick}>
-      <LoginForm onLogin={handleLogin} />
+      <LoginForm client={client} onLogin={handleLogin} />
     </PageBase>
   );
 }

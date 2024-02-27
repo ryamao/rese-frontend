@@ -1,20 +1,16 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn, userEvent, waitFor, within, expect } from "@storybook/test";
+import { fn, userEvent, waitFor, within, expect, spyOn } from "@storybook/test";
 
 import { LoginForm } from "./LoginForm";
-import { handlers } from "../mocks/handlers";
+import { Client } from "../Client";
 
 const meta = {
   title: "Components/Auth/LoginForm",
   component: LoginForm,
   tags: ["autodocs"],
   args: {
+    client: new Client("http://localhost:12345"),
     onLogin: fn()
-  },
-  parameters: {
-    msw: {
-      handlers
-    }
   }
 } satisfies Meta<typeof LoginForm>;
 
@@ -25,18 +21,25 @@ export const Default: Story = {};
 
 export const Filled: Story = {
   play: async ({ canvasElement, args }) => {
+    const spy = spyOn(Client.prototype, "postAuthLogin").mockImplementation(
+      () => Promise.resolve({ status: 200 })
+    );
     const canvas = within(canvasElement);
     await userEvent.type(canvas.getByLabelText("Email"), "test@example.com");
     await userEvent.type(canvas.getByLabelText("Password"), "password");
     await userEvent.click(canvas.getByText("ログイン"));
+    expect(spy).toHaveBeenCalled();
     await waitFor(() => {
       expect(args.onLogin).toHaveBeenCalled();
     });
   }
 };
 
-export const Error: Story = {
+export const Invalid: Story = {
   play: async ({ canvasElement }) => {
+    const spy = spyOn(Client.prototype, "postAuthLogin").mockImplementation(
+      () => Promise.resolve({ status: 200 })
+    );
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByText("ログイン"));
     await waitFor(() => {
@@ -47,5 +50,6 @@ export const Error: Story = {
         canvas.getByText("パスワードを入力してください")
       ).toBeInTheDocument();
     });
+    expect(spy).not.toHaveBeenCalled();
   }
 };

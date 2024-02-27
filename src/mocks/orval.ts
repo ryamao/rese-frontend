@@ -78,7 +78,7 @@ export type PostAuthRegisterResult = AxiosResponse<
 export type PostAuthLoginResult = AxiosResponse<OkResponse | NoContentResponse>;
 
 export const getGetCustomerResponseMock = (
-  overrideResponse?: ShowCustomer200Response
+  overrideResponse: any = {}
 ): ShowCustomer200Response => ({
   name: faker.word.sample(),
   ...overrideResponse
