@@ -5,8 +5,7 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { fetchCsrfToken } from "../fetch";
-import { PostAuthLogin422Response, PostAuthRegisterBody } from "../models";
+import { Client, PostAuthRegisterBody } from "../Client";
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -55,6 +54,7 @@ const ButtonLayout = styled.div`
 `;
 
 export interface RegisterFormProps {
+  client: Client;
   onRegister?: () => void;
 }
 
@@ -75,23 +75,10 @@ const registerFormSchema = z.object({
     .max(100, "パスワードは100文字以内で入力してください")
 });
 
-function registerUser(
-  data: PostAuthRegisterBody,
-  csrfToken: string
-): Promise<Response> {
-  return fetch(new URL("/auth/register", import.meta.env.VITE_API_URL), {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-XSRF-TOKEN": csrfToken
-    },
-    body: JSON.stringify(data)
-  });
-}
-
-export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
+export function RegisterForm({
+  client,
+  onRegister
+}: RegisterFormProps): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -101,29 +88,13 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
     resolver: zodResolver(registerFormSchema)
   });
 
-  const onValid: SubmitHandler<PostAuthRegisterBody> = async (data) => {
-    try {
-      const csrfToken = await fetchCsrfToken();
-      if (csrfToken === null) {
-        alert("TODO: CSRFトークンの取得に失敗した場合の処理を追加する");
-        return;
-      }
-
-      const response = await registerUser(data, csrfToken);
-
-      if (response.ok) {
-        onRegister?.();
-      } else {
-        const error = (await response.json()) as PostAuthLogin422Response;
-        setError("email", {
-          type: "manual",
-          message: error.message
-        });
-      }
-    } catch (error) {
-      alert("TODO: エラーが発生した場合の処理を追加する");
-      console.error(error);
+  const onValid: SubmitHandler<PostAuthRegisterBody> = async (body) => {
+    const { error } = await client.postAuthRegister(body);
+    if (error) {
+      setError("name", { message: error.message });
+      return;
     }
+    onRegister?.();
   };
 
   return (

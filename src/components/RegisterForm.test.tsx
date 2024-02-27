@@ -1,37 +1,55 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { setupServer } from "msw/node";
 
 import { RegisterForm } from "./RegisterForm";
-import { handlers } from "../mocks/handlers";
+import { Client, PostAuthRegisterResult } from "../Client";
 
 describe("RegisterForm", () => {
-  const server = setupServer(...handlers);
-
-  beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
+  const client = new Client("http://localhost:12345");
 
   test("renders", () => {
-    render(<RegisterForm />);
+    render(<RegisterForm client={client} />);
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByText("登録")).toBeInTheDocument();
   });
 
-  test.skip("バリデーション成功時にonRegisterが呼び出される", async () => {
+  test("登録成功", async () => {
+    const spy = spyPostAuthRegister({ data: undefined, error: undefined });
     const onRegister = vitest.fn();
-    render(<RegisterForm onRegister={onRegister} />);
+    render(<RegisterForm client={client} onRegister={onRegister} />);
     await userEvent.type(screen.getByLabelText("Username"), "test");
     await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
     await userEvent.type(screen.getByLabelText("Password"), "password");
     await userEvent.click(screen.getByText("登録"));
+    expect(spy).toHaveBeenCalledWith({
+      name: "test",
+      email: "test@example.com",
+      password: "password"
+    });
     await waitFor(() => expect(onRegister).toHaveBeenCalled());
   });
 
-  test.skip("未入力時にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />);
+  test("登録失敗", async () => {
+    const spy = spyPostAuthRegister({
+      data: undefined,
+      error: { message: "サンプルテキスト", errors: {} }
+    });
+    const onRegister = vitest.fn();
+    render(<RegisterForm client={client} onRegister={onRegister} />);
+    await userEvent.type(screen.getByLabelText("Username"), "test");
+    await userEvent.type(screen.getByLabelText("Email"), "test@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "password");
+    await userEvent.click(screen.getByText("登録"));
+    expect(spy).toHaveBeenCalled();
+    await waitFor(() =>
+      expect(screen.getByText("サンプルテキスト")).toBeInTheDocument()
+    );
+  });
+
+  test("未入力時にバリデーションエラーが発生する", async () => {
+    render(<RegisterForm client={client} />);
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
       expect(screen.getByText("名前を入力してください")).toBeInTheDocument()
@@ -49,16 +67,13 @@ describe("RegisterForm", () => {
   });
 
   test("100文字より多い場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />);
-    const username = screen.getByLabelText("Username");
-    const email = screen.getByLabelText("Email");
-    const password = screen.getByLabelText("Password");
-    await userEvent.type(username, "a".repeat(101));
+    render(<RegisterForm client={client} />);
+    await userEvent.type(screen.getByLabelText("Username"), "a".repeat(101));
     await userEvent.type(
-      email,
+      screen.getByLabelText("Email"),
       "a".repeat(50) + "@" + "a".repeat(50 - 4) + ".com"
     );
-    await userEvent.type(password, "a".repeat(101));
+    await userEvent.type(screen.getByLabelText("Password"), "a".repeat(101));
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
       expect(
@@ -78,9 +93,8 @@ describe("RegisterForm", () => {
   });
 
   test("メールアドレスの形式が正しくない場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />);
-    const email = screen.getByLabelText("Email");
-    await userEvent.type(email, "test");
+    render(<RegisterForm client={client} />);
+    await userEvent.type(screen.getByLabelText("Email"), "test");
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
       expect(
@@ -90,9 +104,8 @@ describe("RegisterForm", () => {
   });
 
   test("パスワードが8文字未満の場合にバリデーションエラーが発生する", async () => {
-    render(<RegisterForm />);
-    const password = screen.getByLabelText("Password");
-    await userEvent.type(password, "pass");
+    render(<RegisterForm client={client} />);
+    await userEvent.type(screen.getByLabelText("Password"), "pass");
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
       expect(
@@ -101,3 +114,9 @@ describe("RegisterForm", () => {
     );
   });
 });
+
+function spyPostAuthRegister(response: PostAuthRegisterResult) {
+  return vitest
+    .spyOn(Client.prototype, "postAuthRegister")
+    .mockImplementation(() => Promise.resolve(response));
+}
