@@ -11,8 +11,8 @@ export default defineConfig({
     coverage: {
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
-        "src/vite-env.d.ts",
         "src/main.tsx",
+        "src/*.d.ts",
         "src/**/*.stories.{ts,tsx}",
         "src/models/**/*.ts",
         "src/mocks/**/*.ts"

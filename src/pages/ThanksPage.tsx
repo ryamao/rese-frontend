@@ -12,7 +12,7 @@ export function ThanksPage() {
 
   return (
     <PageBase onMenuButtonClick={handleMenuButtonClick}>
-      <ThanksPanel onClick={handleConfirm} />
+      <ThanksPanel onConfirm={handleConfirm} />
     </PageBase>
   );
 }

@@ -1,5 +1,3 @@
-import { MouseEventHandler } from "react";
-
 import styled from "@emotion/styled";
 
 import * as styles from "./styles";
@@ -23,14 +21,14 @@ const Text = styled.p`
 `;
 
 export interface ThanksPanelProps {
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onConfirm?: () => void;
 }
 
-export function ThanksPanel(props: ThanksPanelProps) {
+export function ThanksPanel({ onConfirm }: ThanksPanelProps) {
   return (
     <Panel className={styles.whitePanel}>
       <Text>会員登録ありがとうございます</Text>
-      <button type="button" className={styles.blueButton} {...props}>
+      <button type="button" className={styles.blueButton} onClick={onConfirm}>
         ログインする
       </button>
     </Panel>

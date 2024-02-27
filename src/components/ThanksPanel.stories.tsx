@@ -8,7 +8,7 @@ const meta = {
   component: ThanksPanel,
   tags: ["autodocs"],
   args: {
-    onClick: fn()
+    onConfirm: fn()
   }
 } satisfies Meta<typeof ThanksPanel>;
 
