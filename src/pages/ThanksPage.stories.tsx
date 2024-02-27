@@ -5,7 +5,10 @@ import { ThanksPage } from "./ThanksPage";
 const meta = {
   title: "Pages/ThanksPage",
   component: ThanksPage,
-  tags: ["autodocs"]
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen"
+  }
 } satisfies Meta<typeof ThanksPage>;
 
 export default meta;

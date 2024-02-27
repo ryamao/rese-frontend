@@ -16,6 +16,7 @@ const meta = {
     )
   ],
   parameters: {
+    layout: "fullscreen",
     msw: {
       handlers
     }

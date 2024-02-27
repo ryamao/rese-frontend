@@ -10,6 +10,9 @@ const meta = {
   args: {
     onMenuButtonClick: fn(),
     children: "サンプルテキスト"
+  },
+  parameters: {
+    layout: "fullscreen"
   }
 } satisfies Meta<typeof PageBase>;
 
