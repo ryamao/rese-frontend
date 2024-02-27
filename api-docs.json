@@ -152,6 +152,7 @@
         "headers": {
           "Set-Cookie": {
             "description": "CSRFトークンをCookieにセット",
+            "required": true,
             "schema": {
               "type": "string",
               "example": "XSRF-TOKEN=eyJpdiI6Ij"
@@ -300,6 +301,7 @@
     "requestBodies": {
       "post-auth-register": {
         "description": "ユーザー登録リクエスト",
+        "required": true,
         "content": {
           "application/json": {
             "schema": {
@@ -333,6 +335,7 @@
       },
       "post-auth-login": {
         "description": "ログインリクエスト",
+        "required": true,
         "content": {
           "application/json": {
             "schema": {
