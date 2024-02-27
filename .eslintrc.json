@@ -52,6 +52,14 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": ["src/mocks/orval.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ],
   "settings": {
     "react": {
       "version": "detect"

@@ -5,7 +5,7 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { PostAuthLogin422ResponseErrors } from './postAuthLogin422ResponseErrors';
+import type { PostAuthLogin422ResponseErrors } from "./postAuthLogin422ResponseErrors";
 
 export type PostAuthLogin422Response = {
   errors: PostAuthLogin422ResponseErrors;
