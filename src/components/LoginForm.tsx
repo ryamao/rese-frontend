@@ -5,8 +5,7 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { Client } from "../Client";
-import { PostAuthLoginBody } from "../models";
+import { Client, PostAuthLoginBody } from "../Client";
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -75,19 +74,11 @@ export function LoginForm({ client, onLogin }: LoginFormProps) {
   });
 
   async function onValid(data: PostAuthLoginBody) {
-    const result = await client.postAuthLogin(data);
-    switch (result.status) {
-      case 200:
-        onLogin?.();
-        break;
-      case 422:
-        setError("email", { message: result.json.errors.email?.[0] });
-        setError("password", { message: result.json.errors.password?.[0] });
-        break;
-      default:
-        setError("email", { message: String(result.error) });
-        break;
+    const { error } = await client.postAuthLogin(data);
+    if (error) {
+      setError("email", { message: error.message });
     }
+    onLogin?.();
   }
 
   return (

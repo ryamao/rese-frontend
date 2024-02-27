@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn, userEvent, waitFor, within, expect, spyOn } from "@storybook/test";
+import { fn, userEvent, waitFor, within, expect } from "@storybook/test";
 
 import { LoginForm } from "./LoginForm";
-import { Client } from "../Client";
+import { Client, PostAuthLoginResult } from "../Client";
 
 const meta = {
   title: "Components/Auth/LoginForm",
@@ -21,9 +21,7 @@ export const Default: Story = {};
 
 export const Filled: Story = {
   play: async ({ canvasElement, args }) => {
-    const spy = spyOn(Client.prototype, "postAuthLogin").mockImplementation(
-      () => Promise.resolve({ status: 200 })
-    );
+    const spy = spyPostAuthLogin({ data: undefined, error: undefined });
     const canvas = within(canvasElement);
     await userEvent.type(canvas.getByLabelText("Email"), "test@example.com");
     await userEvent.type(canvas.getByLabelText("Password"), "password");
@@ -37,9 +35,7 @@ export const Filled: Story = {
 
 export const Invalid: Story = {
   play: async ({ canvasElement }) => {
-    const spy = spyOn(Client.prototype, "postAuthLogin").mockImplementation(
-      () => Promise.resolve({ status: 200 })
-    );
+    const spy = spyPostAuthLogin({ data: undefined, error: undefined });
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByText("ログイン"));
     await waitFor(() => {
@@ -53,3 +49,9 @@ export const Invalid: Story = {
     expect(spy).not.toHaveBeenCalled();
   }
 };
+
+function spyPostAuthLogin(response: PostAuthLoginResult) {
+  return vitest
+    .spyOn(Client.prototype, "postAuthLogin")
+    .mockImplementation(() => Promise.resolve(response));
+}
