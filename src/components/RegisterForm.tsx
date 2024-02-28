@@ -92,9 +92,9 @@ export function RegisterForm({
     const { error } = await client.postAuthRegister(body);
     if (error) {
       setError("name", { message: error.message });
-      return;
+    } else {
+      onRegister?.();
     }
-    onRegister?.();
   };
 
   return (

@@ -1,21 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { BrowserRouter } from "react-router-dom";
 
-import { LoginPage } from "./LoginPage";
+import { DashboardPage } from "./DashboardPage";
 import { Client } from "../Client";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
-  title: "Pages/LoginPage",
-  component: LoginPage,
+  title: "Pages/DashboardPage",
+  component: DashboardPage,
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    )
-  ],
   parameters: {
     layout: "fullscreen",
     msw: {
@@ -25,7 +17,7 @@ const meta = {
   args: {
     client: new Client()
   }
-} satisfies Meta<typeof LoginPage>;
+} satisfies Meta<typeof DashboardPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
