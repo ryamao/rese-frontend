@@ -1,13 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { DashboardPage } from "./DashboardPage";
+import { Client } from "../Client";
+import { handlers } from "../mocks/handlers";
 
 const meta = {
   title: "Pages/DashboardPage",
   component: DashboardPage,
   tags: ["autodocs"],
   parameters: {
-    layout: "fullscreen"
+    layout: "fullscreen",
+    msw: {
+      handlers
+    }
+  },
+  args: {
+    client: new Client()
   }
 } satisfies Meta<typeof DashboardPage>;
 
