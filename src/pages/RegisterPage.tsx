@@ -2,7 +2,6 @@ import { useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import { PageBase } from "./PageBase";
 import { Client } from "../Client";
 import { RegisterForm } from "../components/RegisterForm";
 import { AuthContext } from "../providers/AuthContextProvider";
@@ -15,10 +14,6 @@ export function RegisterPage({ client }: RegisterPageProps) {
   const { setCustomer } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  function handleMenuButtonClick() {
-    alert("TODO: メニューを開く");
-  }
-
   async function handleRegister() {
     const auth = await client.getAuthStatus();
     if (auth.status !== "customer") {
@@ -28,9 +23,5 @@ export function RegisterPage({ client }: RegisterPageProps) {
     navigate("/thanks");
   }
 
-  return (
-    <PageBase onMenuButtonClick={handleMenuButtonClick}>
-      <RegisterForm client={client} onRegister={handleRegister} />
-    </PageBase>
-  );
+  return <RegisterForm client={client} onRegister={handleRegister} />;
 }

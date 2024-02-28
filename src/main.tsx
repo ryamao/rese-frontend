@@ -36,7 +36,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route
-        element={<AppLayout />}
+        element={<AppLayout httpClient={httpClient} />}
         loader={() => httpClient.getAuthStatus()}
         errorElement={<ErrorPage />}
       >
