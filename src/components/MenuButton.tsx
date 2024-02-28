@@ -48,6 +48,7 @@ const Button = styled.button`
   border: none;
   border-radius: 0.5rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
+  cursor: pointer;
 `;
 
 export interface MenuButtonProps {
