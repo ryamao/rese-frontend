@@ -4,6 +4,13 @@
  */
 
 export interface paths {
+  "/auth/status": {
+    /**
+     * 認証状態取得
+     * @description 認証状態を取得する
+     */
+    get: operations["get-auth-status"];
+  };
   "/customers/{user}": {
     /**
      * 会員情報取得
@@ -31,6 +38,13 @@ export interface paths {
      * @description ユーザー(一般会員)のログイン処理を行う
      */
     post: operations["post-auth-login"];
+  };
+  "/auth/logout": {
+    /**
+     * ログアウト
+     * @description ユーザー(一般会員)のログアウト処理を行う
+     */
+    post: operations["post-auth-logout"];
   };
 }
 
@@ -117,6 +131,17 @@ export interface components {
         };
       };
     };
+    /** @description 認証状態取得成功 */
+    "get-auth-status-200": {
+      content: {
+        "application/json": {
+          /** @enum {string} */
+          status: "guest" | "customer";
+          /** Format: int64 */
+          id?: number;
+        };
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -175,6 +200,15 @@ export type external = Record<string, never>;
 
 export interface operations {
   /**
+   * 認証状態取得
+   * @description 認証状態を取得する
+   */
+  "get-auth-status": {
+    responses: {
+      200: components["responses"]["get-auth-status-200"];
+    };
+  };
+  /**
    * 会員情報取得
    * @description ユーザー(一般会員)の情報を取得する
    */
@@ -222,6 +256,15 @@ export interface operations {
       200: components["responses"]["ok"];
       204: components["responses"]["no-content"];
       422: components["responses"]["post-auth-login-422"];
+    };
+  };
+  /**
+   * ログアウト
+   * @description ユーザー(一般会員)のログアウト処理を行う
+   */
+  "post-auth-logout": {
+    responses: {
+      204: components["responses"]["no-content"];
     };
   };
 }

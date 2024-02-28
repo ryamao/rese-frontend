@@ -25,3 +25,5 @@ export * from "./postAuthRegisterBody";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from "./getAuthStatus200Response";
+export * from "./getAuthStatus200ResponseStatus";

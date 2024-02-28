@@ -17,8 +17,21 @@ import type {
   PostAuthLoginBody,
   PostAuthRegisterBody
 } from "../models";
-import type { ShowCustomer200Response } from "../models";
+import type {
+  GetAuthStatus200Response,
+  ShowCustomer200Response
+} from "../models";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
+
+/**
+ * 認証状態を取得する
+ * @summary 認証状態取得
+ */
+export const getAuthStatus = <TData = AxiosResponse<GetAuthStatus200Response>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/auth/status`, options);
+};
 
 /**
  * ユーザー(一般会員)の情報を取得する
@@ -69,6 +82,17 @@ export const postAuthLogin = <
   return axios.default.post(`/auth/login`, postAuthLoginBody, options);
 };
 
+/**
+ * ユーザー(一般会員)のログアウト処理を行う
+ * @summary ログアウト
+ */
+export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(`/auth/logout`, undefined, options);
+};
+
+export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
 export type GetSanctumCsrfCookieResult =
   AxiosResponse<GetSanctumCsrfCookie204Response>;
@@ -76,6 +100,18 @@ export type PostAuthRegisterResult = AxiosResponse<
   CreatedResponse | NoContentResponse
 >;
 export type PostAuthLoginResult = AxiosResponse<OkResponse | NoContentResponse>;
+export type PostAuthLogoutResult = AxiosResponse<NoContentResponse>;
+
+export const getGetAuthStatusResponseMock = (
+  overrideResponse: any = {}
+): GetAuthStatus200Response => ({
+  id: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined
+  ]),
+  status: faker.helpers.arrayElement(["guest", "customer"] as const),
+  ...overrideResponse
+});
 
 export const getGetCustomerResponseMock = (
   overrideResponse: any = {}
@@ -83,6 +119,25 @@ export const getGetCustomerResponseMock = (
   name: faker.word.sample(),
   ...overrideResponse
 });
+
+export const getGetAuthStatusMockHandler = (
+  overrideResponse?: GetAuthStatus200Response
+) => {
+  return http.get("*/auth/status", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetAuthStatusResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
 
 export const getGetCustomerMockHandler = (
   overrideResponse?: ShowCustomer200Response
@@ -138,9 +193,23 @@ export const getPostAuthLoginMockHandler = () => {
     });
   });
 };
+
+export const getPostAuthLogoutMockHandler = () => {
+  return http.post("*/auth/logout", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
 export const getReseMock = () => [
+  getGetAuthStatusMockHandler(),
   getGetCustomerMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
   getPostAuthRegisterMockHandler(),
-  getPostAuthLoginMockHandler()
+  getPostAuthLoginMockHandler(),
+  getPostAuthLogoutMockHandler()
 ];
