@@ -77,8 +77,9 @@ export function LoginForm({ client, onLogin }: LoginFormProps) {
     const { error } = await client.postAuthLogin(data);
     if (error) {
       setError("email", { message: error.message });
+    } else {
+      onLogin?.();
     }
-    onLogin?.();
   }
 
   return (

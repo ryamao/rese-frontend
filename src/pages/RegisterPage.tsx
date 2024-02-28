@@ -1,18 +1,30 @@
+import { useContext } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { Client } from "../Client";
 import { RegisterForm } from "../components/RegisterForm";
+import { AuthContext } from "../providers/AuthContextProvider";
 
-export function RegisterPage() {
-  const client = new Client(import.meta.env.VITE_API_URL);
+export interface RegisterPageProps {
+  client: Client;
+}
+
+export function RegisterPage({ client }: RegisterPageProps) {
+  const { setCustomer } = useContext(AuthContext);
   const navigate = useNavigate();
 
   function handleMenuButtonClick() {
     alert("TODO: メニューを開く");
   }
 
-  function handleRegister() {
+  async function handleRegister() {
+    const auth = await client.getAuthStatus();
+    if (auth.status !== "customer") {
+      throw new Error("ログインしていません");
+    }
+    setCustomer(auth.id);
     navigate("/thanks");
   }
 

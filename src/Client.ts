@@ -23,6 +23,18 @@ export type PostAuthLoginResult = {
   error?: api.components["responses"]["post-auth-login-422"]["content"]["application/json"];
 };
 
+export type PostAuthLogoutResult = {
+  data: undefined;
+  error?: string;
+};
+
+export type GetAuthStatusResult =
+  | { status: "guest" }
+  | { status: "customer"; id: number };
+
+export type GetCustomerResult =
+  api.components["responses"]["show-customer-200"]["content"]["application/json"];
+
 const middleware: Middleware = {
   async onRequest(req) {
     const headers: HeadersInit = {
@@ -45,7 +57,7 @@ const middleware: Middleware = {
 export class Client {
   private client: ReturnType<typeof createClient<api.paths>>;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string = import.meta.env.VITE_API_URL) {
     this.client = createClient<api.paths>({ baseUrl });
     this.client.use(middleware);
   }
@@ -60,6 +72,7 @@ export class Client {
       });
       return { data, error };
     } catch (error) {
+      console.error(error);
       return {
         data: undefined,
         error: { message: String(error), errors: {} }
@@ -75,7 +88,52 @@ export class Client {
       });
       return { data, error };
     } catch (error) {
+      console.error(error);
       return { data: undefined, error: { message: String(error), errors: {} } };
+    }
+  }
+
+  async postAuthLogout(): Promise<PostAuthLogoutResult> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      await this.client.POST("/auth/logout");
+      return { data: undefined, error: undefined };
+    } catch (error) {
+      console.error(error);
+      return { data: undefined, error: String(error) };
+    }
+  }
+
+  async getAuthStatus(): Promise<GetAuthStatusResult> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data } = await this.client.GET("/auth/status");
+      if (!data) {
+        throw new Error("認証情報が取得できませんでした");
+      }
+      switch (data.status) {
+        case "guest":
+          return { status: "guest" };
+        case "customer":
+          return { status: "customer", id: data.id! };
+      }
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async getCustomer(id: number): Promise<GetCustomerResult> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, error } = await this.client.GET(`/customers/{user}`, {
+        params: { path: { user: id } }
+      });
+      if (error) {
+        throw new Error(error);
+      }
+      return data;
+    } catch (error) {
+      throw new Error(String(error));
     }
   }
 }

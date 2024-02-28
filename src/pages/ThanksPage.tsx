@@ -1,13 +1,17 @@
+import { useNavigate } from "react-router-dom";
+
 import { PageBase } from "./PageBase";
 import { ThanksPanel } from "../components/ThanksPanel";
 
 export function ThanksPage() {
+  const navigate = useNavigate();
+
   function handleMenuButtonClick() {
     alert("TODO: メニューを開く");
   }
 
   function handleConfirm() {
-    alert("TODO: 登録ページの遷移前に戻る");
+    navigate("/mypage");
   }
 
   return (
