@@ -19,6 +19,21 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  function handleHome() {
+    setShowOverlay(false);
+    navigate("/");
+  }
+
+  function handleRegister() {
+    setShowOverlay(false);
+    navigate("/register");
+  }
+
+  function handleLogin() {
+    setShowOverlay(false);
+    navigate("/login");
+  }
+
   async function handleLogout() {
     const { error } = await httpClient.postAuthLogout();
     if (error) {
@@ -27,6 +42,11 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
     authContext.setGuest();
     setShowOverlay(false);
     navigate("/login");
+  }
+
+  function handleMypage() {
+    setShowOverlay(false);
+    navigate("/mypage");
   }
 
   if (authContext.authStatus === null) {
@@ -54,8 +74,12 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
       {showOverlay && (
         <Overlay
           authStatus={authContext.authStatus?.status || "guest"}
-          closeOverlay={() => setShowOverlay(false)}
+          onMenuClose={() => setShowOverlay(false)}
+          onHome={handleHome}
+          onRegister={handleRegister}
+          onLogin={handleLogin}
           onLogout={handleLogout}
+          onMypage={handleMypage}
         />
       )}
     </>

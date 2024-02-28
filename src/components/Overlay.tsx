@@ -1,62 +1,65 @@
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
 
 import { MenuButton } from "./MenuButton";
 
 export interface OverlayProps {
   authStatus: "guest" | "customer";
-  closeOverlay: () => void;
+  onMenuClose: () => void;
+  onHome: () => void;
+  onRegister: () => void;
+  onLogin: () => void;
   onLogout: () => void;
+  onMypage: () => void;
 }
 
 export function Overlay(props: OverlayProps) {
   return (
     <OverlayBody>
       <OverlayHeader>
-        <MenuButton isMenuOpened onClick={props.closeOverlay} />
+        <MenuButton isMenuOpened onClick={props.onMenuClose} />
       </OverlayHeader>
       <OverlayContent>{getLinks(props)}</OverlayContent>
     </OverlayBody>
   );
 }
 
-function getLinks({ authStatus, closeOverlay, onLogout }: OverlayProps) {
-  switch (authStatus) {
+function getLinks(props: OverlayProps) {
+  switch (props.authStatus) {
     case "guest":
-      return linksForGuest(closeOverlay);
+      return linksForGuest(props);
     case "customer":
-      return linksForCustomer(closeOverlay, onLogout);
+      return linksForCustomer(props);
   }
 }
 
-function linksForGuest(closeOverlay: () => void) {
+function linksForGuest({ onHome, onRegister, onLogin }: OverlayProps) {
   return (
     <>
-      <Link to="/" onClick={closeOverlay}>
+      <Button type="button" onClick={onHome}>
         Home
-      </Link>
-      <Link to="/register" onClick={closeOverlay}>
+      </Button>
+      <Button type="button" onClick={onRegister}>
         Registration
-      </Link>
-      <Link to="/login" onClick={closeOverlay}>
+      </Button>
+      <Button type="button" onClick={onLogin}>
         Login
-      </Link>
+      </Button>
     </>
   );
 }
 
-function linksForCustomer(closeOverlay: () => void, onLogout: () => void) {
+function linksForCustomer({ onHome, onLogout, onMypage }: OverlayProps) {
   return (
     <>
-      <Link to="/" onClick={closeOverlay}>
+      <Button type="button" onClick={onHome}>
         Home
-      </Link>
-      <Logout type="button" onClick={onLogout}>
+      </Button>
+      <Button type="button" onClick={onLogout}>
         Logout
-      </Logout>
-      <Link to="/mypage" onClick={closeOverlay}>
+      </Button>
+      <Button type="button" onClick={onMypage}>
         Mypage
-      </Link>
+      </Button>
     </>
   );
 }
@@ -83,18 +86,12 @@ const OverlayContent = styled.div`
   align-items: center;
   margin-top: 2rem;
 
-  & > a {
-    text-decoration: none;
-    font-size: 1.6rem;
-    color: #315dff;
-  }
-
   & > * + * {
     margin-top: 1rem;
   }
 `;
 
-const Logout = styled.button`
+const Button = styled.button`
   background-color: #fff;
   border: none;
   font-size: 1.6rem;
