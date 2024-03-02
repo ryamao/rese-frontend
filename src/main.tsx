@@ -45,9 +45,14 @@ async function postLogout() {
   }
 }
 
-async function getAreas() {
+async function loadShopListPageData() {
   const { areas } = await httpClient.getAreas();
-  return areas;
+  const { genres } = await httpClient.getGenres();
+
+  return {
+    areas,
+    genres
+  };
 }
 
 const router = createBrowserRouter(
@@ -57,7 +62,7 @@ const router = createBrowserRouter(
         <Route
           path="/"
           element={<ShopListPage postLogout={postLogout} />}
-          loader={getAreas}
+          loader={loadShopListPageData}
         />
 
         <Route element={<GuestsOnly />}>

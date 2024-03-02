@@ -38,6 +38,9 @@ export type GetCustomerResult =
 export type GetAreasResult =
   api.components["responses"]["get-areas-200"]["content"]["application/json"];
 
+export type GetGenresResult =
+  api.components["responses"]["get-genres-200"]["content"]["application/json"];
+
 const middleware: Middleware = {
   async onRequest(req) {
     const headers: HeadersInit = {
@@ -144,6 +147,19 @@ export class Client {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
       const { data, error } = await this.client.GET("/areas");
+      if (error) {
+        throw new Error(error);
+      }
+      return data;
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async getGenres(): Promise<GetGenresResult> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, error } = await this.client.GET("/genres");
       if (error) {
         throw new Error(error);
       }

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
-import { GetAreasResult } from "../Client";
+import { GetAreasResult, GetGenresResult } from "../Client";
 import { SearchForm } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
 import { ShopSearchContextProvider } from "../contexts/ShopSearchContext";
@@ -12,8 +12,13 @@ export interface ShopListPageProps {
   postLogout: () => Promise<void>;
 }
 
+export interface ShopListPageLoaderData {
+  areas: GetAreasResult["areas"];
+  genres: GetGenresResult["genres"];
+}
+
 export function ShopListPage(props: ShopListPageProps) {
-  const areas = useLoaderData() as GetAreasResult["areas"];
+  const { areas, genres } = useLoaderData() as ShopListPageLoaderData;
 
   return (
     <PageBase wrapperStyle={pageBaseStyle} {...props}>
@@ -85,18 +90,6 @@ const ShopLayout = styled.div`
   column-gap: 1rem;
   row-gap: 2rem;
 `;
-
-// const areas = [
-//   { id: 1, name: "Shibuya" },
-//   { id: 2, name: "Shinjuku" },
-//   { id: 3, name: "Ebisu" }
-// ];
-
-const genres = [
-  { id: 1, name: "Ramen" },
-  { id: 2, name: "Sushi" },
-  { id: 3, name: "Italian" }
-];
 
 const shopList = [
   {
