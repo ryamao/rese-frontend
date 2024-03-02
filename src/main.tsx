@@ -34,6 +34,10 @@ function ErrorPage() {
   return <div>Error</div>;
 }
 
+async function getAuthStatus() {
+  return httpClient.getAuthStatus();
+}
+
 async function postLogout() {
   const { error } = await httpClient.postAuthLogout();
   if (error) {
@@ -41,14 +45,20 @@ async function postLogout() {
   }
 }
 
+async function getAreas() {
+  const { areas } = await httpClient.getAreas();
+  return areas;
+}
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route
-        element={<UseAuthStatus />}
-        loader={() => httpClient.getAuthStatus()}
-      >
-        <Route path="/" element={<ShopListPage postLogout={postLogout} />} />
+      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
+        <Route
+          path="/"
+          element={<ShopListPage postLogout={postLogout} />}
+          loader={getAreas}
+        />
 
         <Route element={<GuestsOnly />}>
           <Route

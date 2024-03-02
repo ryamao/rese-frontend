@@ -1,7 +1,9 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
+import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
+import { GetAreasResult } from "../Client";
 import { SearchForm } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
 import { ShopSearchContextProvider } from "../contexts/ShopSearchContext";
@@ -11,6 +13,8 @@ export interface ShopListPageProps {
 }
 
 export function ShopListPage(props: ShopListPageProps) {
+  const areas = useLoaderData() as GetAreasResult["areas"];
+
   return (
     <PageBase wrapperStyle={pageBaseStyle} {...props}>
       <ShopSearchContextProvider>
@@ -82,11 +86,11 @@ const ShopLayout = styled.div`
   row-gap: 2rem;
 `;
 
-const areas = [
-  { id: 1, name: "Shibuya" },
-  { id: 2, name: "Shinjuku" },
-  { id: 3, name: "Ebisu" }
-];
+// const areas = [
+//   { id: 1, name: "Shibuya" },
+//   { id: 2, name: "Shinjuku" },
+//   { id: 3, name: "Ebisu" }
+// ];
 
 const genres = [
   { id: 1, name: "Ramen" },

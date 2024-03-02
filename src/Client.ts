@@ -35,6 +35,9 @@ export type GetAuthStatusResult =
 export type GetCustomerResult =
   api.components["responses"]["show-customer-200"]["content"]["application/json"];
 
+export type GetAreasResult =
+  api.components["responses"]["get-areas-200"]["content"]["application/json"];
+
 const middleware: Middleware = {
   async onRequest(req) {
     const headers: HeadersInit = {
@@ -128,6 +131,19 @@ export class Client {
       const { data, error } = await this.client.GET(`/customers/{user}`, {
         params: { path: { user: id } }
       });
+      if (error) {
+        throw new Error(error);
+      }
+      return data;
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async getAreas(): Promise<GetAreasResult> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, error } = await this.client.GET("/areas");
       if (error) {
         throw new Error(error);
       }
