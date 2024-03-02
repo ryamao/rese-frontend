@@ -1,19 +1,37 @@
-import { useContext } from "react";
+import { useReducer } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
-import { ShopSearchContext } from "../contexts/ShopSearchContext";
+
+export interface ShopSearchQuery {
+  area: string;
+  genre: string;
+  search: string;
+}
 
 export interface SearchFormProps {
   areas: { id: number; name: string }[];
   genres: { id: number; name: string }[];
+  onChange: (query: ShopSearchQuery) => void;
 }
 
-export function SearchForm({ areas, genres }: SearchFormProps) {
-  const { query, setArea, setGenre, setSearch } = useContext(ShopSearchContext);
+export function SearchForm({ areas, genres, onChange }: SearchFormProps) {
+  function reducer(state: ShopSearchQuery, action: Action): ShopSearchQuery {
+    const newState = update(state, action);
+    if (newState !== state) {
+      onChange(newState);
+    }
+    return newState;
+  }
+
+  const [state, dispatch] = useReducer(reducer, {
+    area: "",
+    genre: "",
+    search: ""
+  });
 
   return (
     <form className={whitePanel} onSubmit={(e) => e.preventDefault()}>
@@ -22,14 +40,16 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
           <ComboBox
             aria-label="Area"
             name="area"
-            value={query.area}
-            onChange={(e) => setArea(e.target.value)}
+            value={state.area}
+            onChange={(e) =>
+              dispatch({ type: "SET_AREA", payload: e.target.value })
+            }
           >
             <option value="" defaultChecked>
               All area
             </option>
             {areas.map((area) => (
-              <option key={area.id} value={area.id}>
+              <option key={area.id} value={area.name}>
                 {area.name}
               </option>
             ))}
@@ -40,14 +60,16 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
           <ComboBox
             aria-label="Genre"
             name="genre"
-            value={query.genre}
-            onChange={(e) => setGenre(e.target.value)}
+            value={state.genre}
+            onChange={(e) =>
+              dispatch({ type: "SET_GENRE", payload: e.target.value })
+            }
           >
             <option value="" defaultChecked>
               All genre
             </option>
             {genres.map((genre) => (
-              <option key={genre.id} value={genre.id}>
+              <option key={genre.id} value={genre.name}>
                 {genre.name}
               </option>
             ))}
@@ -61,13 +83,31 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
             aria-label="Shop Name"
             name="search"
             placeholder="Search ..."
-            value={query.search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={state.search}
+            onChange={(e) =>
+              dispatch({ type: "SET_SEARCH", payload: e.target.value })
+            }
           />
         </Field>
       </Inner>
     </form>
   );
+}
+
+type Action =
+  | { type: "SET_AREA"; payload: string }
+  | { type: "SET_GENRE"; payload: string }
+  | { type: "SET_SEARCH"; payload: string };
+
+function update(state: ShopSearchQuery, action: Action): ShopSearchQuery {
+  switch (action.type) {
+    case "SET_AREA":
+      return { ...state, area: action.payload };
+    case "SET_GENRE":
+      return { ...state, genre: action.payload };
+    case "SET_SEARCH":
+      return { ...state, search: action.payload };
+  }
 }
 
 const Inner = styled.div`

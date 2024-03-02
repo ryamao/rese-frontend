@@ -3,7 +3,10 @@ import { fn } from "@storybook/test";
 import { MemoryRouter } from "react-router-dom";
 
 import { ShopListPage } from "./ShopListPage";
+import { Client } from "../Client";
 import { AuthContextProvider } from "../providers/AuthContextProvider";
+
+const httpClient = new Client();
 
 const meta = {
   title: "Pages/ShopListPage",
@@ -13,6 +16,7 @@ const meta = {
     layout: "fullscreen"
   },
   args: {
+    httpClient,
     postLogout: fn()
   },
   decorators: [

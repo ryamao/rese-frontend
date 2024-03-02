@@ -1,14 +1,16 @@
+import { useEffect, useState } from "react";
+
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
-import { GetAreasResult, GetGenresResult } from "../Client";
-import { SearchForm } from "../components/SearchForm";
+import { Client, GetAreasResult, GetGenresResult } from "../Client";
+import { SearchForm, ShopSearchQuery } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
-import { ShopSearchContextProvider } from "../contexts/ShopSearchContext";
 
 export interface ShopListPageProps {
+  httpClient: Client;
   postLogout: () => Promise<void>;
 }
 
@@ -17,27 +19,85 @@ export interface ShopListPageLoaderData {
   genres: GetGenresResult["genres"];
 }
 
-export function ShopListPage(props: ShopListPageProps) {
+interface ShopOverview {
+  id: number;
+  name: string;
+  area: string;
+  genre: string;
+  image_url: string;
+  favorite_status: "unknown" | "marked" | "unmarked";
+}
+
+export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   const { areas, genres } = useLoaderData() as ShopListPageLoaderData;
+  const [shops, setShops] = useState<Map<number, ShopOverview>>(new Map());
+  const [nextPage, setNextPage] = useState<number | null>(1);
+  const [query, setQuery] = useState<ShopSearchQuery>({
+    area: "",
+    genre: "",
+    search: ""
+  });
+
+  function handleChangeSearchForm(query: ShopSearchQuery) {
+    setQuery(query);
+  }
+
+  useEffect(() => {
+    console.log("Loading shops: " + nextPage);
+
+    if (!nextPage) return;
+
+    httpClient.getShops(nextPage).then(({ meta, data }) => {
+      setShops((prev) => {
+        const next = new Map(prev);
+        data.forEach((shop) => {
+          next.set(shop.id, shop);
+        });
+        return next;
+      });
+
+      if (nextPage < meta.last_page) {
+        setNextPage(nextPage + 1);
+      } else {
+        setNextPage(null);
+      }
+    });
+  }, [httpClient, nextPage]);
 
   return (
-    <PageBase wrapperStyle={pageBaseStyle} {...props}>
-      <ShopSearchContextProvider>
-        <SearchForm areas={areas} genres={genres} />
-        <ShopLayout>
-          {shopList.map((shop) => (
-            <ShopOverview
-              key={shop.name}
-              imageUrl={shop.imageUrl}
-              name={shop.name}
-              area={shop.area}
-              genre={shop.genre}
-            />
-          ))}
-        </ShopLayout>
-      </ShopSearchContextProvider>
+    <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
+      <SearchForm
+        areas={areas}
+        genres={genres}
+        onChange={handleChangeSearchForm}
+      />
+      <ShopLayout>
+        {searchByQuery([...shops.values()], query).map((shop) => (
+          <ShopOverview
+            key={shop.id}
+            imageUrl={shop.image_url}
+            name={shop.name}
+            area={shop.area}
+            genre={shop.genre}
+            favoriteStatus={shop.favorite_status}
+          />
+        ))}
+      </ShopLayout>
     </PageBase>
   );
+}
+
+function searchByQuery(
+  shops: ShopOverview[],
+  { area = "", genre = "", search }: ShopSearchQuery
+) {
+  return shops.filter((shop) => {
+    return (
+      (area === "" || shop.area === area) &&
+      (genre === "" || shop.genre === genre) &&
+      (search === "" || shop.name.includes(search))
+    );
+  });
 }
 
 const pageBaseStyle = css`
@@ -90,48 +150,3 @@ const ShopLayout = styled.div`
   column-gap: 1rem;
   row-gap: 2rem;
 `;
-
-const shopList = [
-  {
-    id: "1",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 1",
-    area: "Shibuya",
-    genre: "Ramen"
-  },
-  {
-    id: "2",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 2",
-    area: "Shinjuku",
-    genre: "Sushi"
-  },
-  {
-    id: "3",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 3",
-    area: "Ebisu",
-    genre: "Italian"
-  },
-  {
-    id: "4",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 4",
-    area: "Shibuya",
-    genre: "Ramen"
-  },
-  {
-    id: "5",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 5",
-    area: "Shinjuku",
-    genre: "Sushi"
-  },
-  {
-    id: "6",
-    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
-    name: "Shop 6",
-    area: "Ebisu",
-    genre: "Italian"
-  }
-];

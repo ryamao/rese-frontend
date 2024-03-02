@@ -8,13 +8,15 @@ export interface ShopOverviewProps {
   name: string;
   area: string;
   genre: string;
+  favoriteStatus: "unknown" | "marked" | "unmarked";
 }
 
 export function ShopOverview({
   imageUrl,
   name,
   area,
-  genre
+  genre,
+  favoriteStatus
 }: ShopOverviewProps) {
   return (
     <Card className={whitePanel}>
@@ -29,7 +31,7 @@ export function ShopOverview({
           <button type="button" className={blueButton}>
             詳しくみる
           </button>
-          <FavoriteButton isFavorite={false} />
+          <FavoriteButton isFavorite={favoriteStatus === "marked"} />
         </ButtonLayout>
       </Content>
     </Card>

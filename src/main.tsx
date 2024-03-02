@@ -12,7 +12,9 @@ import {
 
 import { Client } from "./Client";
 import { DashboardPage } from "./pages/DashboardPage";
+import { ErrorPage } from "./pages/ErrorPage";
 import { LoginPage } from "./pages/LoginPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
@@ -25,14 +27,6 @@ import { UseAuthStatus } from "./routes/UseAuthStatus";
 const httpClient = new Client();
 
 const queryClient = new QueryClient();
-
-function NotFound() {
-  return <div>Not Found</div>;
-}
-
-function ErrorPage() {
-  return <div>Error</div>;
-}
 
 async function getAuthStatus() {
   return httpClient.getAuthStatus();
@@ -48,11 +42,7 @@ async function postLogout() {
 async function loadShopListPageData() {
   const { areas } = await httpClient.getAreas();
   const { genres } = await httpClient.getGenres();
-
-  return {
-    areas,
-    genres
-  };
+  return { areas, genres };
 }
 
 const router = createBrowserRouter(
@@ -61,7 +51,9 @@ const router = createBrowserRouter(
       <Route element={<UseAuthStatus />} loader={getAuthStatus}>
         <Route
           path="/"
-          element={<ShopListPage postLogout={postLogout} />}
+          element={
+            <ShopListPage httpClient={httpClient} postLogout={postLogout} />
+          }
           loader={loadShopListPageData}
         />
 
@@ -105,7 +97,7 @@ const router = createBrowserRouter(
         </Route>
       </Route>
 
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFoundPage />} />
     </>
   )
 );
