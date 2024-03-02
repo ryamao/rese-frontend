@@ -12,16 +12,30 @@ import { HttpResponse, delay, http } from "msw";
 import type {
   CreatedResponse,
   GetSanctumCsrfCookie204Response,
+  GetShopsParams,
   NoContentResponse,
   OkResponse,
   PostAuthLoginBody,
   PostAuthRegisterBody
 } from "../models";
 import type {
+  GetAreas200Response,
   GetAuthStatus200Response,
+  GetGenres200Response,
+  GetShops200Response,
   ShowCustomer200Response
 } from "../models";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
+
+/**
+ * エリア一覧を取得する
+ * @summary エリア一覧取得
+ */
+export const getAreas = <TData = AxiosResponse<GetAreas200Response>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/areas`, options);
+};
 
 /**
  * 認証状態を取得する
@@ -42,6 +56,30 @@ export const getCustomer = <TData = AxiosResponse<ShowCustomer200Response>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.get(`/customers/${user}`, options);
+};
+
+/**
+ * ジャンル一覧を取得する
+ * @summary ジャンル一覧取得
+ */
+export const getGenres = <TData = AxiosResponse<GetGenres200Response>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/genres`, options);
+};
+
+/**
+ * 飲食店一覧を取得する
+ * @summary 飲食店一覧取得
+ */
+export const getShops = <TData = AxiosResponse<GetShops200Response>>(
+  params?: GetShopsParams,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/shops`, {
+    ...options,
+    params: { ...params, ...options?.params }
+  });
 };
 
 /**
@@ -92,8 +130,11 @@ export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
   return axios.default.post(`/auth/logout`, undefined, options);
 };
 
+export type GetAreasResult = AxiosResponse<GetAreas200Response>;
 export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
+export type GetGenresResult = AxiosResponse<GetGenres200Response>;
+export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetSanctumCsrfCookieResult =
   AxiosResponse<GetSanctumCsrfCookie204Response>;
 export type PostAuthRegisterResult = AxiosResponse<
@@ -101,6 +142,20 @@ export type PostAuthRegisterResult = AxiosResponse<
 >;
 export type PostAuthLoginResult = AxiosResponse<OkResponse | NoContentResponse>;
 export type PostAuthLogoutResult = AxiosResponse<NoContentResponse>;
+
+export const getGetAreasResponseMock = (
+  overrideResponse: any = {}
+): GetAreas200Response => ({
+  areas: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    id: faker.number.int({ min: undefined, max: undefined }),
+    name: faker.word.sample(),
+    ...overrideResponse
+  })),
+  ...overrideResponse
+});
 
 export const getGetAuthStatusResponseMock = (
   overrideResponse: any = {}
@@ -119,6 +174,82 @@ export const getGetCustomerResponseMock = (
   name: faker.word.sample(),
   ...overrideResponse
 });
+
+export const getGetGenresResponseMock = (
+  overrideResponse: any = {}
+): GetGenres200Response => ({
+  genres: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    id: faker.number.int({ min: undefined, max: undefined }),
+    name: faker.word.sample(),
+    ...overrideResponse
+  })),
+  ...overrideResponse
+});
+
+export const getGetShopsResponseMock = (
+  overrideResponse: any = {}
+): GetShops200Response => ({
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({})),
+  links: {
+    first: faker.internet.url(),
+    last: faker.internet.url(),
+    next: faker.helpers.arrayElement([{}, faker.internet.url()]),
+    prev: faker.helpers.arrayElement([{}, faker.internet.url()]),
+    ...overrideResponse
+  },
+  meta: {
+    current_page: faker.number.int({ min: 1, max: undefined }),
+    from: faker.helpers.arrayElement([
+      {},
+      faker.number.int({ min: 1, max: undefined })
+    ]),
+    last_page: faker.number.int({ min: 1, max: undefined }),
+    links: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1
+    ).map(() => ({
+      active: faker.datatype.boolean(),
+      label: faker.word.sample(),
+      url: faker.helpers.arrayElement([{}, faker.internet.url()]),
+      ...overrideResponse
+    })),
+    path: faker.internet.url(),
+    per_page: faker.number.int({ min: 1, max: undefined }),
+    to: faker.helpers.arrayElement([
+      {},
+      faker.number.int({ min: 1, max: undefined })
+    ]),
+    total: faker.number.int({ min: 0, max: undefined }),
+    ...overrideResponse
+  },
+  ...overrideResponse,
+  ...overrideResponse
+});
+
+export const getGetAreasMockHandler = (
+  overrideResponse?: GetAreas200Response
+) => {
+  return http.get("*/areas", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetAreasResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
 
 export const getGetAuthStatusMockHandler = (
   overrideResponse?: GetAuthStatus200Response
@@ -147,6 +278,44 @@ export const getGetCustomerMockHandler = (
     return new HttpResponse(
       JSON.stringify(
         overrideResponse ? overrideResponse : getGetCustomerResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
+export const getGetGenresMockHandler = (
+  overrideResponse?: GetGenres200Response
+) => {
+  return http.get("*/genres", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetGenresResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
+export const getGetShopsMockHandler = (
+  overrideResponse?: GetShops200Response
+) => {
+  return http.get("*/shops", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetShopsResponseMock()
       ),
       {
         status: 200,
@@ -206,8 +375,11 @@ export const getPostAuthLogoutMockHandler = () => {
   });
 };
 export const getReseMock = () => [
+  getGetAreasMockHandler(),
   getGetAuthStatusMockHandler(),
   getGetCustomerMockHandler(),
+  getGetGenresMockHandler(),
+  getGetShopsMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
   getPostAuthRegisterMockHandler(),
   getPostAuthLoginMockHandler(),
