@@ -1,49 +1,32 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 
-import { AuthStatus, MenuItem, PageBase } from "./PageBase";
+import { PageBase } from "./PageBase";
 import { SearchForm } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
+import { ShopSearchContextProvider } from "../contexts/ShopSearchContext";
 
 export interface ShopListPageProps {
-  authStatus: AuthStatus;
-  onClickMenuItem: (item: MenuItem) => void;
-  areas: { id: number; name: string }[];
-  genres: { id: number; name: string }[];
-  shopList: {
-    id: string;
-    imageUrl: string;
-    name: string;
-    area: string;
-    genre: string;
-  }[];
+  postLogout: () => Promise<void>;
 }
 
-export function ShopListPage({
-  authStatus,
-  onClickMenuItem,
-  areas,
-  genres,
-  shopList
-}: ShopListPageProps) {
+export function ShopListPage(props: ShopListPageProps) {
   return (
-    <PageBase
-      wrapperStyle={pageBaseStyle}
-      authStatus={authStatus}
-      onClickMenuItem={onClickMenuItem}
-    >
-      <SearchForm areas={areas} genres={genres} />
-      <ShopLayout>
-        {shopList.map((shop) => (
-          <ShopOverview
-            key={shop.name}
-            imageUrl={shop.imageUrl}
-            name={shop.name}
-            area={shop.area}
-            genre={shop.genre}
-          />
-        ))}
-      </ShopLayout>
+    <PageBase wrapperStyle={pageBaseStyle} {...props}>
+      <ShopSearchContextProvider>
+        <SearchForm areas={areas} genres={genres} />
+        <ShopLayout>
+          {shopList.map((shop) => (
+            <ShopOverview
+              key={shop.name}
+              imageUrl={shop.imageUrl}
+              name={shop.name}
+              area={shop.area}
+              genre={shop.genre}
+            />
+          ))}
+        </ShopLayout>
+      </ShopSearchContextProvider>
     </PageBase>
   );
 }
@@ -98,3 +81,60 @@ const ShopLayout = styled.div`
   column-gap: 1rem;
   row-gap: 2rem;
 `;
+
+const areas = [
+  { id: 1, name: "Shibuya" },
+  { id: 2, name: "Shinjuku" },
+  { id: 3, name: "Ebisu" }
+];
+
+const genres = [
+  { id: 1, name: "Ramen" },
+  { id: 2, name: "Sushi" },
+  { id: 3, name: "Italian" }
+];
+
+const shopList = [
+  {
+    id: "1",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 1",
+    area: "Shibuya",
+    genre: "Ramen"
+  },
+  {
+    id: "2",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 2",
+    area: "Shinjuku",
+    genre: "Sushi"
+  },
+  {
+    id: "3",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 3",
+    area: "Ebisu",
+    genre: "Italian"
+  },
+  {
+    id: "4",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 4",
+    area: "Shibuya",
+    genre: "Ramen"
+  },
+  {
+    id: "5",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 5",
+    area: "Shinjuku",
+    genre: "Sushi"
+  },
+  {
+    id: "6",
+    imageUrl: "https://source.unsplash.com/800x600/?restaurant",
+    name: "Shop 6",
+    area: "Ebisu",
+    genre: "Italian"
+  }
+];

@@ -1,30 +1,60 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { css } from "@emotion/css";
 import { Global, css as reactCss } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 import { MenuButton } from "../components/MenuButton";
-import { Overlay } from "../components/Overlay";
+import { MenuButtonType, Overlay } from "../components/Overlay";
+import { AuthContext } from "../providers/AuthContextProvider";
 
-export type AuthStatus = "guest" | "customer";
 export type LayoutType = "normal" | "search" | "detail";
-export type MenuItem = "home" | "register" | "login" | "logout" | "mypage";
 
 export interface PageBaseProps {
   children: React.ReactNode;
   wrapperStyle?: string;
-  authStatus: AuthStatus;
-  onClickMenuItem: (item: MenuItem) => void;
+  postLogout: () => Promise<void>;
 }
 
 export function PageBase({
   children,
   wrapperStyle,
-  authStatus,
-  onClickMenuItem
+  postLogout
 }: PageBaseProps) {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const { authStatus, setGuest } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  async function logout() {
+    await postLogout();
+    setGuest();
+  }
+
+  async function handleClickMenuButton(type: MenuButtonType) {
+    switch (type) {
+      case "close":
+        break;
+      case "home":
+        navigate("/");
+        break;
+      case "register":
+        navigate("/register");
+        break;
+      case "login":
+        navigate("/login");
+        break;
+      case "logout":
+        await logout();
+        navigate("/login");
+        break;
+      case "mypage":
+        navigate("/mypage");
+        break;
+    }
+
+    setShowOverlay(false);
+  }
 
   return (
     <>
@@ -40,13 +70,8 @@ export function PageBase({
       </div>
       {showOverlay && (
         <Overlay
-          authStatus={authStatus}
-          onMenuClose={() => setShowOverlay(false)}
-          onHome={() => onClickMenuItem("home")}
-          onRegister={() => onClickMenuItem("register")}
-          onLogin={() => onClickMenuItem("login")}
-          onLogout={() => onClickMenuItem("logout")}
-          onMypage={() => onClickMenuItem("mypage")}
+          authStatus={authStatus?.status ?? "guest"}
+          onClickMenuButton={handleClickMenuButton}
         />
       )}
     </>
