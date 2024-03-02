@@ -12,4 +12,5 @@ export const blueButton = css`
   background-color: #315dff;
   border: none;
   border-radius: 0.25rem;
+  cursor: pointer;
 `;
