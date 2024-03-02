@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Client, GetAuthStatusResult } from "../Client";
 import { MenuButton } from "../components/MenuButton";
-import { Overlay } from "../components/Overlay";
+import { MenuButtonType, Overlay } from "../components/Overlay";
 import { AuthContext } from "../providers/AuthContextProvider";
 
 export interface AppLayoutProps {
@@ -19,36 +19,6 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  function handleHome() {
-    setShowOverlay(false);
-    navigate("/");
-  }
-
-  function handleRegister() {
-    setShowOverlay(false);
-    navigate("/register");
-  }
-
-  function handleLogin() {
-    setShowOverlay(false);
-    navigate("/login");
-  }
-
-  async function handleLogout() {
-    const { error } = await httpClient.postAuthLogout();
-    if (error) {
-      throw new Error("ログアウトに失敗しました");
-    }
-    authContext.setGuest();
-    setShowOverlay(false);
-    navigate("/login");
-  }
-
-  function handleMypage() {
-    setShowOverlay(false);
-    navigate("/mypage");
-  }
-
   if (authContext.authStatus === null) {
     switch (authStatus.status) {
       case "guest":
@@ -58,6 +28,40 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
         authContext.setCustomer(authStatus.id);
         break;
     }
+  }
+
+  async function logout() {
+    const { error } = await httpClient.postAuthLogout();
+    if (error) {
+      throw new Error("ログアウトに失敗しました");
+    }
+    authContext.setGuest();
+    setShowOverlay(false);
+    navigate("/login");
+  }
+
+  async function handleClickMenuButton(type: MenuButtonType) {
+    switch (type) {
+      case "close":
+        break;
+      case "home":
+        navigate("/");
+        break;
+      case "register":
+        navigate("/register");
+        break;
+      case "login":
+        navigate("/login");
+        break;
+      case "logout":
+        logout();
+        break;
+      case "mypage":
+        navigate("/mypage");
+        break;
+    }
+
+    setShowOverlay(false);
   }
 
   return (
@@ -74,12 +78,7 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
       {showOverlay && (
         <Overlay
           authStatus={authContext.authStatus?.status || "guest"}
-          onMenuClose={() => setShowOverlay(false)}
-          onHome={handleHome}
-          onRegister={handleRegister}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-          onMypage={handleMypage}
+          onClickMenuButton={handleClickMenuButton}
         />
       )}
     </>

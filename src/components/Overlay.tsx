@@ -2,62 +2,70 @@ import styled from "@emotion/styled";
 
 import { MenuButton } from "./MenuButton";
 
+export type MenuButtonType =
+  | "close"
+  | "home"
+  | "register"
+  | "login"
+  | "logout"
+  | "mypage";
+
 export interface OverlayProps {
   authStatus: "guest" | "customer";
-  onMenuClose: () => void;
-  onHome: () => void;
-  onRegister: () => void;
-  onLogin: () => void;
-  onLogout: () => void;
-  onMypage: () => void;
+  onClickMenuButton: (type: MenuButtonType) => void;
 }
 
 export function Overlay(props: OverlayProps) {
   return (
     <OverlayBody>
       <OverlayHeader>
-        <MenuButton isMenuOpened onClick={props.onMenuClose} />
+        <MenuButton
+          isMenuOpened
+          onClick={() => props.onClickMenuButton("close")}
+        />
       </OverlayHeader>
       <OverlayContent>{getLinks(props)}</OverlayContent>
     </OverlayBody>
   );
 }
 
-function getLinks(props: OverlayProps) {
-  switch (props.authStatus) {
+function getLinks({ authStatus, onClickMenuButton }: OverlayProps) {
+  switch (authStatus) {
     case "guest":
-      return linksForGuest(props);
+      return linksForGuest(onClickMenuButton);
     case "customer":
-      return linksForCustomer(props);
+      return linksForCustomer(onClickMenuButton);
   }
 }
 
-function linksForGuest({ onHome, onRegister, onLogin }: OverlayProps) {
+function linksForGuest(onClickMenuButton: OverlayProps["onClickMenuButton"]) {
   return (
     <>
-      <Button type="button" onClick={onHome}>
+      <Button type="button" onClick={() => onClickMenuButton("home")}>
         Home
       </Button>
-      <Button type="button" onClick={onRegister}>
+      <Button type="button" onClick={() => onClickMenuButton("register")}>
         Registration
       </Button>
-      <Button type="button" onClick={onLogin}>
+      <Button type="button" onClick={() => onClickMenuButton("login")}>
         Login
       </Button>
     </>
   );
 }
 
-function linksForCustomer({ onHome, onLogout, onMypage }: OverlayProps) {
+function linksForCustomer(
+  onClickMenuButton: OverlayProps["onClickMenuButton"]
+) {
   return (
     <>
-      <Button type="button" onClick={onHome}>
+      <Button type="button" onClick={() => onClickMenuButton("home")}>
         Home
       </Button>
-      <Button type="button" onClick={onLogout}>
+      <Button type="button" onClick={() => onClickMenuButton("logout")}>
         Logout
       </Button>
-      <Button type="button" onClick={onMypage}>
+      <Button type="button" onClick={() => onClickMenuButton("mypage")}>
         Mypage
       </Button>
     </>
