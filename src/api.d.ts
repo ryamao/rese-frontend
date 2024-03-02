@@ -121,8 +121,6 @@ export interface components {
         /** @description 次のページのURL */
         next: null | string;
       };
-      /** @description ページネーション結果 */
-      data: unknown[];
     };
   };
   responses: {

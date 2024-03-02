@@ -5,7 +5,6 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { PaginationDataItem } from "./paginationDataItem";
 import type { PaginationLinks } from "./paginationLinks";
 import type { PaginationMeta } from "./paginationMeta";
 
@@ -13,8 +12,6 @@ import type { PaginationMeta } from "./paginationMeta";
  * ページネーション
  */
 export interface Pagination {
-  /** ページネーション結果 */
-  data: PaginationDataItem[];
   /** ページネーションリンク */
   links: PaginationLinks;
   /** ページネーションメタ情報 */

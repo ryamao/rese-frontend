@@ -192,10 +192,6 @@ export const getGetGenresResponseMock = (
 export const getGetShopsResponseMock = (
   overrideResponse: any = {}
 ): GetShops200Response => ({
-  data: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1
-  ).map(() => ({})),
   links: {
     first: faker.internet.url(),
     last: faker.internet.url(),
@@ -229,6 +225,22 @@ export const getGetShopsResponseMock = (
     ...overrideResponse
   },
   ...overrideResponse,
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    area: faker.word.sample(),
+    favorite_status: faker.helpers.arrayElement([
+      "unknown",
+      "marked",
+      "unmarked"
+    ] as const),
+    genre: faker.word.sample(),
+    id: faker.number.int({ min: undefined, max: undefined }),
+    image_url: faker.internet.url(),
+    name: faker.word.sample(),
+    ...overrideResponse
+  })),
   ...overrideResponse
 });
 

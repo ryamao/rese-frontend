@@ -184,7 +184,7 @@
     "schemas": {
       "pagination": {
         "description": "ページネーション",
-        "required": ["meta", "links", "data"],
+        "required": ["meta", "links"],
         "properties": {
           "meta": {
             "description": "ページネーションメタ情報",
@@ -321,11 +321,6 @@
               }
             },
             "type": "object"
-          },
-          "data": {
-            "description": "ページネーション結果",
-            "type": "array",
-            "items": {}
           }
         },
         "type": "object"
