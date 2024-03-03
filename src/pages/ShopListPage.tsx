@@ -12,8 +12,8 @@ import {
   GetGenresResult,
   GetShopsResult
 } from "../Client";
-import { SearchForm } from "../components/SearchForm";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
+import { ShopSearchForm } from "../components/ShopSearchForm";
 import {
   ShopSearchContext,
   ShopSearchParams,
@@ -55,7 +55,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   return (
     <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
       <ShopSearchContext.Provider value={shopSearchContextValue}>
-        <SearchForm areas={areas} genres={genres} />
+        <ShopSearchForm areas={areas} genres={genres} />
         <ShopLayout>
           {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
             <ShopOverviewCard

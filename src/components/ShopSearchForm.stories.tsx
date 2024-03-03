@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within } from "@storybook/test";
 
-import { SearchForm } from "./SearchForm";
+import { ShopSearchForm } from "./ShopSearchForm";
 import {
   ShopSearchContext,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
 
 const meta = {
-  title: "Components/Shop/SearchForm",
-  component: SearchForm,
+  title: "Components/Shop/ShopSearchForm",
+  component: ShopSearchForm,
   tags: ["autodocs"],
   args: {
     areas: [
@@ -35,7 +35,7 @@ const meta = {
       );
     }
   ]
-} satisfies Meta<typeof SearchForm>;
+} satisfies Meta<typeof ShopSearchForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

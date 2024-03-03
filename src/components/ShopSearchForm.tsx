@@ -16,7 +16,7 @@ export interface SearchFormProps {
   genres: { id: number; name: string }[];
 }
 
-export function SearchForm({ areas, genres }: SearchFormProps) {
+export function ShopSearchForm({ areas, genres }: SearchFormProps) {
   const { params, setArea, setGenre, setSearch } = useShopSearchContext();
 
   return (

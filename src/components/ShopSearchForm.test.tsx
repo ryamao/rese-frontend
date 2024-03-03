@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { SearchForm } from "./SearchForm";
+import { ShopSearchForm } from "./ShopSearchForm";
 import {
   ShopSearchContext,
   useShopSearchState
@@ -16,7 +16,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-describe("SearchForm", () => {
+describe("ShopSearchForm", () => {
   const areas = [
     { id: 1, name: "Area1" },
     { id: 2, name: "Area2" }
@@ -27,9 +27,12 @@ describe("SearchForm", () => {
   ];
 
   test("コンポーネント内に必要な要素が存在する", () => {
-    const { getByRole } = render(<SearchForm areas={areas} genres={genres} />, {
-      wrapper: Wrapper
-    });
+    const { getByRole } = render(
+      <ShopSearchForm areas={areas} genres={genres} />,
+      {
+        wrapper: Wrapper
+      }
+    );
 
     const areaSelect = getByRole("combobox", { name: "Area" });
     const genreSelect = getByRole("combobox", { name: "Genre" });
@@ -50,7 +53,7 @@ describe("SearchForm", () => {
 
     const { getByRole } = render(
       <ShopSearchContext.Provider value={value}>
-        <SearchForm areas={areas} genres={genres} />
+        <ShopSearchForm areas={areas} genres={genres} />
       </ShopSearchContext.Provider>
     );
 
@@ -73,7 +76,7 @@ describe("SearchForm", () => {
 
     const { getByRole } = render(
       <ShopSearchContext.Provider value={value}>
-        <SearchForm areas={areas} genres={genres} />
+        <ShopSearchForm areas={areas} genres={genres} />
       </ShopSearchContext.Provider>
     );
 
@@ -96,7 +99,7 @@ describe("SearchForm", () => {
 
     const { getByRole } = render(
       <ShopSearchContext.Provider value={value}>
-        <SearchForm areas={areas} genres={genres} />
+        <ShopSearchForm areas={areas} genres={genres} />
       </ShopSearchContext.Provider>
     );
 
