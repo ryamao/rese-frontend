@@ -5,7 +5,77 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { Client, PostAuthRegisterBody } from "../Client";
+import { PostAuthRegisterBody, PostAuthRegisterResult } from "../Client";
+
+export interface RegisterFormProps {
+  onRegister: (body: {
+    name: string;
+    email: string;
+    password: string;
+  }) => Promise<PostAuthRegisterResult>;
+}
+
+const registerFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "名前を入力してください")
+    .max(100, "名前は100文字以内で入力してください"),
+  email: z
+    .string()
+    .min(1, "メールアドレスを入力してください")
+    .max(100, "メールアドレスは100文字以内で入力してください")
+    .email("メールアドレスの形式が正しくありません"),
+  password: z
+    .string()
+    .min(1, "パスワードを入力してください")
+    .min(8, "パスワードは8文字以上で入力してください")
+    .max(100, "パスワードは100文字以内で入力してください")
+});
+
+export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm<PostAuthRegisterBody>({
+    resolver: zodResolver(registerFormSchema)
+  });
+
+  const onValid: SubmitHandler<PostAuthRegisterBody> = async (body) => {
+    const { error } = await onRegister(body);
+    if (error) {
+      setError("email", { message: error.message });
+    }
+  };
+
+  return (
+    <FormLayout className={styles.whitePanel}>
+      <Heading>Registration</Heading>
+      <FormBody onSubmit={handleSubmit(onValid)} noValidate>
+        <TextFieldList>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("name")} />
+            <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("email")} />
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("password")} />
+            <ErrorMessage>{errors.password?.message}</ErrorMessage>
+          </TextFieldListItem>
+        </TextFieldList>
+        <ButtonLayout>
+          <button type="submit" className={styles.blueButton}>
+            登録
+          </button>
+        </ButtonLayout>
+      </FormBody>
+    </FormLayout>
+  );
+}
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -52,75 +122,3 @@ const ButtonLayout = styled.div`
   justify-content: right;
   width: 100%;
 `;
-
-export interface RegisterFormProps {
-  client: Client;
-  onRegister?: () => void;
-}
-
-const registerFormSchema = z.object({
-  name: z
-    .string()
-    .min(1, "名前を入力してください")
-    .max(100, "名前は100文字以内で入力してください"),
-  email: z
-    .string()
-    .min(1, "メールアドレスを入力してください")
-    .max(100, "メールアドレスは100文字以内で入力してください")
-    .email("メールアドレスの形式が正しくありません"),
-  password: z
-    .string()
-    .min(1, "パスワードを入力してください")
-    .min(8, "パスワードは8文字以上で入力してください")
-    .max(100, "パスワードは100文字以内で入力してください")
-});
-
-export function RegisterForm({
-  client,
-  onRegister
-}: RegisterFormProps): JSX.Element {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError
-  } = useForm<PostAuthRegisterBody>({
-    resolver: zodResolver(registerFormSchema)
-  });
-
-  const onValid: SubmitHandler<PostAuthRegisterBody> = async (body) => {
-    const { error } = await client.postAuthRegister(body);
-    if (error) {
-      setError("name", { message: error.message });
-    } else {
-      onRegister?.();
-    }
-  };
-
-  return (
-    <FormLayout className={styles.whitePanel}>
-      <Heading>Registration</Heading>
-      <FormBody onSubmit={handleSubmit(onValid)} noValidate>
-        <TextFieldList>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("name")} />
-            <ErrorMessage>{errors.name?.message}</ErrorMessage>
-          </TextFieldListItem>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("email")} />
-            <ErrorMessage>{errors.email?.message}</ErrorMessage>
-          </TextFieldListItem>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("password")} />
-            <ErrorMessage>{errors.password?.message}</ErrorMessage>
-          </TextFieldListItem>
-        </TextFieldList>
-        <ButtonLayout>
-          <button type="submit" className={styles.blueButton}>
-            登録
-          </button>
-        </ButtonLayout>
-      </FormBody>
-    </FormLayout>
-  );
-}
