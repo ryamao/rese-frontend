@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import {
@@ -12,8 +11,8 @@ import {
   GetGenresResult,
   GetShopsResult
 } from "../Client";
-import { SearchForm } from "../components/SearchForm";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
+import { ShopSearchForm } from "../components/ShopSearchForm";
 import {
   ShopSearchContext,
   ShopSearchParams,
@@ -31,7 +30,6 @@ export interface ShopListPageLoaderData {
 }
 
 export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
-  const { areas, genres } = useLoaderData() as ShopListPageLoaderData;
   const { data, isLoading, hasNextPage, fetchNextPage } =
     usePageQuery(httpClient);
   const shopSearchContextValue = useShopSearchState();
@@ -55,7 +53,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   return (
     <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
       <ShopSearchContext.Provider value={shopSearchContextValue}>
-        <SearchForm areas={areas} genres={genres} />
+        <ShopSearchForm />
         <ShopLayout>
           {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
             <ShopOverviewCard

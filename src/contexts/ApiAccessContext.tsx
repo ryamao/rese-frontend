@@ -1,9 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { Client, GetAuthStatusResult } from "../Client";
+import {
+  Client,
+  GetAreasResult,
+  GetAuthStatusResult,
+  GetGenresResult
+} from "../Client";
 
 export interface ApiAccessContextType {
   authStatus: GetAuthStatusResult | null;
+  getAreas: () => Promise<GetAreasResult["areas"]>;
+  getGenres: () => Promise<GetGenresResult["genres"]>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
 }
@@ -23,10 +30,13 @@ export function useApiAccessState(httpClient: Client): ApiAccessContextType {
 
   useEffect(() => {
     httpClient.getAuthStatus().then(setAuthStatus);
-  }, [httpClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     authStatus,
+    getAreas: () => httpClient.getAreas().then((result) => result.areas),
+    getGenres: () => httpClient.getGenres().then((result) => result.genres),
     addFavorite: (userId: number, shopId: number) =>
       httpClient.postCustomerShopFavorite(userId, shopId),
     removeFavorite: (userId: number, shopId: number) =>

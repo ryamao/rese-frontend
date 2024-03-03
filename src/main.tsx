@@ -40,12 +40,6 @@ async function postLogout() {
   }
 }
 
-async function loadShopListPageData() {
-  const { areas } = await httpClient.getAreas();
-  const { genres } = await httpClient.getGenres();
-  return { areas, genres };
-}
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -55,7 +49,6 @@ const router = createBrowserRouter(
           element={
             <ShopListPage httpClient={httpClient} postLogout={postLogout} />
           }
-          loader={loadShopListPageData}
         />
       </Route>
 
