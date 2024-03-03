@@ -10,7 +10,6 @@ import {
   createRoutesFromElements
 } from "react-router-dom";
 
-import { Client } from "./Client";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -21,9 +20,12 @@ import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 
-const httpClient = new Client();
-
-const queryClient = new QueryClient();
+const global = css`
+  body {
+    margin: 0;
+    background-color: #eee;
+  }
+`;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,10 +40,7 @@ const router = createBrowserRouter(
 
         <Route element={<CustomersOnlyRoute />}>
           <Route path="thanks" element={<ThanksPage />} />
-          <Route
-            path="mypage"
-            element={<DashboardPage client={httpClient} />}
-          />
+          <Route path="mypage" element={<DashboardPage />} />
         </Route>
       </Route>
 
@@ -50,16 +49,9 @@ const router = createBrowserRouter(
   )
 );
 
-const global = css`
-  body {
-    margin: 0;
-    background-color: #eee;
-  }
-`;
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={new QueryClient()}>
       <Global styles={global} />
       <RouterProvider router={router} />
     </QueryClientProvider>
