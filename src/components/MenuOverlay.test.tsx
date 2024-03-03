@@ -1,12 +1,12 @@
 import { render } from "@testing-library/react";
 
-import { Overlay } from "./Overlay";
+import { MenuOverlay } from "./MenuOverlay";
 
-describe("components/Overlay", () => {
+describe("components/MenuOverlay", () => {
   test("renders links for guest", () => {
     const props = createOverlayProps("guest");
 
-    const { getByText } = render(<Overlay {...props} />);
+    const { getByText } = render(<MenuOverlay {...props} />);
 
     expect(getByText("Home")).toBeInTheDocument();
     expect(getByText("Registration")).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe("components/Overlay", () => {
   test("renders links for customer", () => {
     const props = createOverlayProps("customer");
 
-    const { getByText } = render(<Overlay {...props} />);
+    const { getByText } = render(<MenuOverlay {...props} />);
 
     expect(getByText("Home")).toBeInTheDocument();
     expect(getByText("Logout")).toBeInTheDocument();

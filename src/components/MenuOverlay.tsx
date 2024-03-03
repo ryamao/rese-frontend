@@ -15,7 +15,7 @@ export interface OverlayProps {
   onClickMenuButton?: (type: MenuButtonType) => void;
 }
 
-export function Overlay(props: OverlayProps) {
+export function MenuOverlay(props: OverlayProps) {
   return (
     <OverlayBody>
       <OverlayHeader>
