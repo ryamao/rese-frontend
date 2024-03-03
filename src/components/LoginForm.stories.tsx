@@ -1,57 +1,56 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn, userEvent, waitFor, within, expect, spyOn } from "@storybook/test";
+import { fn, userEvent, waitFor, within, expect } from "@storybook/test";
 
 import { LoginForm } from "./LoginForm";
-import { Client, PostAuthLoginResult } from "../Client";
 
 const meta = {
   title: "Components/Auth/LoginForm",
   component: LoginForm,
-  tags: ["autodocs"],
-  args: {
-    client: new Client("http://localhost:12345"),
-    onLogin: fn()
-  }
+  tags: ["autodocs"]
 } satisfies Meta<typeof LoginForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    onLogin: fn().mockImplementation(() =>
+      Promise.resolve({ error: undefined })
+    )
+  }
+};
 
 export const Filled: Story = {
+  args: {
+    onLogin: fn().mockImplementation(() =>
+      Promise.resolve({ error: undefined })
+    )
+  },
   play: async ({ canvasElement, args }) => {
-    const spy = spyPostAuthLogin({ data: undefined, error: undefined });
     const canvas = within(canvasElement);
     await userEvent.type(canvas.getByLabelText("Email"), "test@example.com");
     await userEvent.type(canvas.getByLabelText("Password"), "password");
     await userEvent.click(canvas.getByText("ログイン"));
-    await expect(spy).toHaveBeenCalled();
     await waitFor(() => {
-      expect(args.onLogin).toHaveBeenCalled();
+      expect(args.onLogin).toHaveBeenCalledWith("test@example.com", "password");
     });
   }
 };
 
 export const Invalid: Story = {
+  args: {
+    onLogin: fn().mockImplementation(() =>
+      Promise.resolve({ error: undefined })
+    )
+  },
   play: async ({ canvasElement }) => {
-    const spy = spyPostAuthLogin({ data: undefined, error: undefined });
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByText("ログイン"));
-    await waitFor(() => {
-      expect(
-        canvas.getByText("メールアドレスを入力してください")
-      ).toBeInTheDocument();
-      expect(
-        canvas.getByText("パスワードを入力してください")
-      ).toBeInTheDocument();
-    });
-    expect(spy).not.toHaveBeenCalled();
+    expect(
+      await canvas.findByText("メールアドレスを入力してください")
+    ).toBeInTheDocument();
+    expect(
+      await canvas.findByText("パスワードを入力してください")
+    ).toBeInTheDocument();
   }
 };
-
-function spyPostAuthLogin(response: PostAuthLoginResult) {
-  return spyOn(Client.prototype, "postAuthLogin").mockImplementation(() =>
-    Promise.resolve(response)
-  );
-}

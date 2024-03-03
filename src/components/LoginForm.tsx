@@ -5,7 +5,57 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { Client, PostAuthLoginBody } from "../Client";
+import { PostAuthLoginBody, PostAuthLoginResult } from "../Client";
+
+const loginFormSchema = z.object({
+  email: z.string().min(1, "メールアドレスを入力してください"),
+  password: z.string().min(1, "パスワードを入力してください")
+});
+
+export interface LoginFormProps {
+  onLogin: (email: string, password: string) => Promise<PostAuthLoginResult>;
+}
+
+export function LoginForm({ onLogin }: LoginFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm<PostAuthLoginBody>({
+    resolver: zodResolver(loginFormSchema)
+  });
+
+  async function onValid(data: PostAuthLoginBody) {
+    const { error } = await onLogin(data.email, data.password);
+    if (error) {
+      setError("email", { message: error.message });
+    }
+  }
+
+  return (
+    <FormLayout className={styles.whitePanel}>
+      <Heading>Login</Heading>
+      <FormBody onSubmit={handleSubmit(onValid)} noValidate>
+        <TextFieldList>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("email")} />
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("password")} />
+            <ErrorMessage>{errors.password?.message}</ErrorMessage>
+          </TextFieldListItem>
+        </TextFieldList>
+        <ButtonLayout>
+          <button type="submit" className={styles.blueButton}>
+            ログイン
+          </button>
+        </ButtonLayout>
+      </FormBody>
+    </FormLayout>
+  );
+}
 
 const FormLayout = styled.div`
   width: 24rem;
@@ -52,56 +102,3 @@ const ButtonLayout = styled.div`
   justify-content: right;
   width: 100%;
 `;
-
-const loginFormSchema = z.object({
-  email: z.string().min(1, "メールアドレスを入力してください"),
-  password: z.string().min(1, "パスワードを入力してください")
-});
-
-export interface LoginFormProps {
-  client: Client;
-  onLogin?: () => void;
-}
-
-export function LoginForm({ client, onLogin }: LoginFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError
-  } = useForm<PostAuthLoginBody>({
-    resolver: zodResolver(loginFormSchema)
-  });
-
-  async function onValid(data: PostAuthLoginBody) {
-    const { error } = await client.postAuthLogin(data);
-    if (error) {
-      setError("email", { message: error.message });
-    } else {
-      onLogin?.();
-    }
-  }
-
-  return (
-    <FormLayout className={styles.whitePanel}>
-      <Heading>Login</Heading>
-      <FormBody onSubmit={handleSubmit(onValid)} noValidate>
-        <TextFieldList>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("email")} />
-            <ErrorMessage>{errors.email?.message}</ErrorMessage>
-          </TextFieldListItem>
-          <TextFieldListItem>
-            <AuthTextField registerReturn={register("password")} />
-            <ErrorMessage>{errors.password?.message}</ErrorMessage>
-          </TextFieldListItem>
-        </TextFieldList>
-        <ButtonLayout>
-          <button type="submit" className={styles.blueButton}>
-            ログイン
-          </button>
-        </ButtonLayout>
-      </FormBody>
-    </FormLayout>
-  );
-}
