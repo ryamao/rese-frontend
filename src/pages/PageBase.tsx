@@ -6,7 +6,7 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
 import { MenuButton } from "../components/MenuButton";
-import { MenuButtonType, Overlay } from "../components/Overlay";
+import { MenuButtonType, MenuOverlay } from "../components/MenuOverlay";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export type LayoutType = "normal" | "search" | "detail";
@@ -59,7 +59,7 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
         {children}
       </div>
       {isOverlayVisible && (
-        <Overlay
+        <MenuOverlay
           authStatus={authStatus?.status ?? "guest"}
           onClickMenuButton={handleClickMenuButton}
         />
