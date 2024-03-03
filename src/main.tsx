@@ -17,7 +17,6 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
-import { AuthContextProvider } from "./providers/AuthContextProvider";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
@@ -61,10 +60,8 @@ const global = css`
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <Global styles={global} />
-        <RouterProvider router={router} />
-      </AuthContextProvider>
+      <Global styles={global} />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>
 );
