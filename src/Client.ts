@@ -186,4 +186,44 @@ export class Client {
       throw new Error(String(error));
     }
   }
+
+  async postCustomerShopFavorite(
+    userId: number,
+    shopId: number
+  ): Promise<void> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { error } = await this.client.POST(
+        "/customers/{user}/shops/{shop}/favorite",
+        {
+          params: { path: { user: userId, shop: shopId } }
+        }
+      );
+      if (error) {
+        throw new Error(error);
+      }
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async deleteCustomerShopFavorite(
+    userId: number,
+    shopId: number
+  ): Promise<void> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { error } = await this.client.DELETE(
+        "/customers/{user}/shops/{shop}/favorite",
+        {
+          params: { path: { user: userId, shop: shopId } }
+        }
+      );
+      if (error) {
+        throw new Error(error);
+      }
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
 }

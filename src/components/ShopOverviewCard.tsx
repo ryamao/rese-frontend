@@ -2,9 +2,11 @@ import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
+import { useApiAccessContext } from "../contexts/ApiAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopOverviewProps {
+  id: number;
   imageUrl: string;
   name: string;
   area: { id: number; name: string };
@@ -13,6 +15,7 @@ export interface ShopOverviewProps {
 }
 
 export function ShopOverviewCard({
+  id,
   imageUrl,
   name,
   area,
@@ -20,6 +23,24 @@ export function ShopOverviewCard({
   favoriteStatus
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
+  const { authStatus, addFavorite, removeFavorite } = useApiAccessContext();
+
+  function handleClickFavoriteButton(
+    favoriteStatus: "unknown" | "marked" | "unmarked"
+  ) {
+    if (authStatus?.status !== "customer") {
+      return;
+    }
+
+    switch (favoriteStatus) {
+      case "marked":
+        removeFavorite(authStatus.id, id);
+        break;
+      case "unmarked":
+        addFavorite(authStatus.id, id);
+        break;
+    }
+  }
 
   return (
     <div className={whitePanel}>
@@ -38,7 +59,10 @@ export function ShopOverviewCard({
           <button type="button" className={blueButton}>
             詳しくみる
           </button>
-          <FavoriteButton favoriteStatus={favoriteStatus} />
+          <FavoriteButton
+            favoriteStatus={favoriteStatus}
+            onClick={handleClickFavoriteButton}
+          />
         </ButtonLayout>
       </Content>
     </div>
