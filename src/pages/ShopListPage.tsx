@@ -5,33 +5,21 @@ import styled from "@emotion/styled";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { PageBase } from "./PageBase";
-import {
-  Client,
-  GetAreasResult,
-  GetGenresResult,
-  GetShopsResult
-} from "../Client";
+import { GetShopsResult } from "../Client";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
 import { ShopSearchForm } from "../components/ShopSearchForm";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import {
   ShopSearchContext,
   ShopSearchParams,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
 
-export interface ShopListPageProps {
-  httpClient: Client;
-}
-
-export interface ShopListPageLoaderData {
-  areas: GetAreasResult["areas"];
-  genres: GetGenresResult["genres"];
-}
-
-export function ShopListPage({ httpClient }: ShopListPageProps) {
+export function ShopListPage() {
+  const { getShops } = useBackendAccessContext();
+  const shopSearch = useShopSearchState();
   const { data, isLoading, hasNextPage, fetchNextPage } =
-    usePageQuery(httpClient);
-  const shopSearchContextValue = useShopSearchState();
+    usePageQuery(getShops);
 
   useEffect(() => {
     if (hasNextPage) {
@@ -51,10 +39,10 @@ export function ShopListPage({ httpClient }: ShopListPageProps) {
 
   return (
     <PageBase wrapperStyle={pageBaseStyle}>
-      <ShopSearchContext.Provider value={shopSearchContextValue}>
+      <ShopSearchContext.Provider value={shopSearch}>
         <ShopSearchForm />
         <ShopLayout>
-          {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
+          {searchByQuery(shops, shopSearch.params).map((shop) => (
             <ShopOverviewCard
               key={shop.id}
               id={shop.id}
@@ -71,10 +59,10 @@ export function ShopListPage({ httpClient }: ShopListPageProps) {
   );
 }
 
-function usePageQuery(httpClient: Client) {
+function usePageQuery(getShops: (page: number) => Promise<GetShopsResult>) {
   return useInfiniteQuery({
     queryKey: ["shops"],
-    queryFn: ({ pageParam }) => httpClient.getShops(pageParam),
+    queryFn: async ({ pageParam }) => await getShops(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.meta.current_page < lastPage.meta.last_page

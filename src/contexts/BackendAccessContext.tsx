@@ -4,7 +4,8 @@ import {
   Client,
   GetAreasResult,
   GetAuthStatusResult,
-  GetGenresResult
+  GetGenresResult,
+  GetShopsResult
 } from "../Client";
 
 export interface BackendAccessContextType {
@@ -12,6 +13,7 @@ export interface BackendAccessContextType {
   logout: () => Promise<void>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
+  getShops: (page: number) => Promise<GetShopsResult>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
 }
@@ -44,9 +46,10 @@ export function useBackendAccessState(
     },
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),
-    addFavorite: (userId: number, shopId: number) =>
+    getShops: (page) => httpClient.getShops(page),
+    addFavorite: (userId, shopId) =>
       httpClient.postCustomerShopFavorite(userId, shopId),
-    removeFavorite: (userId: number, shopId: number) =>
+    removeFavorite: (userId, shopId) =>
       httpClient.deleteCustomerShopFavorite(userId, shopId)
   };
 }

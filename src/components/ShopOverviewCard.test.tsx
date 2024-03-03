@@ -7,6 +7,7 @@ import {
   BackendAccessContextType
 } from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
+import { createMockBackendAccessState } from "../mocks/contexts";
 
 describe("ShopOverviewCard", () => {
   test("画像が表示されている", () => {
@@ -88,14 +89,7 @@ function renderCard(
       ? { status: "guest" }
       : { status: "customer", id: 111 };
 
-  const backendAccess: BackendAccessContextType = {
-    authStatus,
-    logout: vi.fn(),
-    getAreas: vi.fn(),
-    getGenres: vi.fn(),
-    addFavorite: vi.fn(),
-    removeFavorite: vi.fn()
-  };
+  const backendAccess = createMockBackendAccessState({ authStatus });
 
   const shopSearch = {
     params: { area: null, genre: null, search: "" },

@@ -2,11 +2,9 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ShopSearchForm } from "./ShopSearchForm";
-import {
-  BackendAccessContext,
-  BackendAccessContextType
-} from "../contexts/BackendAccessContext";
+import { BackendAccessContext } from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
+import { createMockBackendAccessState } from "../mocks/contexts";
 
 describe("ShopSearchForm", () => {
   test("コンポーネント内に必要な要素が存在する", () => {
@@ -74,14 +72,10 @@ describe("ShopSearchForm", () => {
 });
 
 function renderForm() {
-  const backendAccess: BackendAccessContextType = {
-    authStatus: { status: "guest" },
-    logout: vi.fn(),
+  const backendAccess = createMockBackendAccessState({
     getAreas: () => Promise.resolve(sampleAreas),
-    getGenres: () => Promise.resolve(sampleGenres),
-    addFavorite: vi.fn(),
-    removeFavorite: vi.fn()
-  };
+    getGenres: () => Promise.resolve(sampleGenres)
+  });
 
   const shopSearch = {
     params: { area: null, genre: null, search: "" },
