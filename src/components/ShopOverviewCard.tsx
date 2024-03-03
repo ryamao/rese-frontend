@@ -2,12 +2,13 @@ import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
+import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopOverviewProps {
   imageUrl: string;
   name: string;
-  area: string;
-  genre: string;
+  area: { id: number; name: string };
+  genre: { id: number; name: string };
   favoriteStatus: "unknown" | "marked" | "unmarked";
 }
 
@@ -18,20 +19,26 @@ export function ShopOverviewCard({
   genre,
   favoriteStatus
 }: ShopOverviewProps) {
+  const { setArea, setGenre } = useShopSearchContext();
+
   return (
     <div className={whitePanel}>
-      <Image src={imageUrl} alt={genre} />
+      <Image src={imageUrl} alt={genre.name} />
       <Content>
         <Name>{name}</Name>
         <TagLayout>
-          <Tag type="button">#{area}</Tag>
-          <Tag type="button">#{genre}</Tag>
+          <Tag type="button" onClick={() => setArea(area.id)}>
+            #{area.name}
+          </Tag>
+          <Tag type="button" onClick={() => setGenre(genre.id)}>
+            #{genre.name}
+          </Tag>
         </TagLayout>
         <ButtonLayout>
           <button type="button" className={blueButton}>
             詳しくみる
           </button>
-          <FavoriteButton isFavorite={favoriteStatus === "marked"} />
+          <FavoriteButton favoriteStatus={favoriteStatus} />
         </ButtonLayout>
       </Content>
     </div>

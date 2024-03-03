@@ -62,8 +62,8 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
               key={shop.id}
               imageUrl={shop.image_url}
               name={shop.name}
-              area={shop.area.name}
-              genre={shop.genre.name}
+              area={shop.area}
+              genre={shop.genre}
               favoriteStatus={shop.favorite_status}
             />
           ))}
