@@ -13,7 +13,7 @@ import {
   GetShopsResult
 } from "../Client";
 import { SearchForm } from "../components/SearchForm";
-import { ShopOverview } from "../components/ShopOverview";
+import { ShopOverviewCard } from "../components/ShopOverviewCard";
 import {
   ShopSearchContext,
   ShopSearchParams,
@@ -58,7 +58,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
         <SearchForm areas={areas} genres={genres} />
         <ShopLayout>
           {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
-            <ShopOverview
+            <ShopOverviewCard
               key={shop.id}
               imageUrl={shop.image_url}
               name={shop.name}

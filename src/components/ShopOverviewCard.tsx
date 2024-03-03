@@ -11,7 +11,7 @@ export interface ShopOverviewProps {
   favoriteStatus: "unknown" | "marked" | "unmarked";
 }
 
-export function ShopOverview({
+export function ShopOverviewCard({
   imageUrl,
   name,
   area,
@@ -19,7 +19,7 @@ export function ShopOverview({
   favoriteStatus
 }: ShopOverviewProps) {
   return (
-    <Card className={whitePanel}>
+    <div className={whitePanel}>
       <Image src={imageUrl} alt={genre} />
       <Content>
         <Name>{name}</Name>
@@ -34,20 +34,18 @@ export function ShopOverview({
           <FavoriteButton isFavorite={favoriteStatus === "marked"} />
         </ButtonLayout>
       </Content>
-    </Card>
+    </div>
   );
 }
 
-const Card = styled.div``;
-
 const Image = styled.img`
   width: 100%;
-  border-radius: 0.25rem 0.25rem 0 0;
   object-fit: cover;
+  border-radius: 0.25rem 0.25rem 0 0;
 `;
 
 const Content = styled.div`
-  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
 `;
 
 const Name = styled.h2`
@@ -62,16 +60,16 @@ const TagLayout = styled.div`
 `;
 
 const Tag = styled.button`
-  border: none;
-  background-color: transparent;
-  font-size: 0.9rem;
   padding: 0;
+  font-size: 0.9rem;
   cursor: pointer;
+  background-color: transparent;
+  border: none;
 `;
 
 const ButtonLayout = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-top: 1rem;
 `;
