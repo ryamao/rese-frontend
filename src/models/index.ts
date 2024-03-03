@@ -48,3 +48,5 @@ export * from "./searchQueryParameter";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from "./getShops200ResponseAllOfDataItemArea";
+export * from "./getShops200ResponseAllOfDataItemGenre";

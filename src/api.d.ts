@@ -245,8 +245,16 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
-            area: string;
-            genre: string;
+            area: {
+              /** Format: int64 */
+              id: number;
+              name: string;
+            };
+            genre: {
+              /** Format: int64 */
+              id: number;
+              name: string;
+            };
             /** Format: uri */
             image_url: string;
             /** @enum {string} */

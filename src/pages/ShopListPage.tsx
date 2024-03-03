@@ -6,7 +6,12 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
-import { Client, GetAreasResult, GetGenresResult } from "../Client";
+import {
+  Client,
+  GetAreasResult,
+  GetGenresResult,
+  GetShopsResult
+} from "../Client";
 import { SearchForm, ShopSearchQuery } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
 
@@ -18,15 +23,6 @@ export interface ShopListPageProps {
 export interface ShopListPageLoaderData {
   areas: GetAreasResult["areas"];
   genres: GetGenresResult["genres"];
-}
-
-interface ShopOverview {
-  id: number;
-  name: string;
-  area: string;
-  genre: string;
-  image_url: string;
-  favorite_status: "unknown" | "marked" | "unmarked";
 }
 
 export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
@@ -72,8 +68,8 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
             key={shop.id}
             imageUrl={shop.image_url}
             name={shop.name}
-            area={shop.area}
-            genre={shop.genre}
+            area={shop.area.name}
+            genre={shop.genre.name}
             favoriteStatus={shop.favorite_status}
           />
         ))}
@@ -96,13 +92,13 @@ function usePageQuery(httpClient: Client) {
 }
 
 function searchByQuery(
-  shops: ShopOverview[],
+  shops: GetShopsResult["data"],
   { area = "", genre = "", search }: ShopSearchQuery
 ) {
   return shops.filter((shop) => {
     return (
-      (area === "" || shop.area === area) &&
-      (genre === "" || shop.genre === genre) &&
+      (area === "" || shop.area.name === area) &&
+      (genre === "" || shop.genre.name === genre) &&
       (search === "" || shop.name.includes(search))
     );
   });

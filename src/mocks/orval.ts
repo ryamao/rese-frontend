@@ -229,13 +229,21 @@ export const getGetShopsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1
   ).map(() => ({
-    area: faker.word.sample(),
+    area: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
     favorite_status: faker.helpers.arrayElement([
       "unknown",
       "marked",
       "unmarked"
     ] as const),
-    genre: faker.word.sample(),
+    genre: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
     id: faker.number.int({ min: undefined, max: undefined }),
     image_url: faker.internet.url(),
     name: faker.word.sample(),
