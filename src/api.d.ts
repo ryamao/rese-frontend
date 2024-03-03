@@ -31,6 +31,11 @@ export interface paths {
      * @description ユーザー(一般会員)が飲食店をお気に入り登録する
      */
     post: operations["post-customer-shop-favorite"];
+    /**
+     * お気に入り解除
+     * @description ユーザー(一般会員)が飲食店のお気に入りを解除する
+     */
+    delete: operations["delete-customer-shop-favorite"];
   };
   "/genres": {
     /**
@@ -385,6 +390,25 @@ export interface operations {
     };
     responses: {
       201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["unprocessable-entity"];
+    };
+  };
+  /**
+   * お気に入り解除
+   * @description ユーザー(一般会員)が飲食店のお気に入りを解除する
+   */
+  "delete-customer-shop-favorite": {
+    parameters: {
+      path: {
+        user: components["parameters"]["user-id"];
+        shop: components["parameters"]["shop-id"];
+      };
+    };
+    responses: {
+      204: components["responses"]["no-content"];
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
