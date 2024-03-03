@@ -34,7 +34,7 @@ const router = createBrowserRouter(
 
         <Route element={<GuestsOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage client={httpClient} />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
 
         <Route element={<CustomersOnlyRoute />}>
