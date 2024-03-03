@@ -21,15 +21,10 @@ import { AuthContextProvider } from "./providers/AuthContextProvider";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
-import { UseAuthStatus } from "./routes/UseAuthStatus";
 
 const httpClient = new Client();
 
 const queryClient = new QueryClient();
-
-async function getAuthStatus() {
-  return httpClient.getAuthStatus();
-}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,9 +39,7 @@ const router = createBrowserRouter(
           />
           <Route path="/login" element={<LoginPage client={httpClient} />} />
         </Route>
-      </Route>
 
-      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
         <Route element={<CustomersOnlyRoute />}>
           <Route path="thanks" element={<ThanksPage />} />
           <Route

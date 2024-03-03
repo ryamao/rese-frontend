@@ -1,21 +1,19 @@
-import { useContext } from "react";
-
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { AuthContext } from "../providers/AuthContextProvider";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export function CustomersOnlyRoute() {
-  const auth = useContext(AuthContext).authStatus;
+  const { authStatus } = useBackendAccessContext();
 
   const location = useLocation();
 
-  switch (auth?.status) {
+  switch (authStatus?.status) {
     case null:
     case "guest":
       return (
         <Navigate to="/login" state={{ from: location }} replace={false} />
       );
     case "customer":
-      return <Outlet context={{ id: auth.id }} />;
+      return <Outlet context={{ id: authStatus.id }} />;
   }
 }
