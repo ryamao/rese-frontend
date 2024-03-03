@@ -19,8 +19,8 @@ import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
 import { AuthContextProvider } from "./providers/AuthContextProvider";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
-import { CustomersOnly } from "./routes/CustomersOnly";
-import { GuestsOnly } from "./routes/GuestsOnly";
+import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
+import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 import { UseAuthStatus } from "./routes/UseAuthStatus";
 
 const httpClient = new Client();
@@ -37,7 +37,7 @@ const router = createBrowserRouter(
       <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage />} />
 
-        <Route element={<GuestsOnly />}>
+        <Route element={<GuestsOnlyRoute />}>
           <Route
             path="/register"
             element={<RegisterPage client={httpClient} />}
@@ -47,7 +47,7 @@ const router = createBrowserRouter(
       </Route>
 
       <Route element={<UseAuthStatus />} loader={getAuthStatus}>
-        <Route element={<CustomersOnly />}>
+        <Route element={<CustomersOnlyRoute />}>
           <Route path="thanks" element={<ThanksPage />} />
           <Route
             path="mypage"

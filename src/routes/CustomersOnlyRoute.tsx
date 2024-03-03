@@ -4,7 +4,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { AuthContext } from "../providers/AuthContextProvider";
 
-export function CustomersOnly() {
+export function CustomersOnlyRoute() {
   const auth = useContext(AuthContext).authStatus;
 
   const location = useLocation();

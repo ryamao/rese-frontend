@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
-export function GuestsOnly() {
+export function GuestsOnlyRoute() {
   const { authStatus } = useBackendAccessContext();
 
   const location = useLocation();
