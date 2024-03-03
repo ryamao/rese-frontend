@@ -2,7 +2,10 @@ import { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within } from "@storybook/test";
 
 import { SearchForm } from "./SearchForm";
-import { ShopSearchContextProvider } from "../contexts/ShopSearchContext";
+import {
+  ShopSearchContext,
+  useShopSearchState
+} from "../contexts/ShopSearchContext";
 
 const meta = {
   title: "Components/Shop/SearchForm",
@@ -23,11 +26,14 @@ const meta = {
     ]
   },
   decorators: [
-    (Story) => (
-      <ShopSearchContextProvider>
-        <Story />
-      </ShopSearchContextProvider>
-    )
+    (Story) => {
+      const value = useShopSearchState();
+      return (
+        <ShopSearchContext.Provider value={value}>
+          <Story />
+        </ShopSearchContext.Provider>
+      );
+    }
   ]
 } satisfies Meta<typeof SearchForm>;
 

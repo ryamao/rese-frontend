@@ -1,11 +1,15 @@
-import { useContext } from "react";
-
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
-import { ShopSearchContext } from "../contexts/ShopSearchContext";
+import { useShopSearchContext } from "../contexts/ShopSearchContext";
+
+export interface ShopSearchQuery {
+  area: string;
+  genre: string;
+  search: string;
+}
 
 export interface SearchFormProps {
   areas: { id: number; name: string }[];
@@ -13,7 +17,7 @@ export interface SearchFormProps {
 }
 
 export function SearchForm({ areas, genres }: SearchFormProps) {
-  const { query, setArea, setGenre, setSearch } = useContext(ShopSearchContext);
+  const { params, setArea, setGenre, setSearch } = useShopSearchContext();
 
   return (
     <form className={whitePanel} onSubmit={(e) => e.preventDefault()}>
@@ -22,8 +26,10 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
           <ComboBox
             aria-label="Area"
             name="area"
-            value={query.area}
-            onChange={(e) => setArea(e.target.value)}
+            value={params.area ? String(params.area) : ""}
+            onChange={(e) =>
+              setArea(e.target.value ? Number(e.target.value) : null)
+            }
           >
             <option value="" defaultChecked>
               All area
@@ -40,8 +46,10 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
           <ComboBox
             aria-label="Genre"
             name="genre"
-            value={query.genre}
-            onChange={(e) => setGenre(e.target.value)}
+            value={params.genre ? String(params.genre) : ""}
+            onChange={(e) =>
+              setGenre(e.target.value ? Number(e.target.value) : null)
+            }
           >
             <option value="" defaultChecked>
               All genre
@@ -61,7 +69,7 @@ export function SearchForm({ areas, genres }: SearchFormProps) {
             aria-label="Shop Name"
             name="search"
             placeholder="Search ..."
-            value={query.search}
+            value={params.search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </Field>
@@ -87,14 +95,14 @@ const Field = styled.div`
 `;
 
 const ComboBox = styled.select`
-  border: none;
   padding: 0.375rem 0.25rem;
+  border: none;
 `;
 
 const SearchBox = styled.input`
-  border: none;
-  padding: 0.375rem 0.5rem;
   width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: none;
 `;
 
 const searchIconStyle = css`

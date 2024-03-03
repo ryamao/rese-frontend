@@ -4,24 +4,16 @@ import userEvent from "@testing-library/user-event";
 import { SearchForm } from "./SearchForm";
 import {
   ShopSearchContext,
-  ShopSearchContextProvider
+  useShopSearchState
 } from "../contexts/ShopSearchContext";
 
-function createMock() {
-  const mockValue = {
-    query: {
-      search: ""
-    },
-    setArea: vi.fn(),
-    setGenre: vi.fn(),
-    setSearch: vi.fn()
-  };
-  const MockProvider = ({ children }: { children: React.ReactNode }) => (
-    <ShopSearchContext.Provider value={mockValue}>
+function Wrapper({ children }: { children: React.ReactNode }) {
+  const value = useShopSearchState();
+  return (
+    <ShopSearchContext.Provider value={value}>
       {children}
     </ShopSearchContext.Provider>
   );
-  return { mockValue, MockProvider };
 }
 
 describe("SearchForm", () => {
@@ -36,7 +28,7 @@ describe("SearchForm", () => {
 
   test("コンポーネント内に必要な要素が存在する", () => {
     const { getByRole } = render(<SearchForm areas={areas} genres={genres} />, {
-      wrapper: ShopSearchContextProvider
+      wrapper: Wrapper
     });
 
     const areaSelect = getByRole("combobox", { name: "Area" });
@@ -49,53 +41,72 @@ describe("SearchForm", () => {
   });
 
   test("エリアセレクト", async () => {
-    const { mockValue, MockProvider } = createMock();
+    const value = {
+      params: { area: null, genre: null, search: "" },
+      setArea: vi.fn(),
+      setGenre: vi.fn(),
+      setSearch: vi.fn()
+    };
 
-    const { getByRole } = render(<SearchForm areas={areas} genres={genres} />, {
-      wrapper: MockProvider
-    });
+    const { getByRole } = render(
+      <ShopSearchContext.Provider value={value}>
+        <SearchForm areas={areas} genres={genres} />
+      </ShopSearchContext.Provider>
+    );
 
     const areaSelect = getByRole("combobox", { name: "Area" });
 
     await userEvent.selectOptions(areaSelect, "Area1");
 
     await waitFor(() => {
-      expect(areaSelect).toHaveValue("1");
-      expect(mockValue.setArea).toHaveBeenCalled();
+      expect(value.setArea).toHaveBeenCalledWith(1);
     });
   });
 
   test("ジャンルセレクト", async () => {
-    const { mockValue, MockProvider } = createMock();
+    const value = {
+      params: { area: null, genre: null, search: "" },
+      setArea: vi.fn(),
+      setGenre: vi.fn(),
+      setSearch: vi.fn()
+    };
 
-    const { getByRole } = render(<SearchForm areas={areas} genres={genres} />, {
-      wrapper: MockProvider
-    });
+    const { getByRole } = render(
+      <ShopSearchContext.Provider value={value}>
+        <SearchForm areas={areas} genres={genres} />
+      </ShopSearchContext.Provider>
+    );
 
     const genreSelect = getByRole("combobox", { name: "Genre" });
 
-    await userEvent.selectOptions(genreSelect, "Genre1");
+    await userEvent.selectOptions(genreSelect, "Genre2");
 
     await waitFor(() => {
-      expect(genreSelect).toHaveValue("1");
-      expect(mockValue.setGenre).toHaveBeenCalled();
+      expect(value.setGenre).toHaveBeenCalledWith(2);
     });
   });
 
-  test.skip("検索フォーム", async () => {
-    const { mockValue, MockProvider } = createMock();
+  test("検索フォーム", async () => {
+    const value = {
+      params: { area: null, genre: null, search: "" },
+      setArea: vi.fn(),
+      setGenre: vi.fn(),
+      setSearch: vi.fn()
+    };
 
-    const { getByRole } = render(<SearchForm areas={areas} genres={genres} />, {
-      wrapper: MockProvider
-    });
+    const { getByRole } = render(
+      <ShopSearchContext.Provider value={value}>
+        <SearchForm areas={areas} genres={genres} />
+      </ShopSearchContext.Provider>
+    );
 
     const searchField = getByRole("searchbox", { name: "Shop Name" });
 
-    await userEvent.type(searchField, "test");
+    await userEvent.type(searchField, "abc");
 
     await waitFor(() => {
-      expect(searchField).toHaveValue("test");
-      expect(mockValue.setSearch).toHaveBeenCalled();
+      expect(value.setSearch).toHaveBeenCalledWith("a");
+      expect(value.setSearch).toHaveBeenCalledTimes(3);
     });
   });
 });

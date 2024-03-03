@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type PostAuthLogin422ResponseErrorsItem = {
-  email?: string[];
-  password?: string[];
-};
+/**
+ * 店名検索キーワード
+ */
+export type SearchQueryParameter = string;

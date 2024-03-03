@@ -1,15 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer } from "react";
 
-export interface ShopSearchQuery {
-  area?: string;
-  genre?: string;
+export interface ShopSearchParams {
+  area: number | null;
+  genre: number | null;
   search: string;
 }
 
 export interface ShopSearchContextType {
-  query: ShopSearchQuery;
-  setArea: (area: string) => void;
-  setGenre: (genre: string) => void;
+  params: ShopSearchParams;
+  setArea: (area: number | null) => void;
+  setGenre: (genre: number | null) => void;
   setSearch: (search: string) => void;
 }
 
@@ -20,40 +20,50 @@ export const ShopSearchContext = createContext<ShopSearchContextType>(
 // eslint-disable-next-line react-refresh/only-export-components
 export const useShopSearchContext = () => useContext(ShopSearchContext);
 
-export function ShopSearchContextProvider({
-  children
-}: {
-  children: React.ReactNode;
-}) {
-  const [query, setQuery] = useState<ShopSearchQuery>({
+// eslint-disable-next-line react-refresh/only-export-components
+export function useShopSearchState(): ShopSearchContextType {
+  const [params, dispatch] = useReducer(shopSearchReducer, {
+    area: null,
+    genre: null,
     search: ""
   });
 
-  const value = {
-    query,
-    setArea: (area: string) => {
-      setQuery((prev) => ({
-        ...prev,
-        area
-      }));
-    },
-    setGenre: (genre: string) => {
-      setQuery((prev) => ({
-        ...prev,
-        genre
-      }));
-    },
-    setSearch: (search: string) => {
-      setQuery((prev) => ({
-        ...prev,
-        search
-      }));
-    }
+  return {
+    params,
+    setArea: (area: number | null) =>
+      dispatch({ type: "SET_AREA", payload: area }),
+    setGenre: (genre: number | null) =>
+      dispatch({ type: "SET_GENRE", payload: genre }),
+    setSearch: (search: string) =>
+      dispatch({ type: "SET_SEARCH", payload: search })
   };
+}
 
-  return (
-    <ShopSearchContext.Provider value={value}>
-      {children}
-    </ShopSearchContext.Provider>
-  );
+type ShopSearchAction =
+  | { type: "SET_AREA"; payload: number | null }
+  | { type: "SET_GENRE"; payload: number | null }
+  | { type: "SET_SEARCH"; payload: string };
+
+function shopSearchReducer(
+  state: ShopSearchParams,
+  action: ShopSearchAction
+): ShopSearchParams {
+  console.log(state, action);
+  switch (action.type) {
+    case "SET_AREA":
+      return {
+        ...state,
+        area: action.payload
+      };
+    case "SET_GENRE":
+      return {
+        ...state,
+        genre: action.payload
+      };
+    case "SET_SEARCH":
+      return {
+        ...state,
+        search: action.payload
+      };
+  }
 }

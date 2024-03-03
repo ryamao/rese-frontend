@@ -6,8 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type PostAuthRegister422ResponseErrorsItem = {
-  email?: string[];
-  name?: string[];
-  password?: string[];
-};
+/**
+ * 現在のページの最後のレコード番号
+ */
+export type PaginationMetaTo = null | number;

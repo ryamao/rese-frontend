@@ -1,43 +1,34 @@
 import { useContext, useState } from "react";
 
+import { css } from "@emotion/css";
+import { Global, css as reactCss } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Outlet, useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { Client, GetAuthStatusResult } from "../Client";
 import { MenuButton } from "../components/MenuButton";
 import { MenuButtonType, Overlay } from "../components/Overlay";
 import { AuthContext } from "../providers/AuthContextProvider";
 
-export interface AppLayoutProps {
-  httpClient: Client;
+export type LayoutType = "normal" | "search" | "detail";
+
+export interface PageBaseProps {
+  children: React.ReactNode;
+  wrapperStyle?: string;
+  postLogout: () => Promise<void>;
 }
 
-export function AppLayout({ httpClient }: AppLayoutProps) {
-  const authStatus = useLoaderData() as GetAuthStatusResult;
-  const authContext = useContext(AuthContext);
+export function PageBase({
+  children,
+  wrapperStyle,
+  postLogout
+}: PageBaseProps) {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const { authStatus, setGuest } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  if (authContext.authStatus === null) {
-    switch (authStatus.status) {
-      case "guest":
-        authContext.setGuest();
-        break;
-      case "customer":
-        authContext.setCustomer(authStatus.id);
-        break;
-    }
-  }
-
   async function logout() {
-    const { error } = await httpClient.postAuthLogout();
-    if (error) {
-      throw new Error("ログアウトに失敗しました");
-    }
-    authContext.setGuest();
-    setShowOverlay(false);
-    navigate("/login");
+    await postLogout();
+    setGuest();
   }
 
   async function handleClickMenuButton(type: MenuButtonType) {
@@ -54,7 +45,8 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
         navigate("/login");
         break;
       case "logout":
-        logout();
+        await logout();
+        navigate("/login");
         break;
       case "mypage":
         navigate("/mypage");
@@ -66,24 +58,42 @@ export function AppLayout({ httpClient }: AppLayoutProps) {
 
   return (
     <>
-      <Header>
-        <HeaderInner>
-          <MenuButton onClick={() => setShowOverlay(true)} />
-          <Title>Rese</Title>
-        </HeaderInner>
-      </Header>
-      <Main>
-        <Outlet />
-      </Main>
+      <Global styles={global} />
+      <div className={wrapperStyle ?? normalStyle}>
+        <Header>
+          <HeaderInner>
+            <MenuButton onClick={() => setShowOverlay(true)} />
+            <Title>Rese</Title>
+          </HeaderInner>
+        </Header>
+        {children}
+      </div>
       {showOverlay && (
         <Overlay
-          authStatus={authContext.authStatus?.status || "guest"}
+          authStatus={authStatus?.status ?? "guest"}
           onClickMenuButton={handleClickMenuButton}
         />
       )}
     </>
   );
 }
+
+const global = reactCss`
+  body {
+    margin: 0;
+    background-color: #eee;
+  }
+`;
+
+const normalStyle = css`
+  max-width: 1230px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  row-gap: 2rem;
+  padding: 2rem;
+`;
 
 const Header = styled.header`
   display: flex;
@@ -95,8 +105,6 @@ const HeaderInner = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 1230px;
-  padding: 2rem;
 `;
 
 const Title = styled.h1`
@@ -104,10 +112,4 @@ const Title = styled.h1`
   margin: 0;
   font-size: 1.5rem;
   color: #315dff;
-`;
-
-const Main = styled.main`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;

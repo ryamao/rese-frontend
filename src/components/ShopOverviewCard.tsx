@@ -2,50 +2,57 @@ import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
+import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopOverviewProps {
   imageUrl: string;
   name: string;
-  area: string;
-  genre: string;
+  area: { id: number; name: string };
+  genre: { id: number; name: string };
+  favoriteStatus: "unknown" | "marked" | "unmarked";
 }
 
-export function ShopOverview({
+export function ShopOverviewCard({
   imageUrl,
   name,
   area,
-  genre
+  genre,
+  favoriteStatus
 }: ShopOverviewProps) {
+  const { setArea, setGenre } = useShopSearchContext();
+
   return (
-    <Card className={whitePanel}>
-      <Image src={imageUrl} alt={genre} />
+    <div className={whitePanel}>
+      <Image src={imageUrl} alt={genre.name} />
       <Content>
         <Name>{name}</Name>
         <TagLayout>
-          <Tag type="button">#{area}</Tag>
-          <Tag type="button">#{genre}</Tag>
+          <Tag type="button" onClick={() => setArea(area.id)}>
+            #{area.name}
+          </Tag>
+          <Tag type="button" onClick={() => setGenre(genre.id)}>
+            #{genre.name}
+          </Tag>
         </TagLayout>
         <ButtonLayout>
           <button type="button" className={blueButton}>
             詳しくみる
           </button>
-          <FavoriteButton isFavorite={false} />
+          <FavoriteButton favoriteStatus={favoriteStatus} />
         </ButtonLayout>
       </Content>
-    </Card>
+    </div>
   );
 }
 
-const Card = styled.div``;
-
 const Image = styled.img`
   width: 100%;
-  border-radius: 0.25rem 0.25rem 0 0;
   object-fit: cover;
+  border-radius: 0.25rem 0.25rem 0 0;
 `;
 
 const Content = styled.div`
-  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
 `;
 
 const Name = styled.h2`
@@ -60,16 +67,16 @@ const TagLayout = styled.div`
 `;
 
 const Tag = styled.button`
-  border: none;
-  background-color: transparent;
-  font-size: 0.9rem;
   padding: 0;
+  font-size: 0.9rem;
   cursor: pointer;
+  background-color: transparent;
+  border: none;
 `;
 
 const ButtonLayout = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-top: 1rem;
 `;
