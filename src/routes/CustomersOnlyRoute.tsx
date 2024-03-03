@@ -14,6 +14,6 @@ export function CustomersOnlyRoute() {
         <Navigate to="/login" state={{ from: location }} replace={false} />
       );
     case "customer":
-      return <Outlet context={{ id: authStatus.id }} />;
+      return <Outlet />;
   }
 }
