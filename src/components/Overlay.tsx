@@ -12,7 +12,7 @@ export type MenuButtonType =
 
 export interface OverlayProps {
   authStatus: "guest" | "customer";
-  onClickMenuButton: (type: MenuButtonType) => void;
+  onClickMenuButton?: (type: MenuButtonType) => void;
 }
 
 export function Overlay(props: OverlayProps) {
@@ -21,7 +21,7 @@ export function Overlay(props: OverlayProps) {
       <OverlayHeader>
         <MenuButton
           isMenuOpened
-          onClick={() => props.onClickMenuButton("close")}
+          onClick={() => props.onClickMenuButton?.("close")}
         />
       </OverlayHeader>
       <OverlayContent>{getLinks(props)}</OverlayContent>
@@ -41,13 +41,13 @@ function getLinks({ authStatus, onClickMenuButton }: OverlayProps) {
 function linksForGuest(onClickMenuButton: OverlayProps["onClickMenuButton"]) {
   return (
     <>
-      <Button type="button" onClick={() => onClickMenuButton("home")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("home")}>
         Home
       </Button>
-      <Button type="button" onClick={() => onClickMenuButton("register")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("register")}>
         Registration
       </Button>
-      <Button type="button" onClick={() => onClickMenuButton("login")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("login")}>
         Login
       </Button>
     </>
@@ -59,13 +59,13 @@ function linksForCustomer(
 ) {
   return (
     <>
-      <Button type="button" onClick={() => onClickMenuButton("home")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("home")}>
         Home
       </Button>
-      <Button type="button" onClick={() => onClickMenuButton("logout")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("logout")}>
         Logout
       </Button>
-      <Button type="button" onClick={() => onClickMenuButton("mypage")}>
+      <Button type="button" onClick={() => onClickMenuButton?.("mypage")}>
         Mypage
       </Button>
     </>
@@ -100,9 +100,9 @@ const OverlayContent = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #fff;
-  border: none;
   font-size: 1.6rem;
   color: #315dff;
   cursor: pointer;
+  background-color: #fff;
+  border: none;
 `;
