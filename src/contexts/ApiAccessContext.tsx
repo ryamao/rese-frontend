@@ -9,6 +9,7 @@ import {
 
 export interface ApiAccessContextType {
   authStatus: GetAuthStatusResult | null;
+  logout: () => Promise<void>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
@@ -35,6 +36,10 @@ export function useApiAccessState(httpClient: Client): ApiAccessContextType {
 
   return {
     authStatus,
+    logout: async () => {
+      await httpClient.postAuthLogout();
+      setAuthStatus({ status: "guest" });
+    },
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),
     addFavorite: (userId: number, shopId: number) =>

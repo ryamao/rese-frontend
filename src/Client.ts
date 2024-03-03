@@ -23,11 +23,6 @@ export type PostAuthLoginResult = {
   error?: api.components["responses"]["post-auth-login-422"]["content"]["application/json"];
 };
 
-export type PostAuthLogoutResult = {
-  data: undefined;
-  error?: string;
-};
-
 export type GetAuthStatusResult =
   | { status: "guest" }
   | { status: "customer"; id: number };
@@ -102,14 +97,15 @@ export class Client {
     }
   }
 
-  async postAuthLogout(): Promise<PostAuthLogoutResult> {
+  async postAuthLogout(): Promise<void> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      await this.client.POST("/auth/logout");
-      return { data: undefined, error: undefined };
+      const { error } = await this.client.POST("/auth/logout");
+      if (error) {
+        throw new Error(error);
+      }
     } catch (error) {
-      console.error(error);
-      return { data: undefined, error: String(error) };
+      throw new Error(String(error));
     }
   }
 
