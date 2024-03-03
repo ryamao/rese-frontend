@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { FavoriteButton } from "./FavoriteButton";
 
@@ -7,17 +8,27 @@ const meta = {
   component: FavoriteButton,
   tags: ["autodocs"],
   args: {
-    isFavorite: false
+    onClick: fn()
   }
 } satisfies Meta<typeof FavoriteButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const IsFavorite: Story = {
+export const Unknown: Story = {
   args: {
-    isFavorite: true
+    favoriteStatus: "unknown"
+  }
+};
+
+export const Marked: Story = {
+  args: {
+    favoriteStatus: "marked"
+  }
+};
+
+export const Unmarked: Story = {
+  args: {
+    favoriteStatus: "unmarked"
   }
 };
