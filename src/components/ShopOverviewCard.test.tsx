@@ -90,6 +90,7 @@ function renderCard(
 
   const apiAccess: ApiAccessContextType = {
     authStatus,
+    logout: vi.fn(),
     getAreas: vi.fn(),
     getGenres: vi.fn(),
     addFavorite: vi.fn(),

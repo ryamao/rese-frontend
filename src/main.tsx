@@ -12,7 +12,6 @@ import {
 
 import { Client } from "./Client";
 import { DashboardPage } from "./pages/DashboardPage";
-import { ErrorPage } from "./pages/ErrorPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
@@ -20,7 +19,6 @@ import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
 import { AuthContextProvider } from "./providers/AuthContextProvider";
 import { ApiAccessRoute } from "./routes/ApiAccessRoute";
-import { AppLayout } from "./routes/AppLayout";
 import { CustomersOnly } from "./routes/CustomersOnly";
 import { GuestsOnly } from "./routes/GuestsOnly";
 import { UseAuthStatus } from "./routes/UseAuthStatus";
@@ -47,29 +45,6 @@ const router = createBrowserRouter(
             element={<RegisterPage client={httpClient} />}
           />
           <Route path="/login" element={<LoginPage client={httpClient} />} />
-        </Route>
-
-        <Route element={<CustomersOnly />}>
-          <Route path="thanks" element={<ThanksPage />} />
-          <Route
-            path="mypage"
-            element={<DashboardPage client={httpClient} />}
-          />
-        </Route>
-      </Route>
-
-      <Route
-        path="/old"
-        element={<AppLayout httpClient={httpClient} />}
-        loader={() => httpClient.getAuthStatus()}
-        errorElement={<ErrorPage />}
-      >
-        <Route element={<GuestsOnly />}>
-          <Route
-            path="register"
-            element={<RegisterPage client={httpClient} />}
-          />
-          <Route path="login" element={<LoginPage client={httpClient} />} />
         </Route>
 
         <Route element={<CustomersOnly />}>

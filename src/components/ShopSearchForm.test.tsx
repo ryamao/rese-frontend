@@ -76,6 +76,7 @@ describe("ShopSearchForm", () => {
 function renderForm() {
   const apiAccess: ApiAccessContextType = {
     authStatus: { status: "guest" },
+    logout: vi.fn(),
     getAreas: () => Promise.resolve(sampleAreas),
     getGenres: () => Promise.resolve(sampleGenres),
     addFavorite: vi.fn(),
