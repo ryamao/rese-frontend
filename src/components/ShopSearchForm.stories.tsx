@@ -1,57 +1,42 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { userEvent, within } from "@storybook/test";
 
 import { ShopSearchForm } from "./ShopSearchForm";
+import { Client } from "../Client";
+import {
+  ApiAccessContext,
+  useApiAccessState
+} from "../contexts/ApiAccessContext";
 import {
   ShopSearchContext,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
+import { handlers } from "../mocks/handlers";
 
 const meta = {
   title: "Components/Shop/ShopSearchForm",
   component: ShopSearchForm,
   tags: ["autodocs"],
-  args: {
-    areas: [
-      { id: 1, name: "Area1" },
-      { id: 2, name: "Area2" },
-      { id: 3, name: "Area3" }
-    ],
-    genres: [
-      { id: 1, name: "Genre1" },
-      { id: 2, name: "Genre2" },
-      { id: 3, name: "Genre3" },
-      { id: 4, name: "Genre4" },
-      { id: 5, name: "Genre5" }
-    ]
-  },
   decorators: [
     (Story) => {
-      const value = useShopSearchState();
+      const apiAccess = useApiAccessState(new Client());
+      const shopSearch = useShopSearchState();
       return (
-        <ShopSearchContext.Provider value={value}>
-          <Story />
-        </ShopSearchContext.Provider>
+        <ApiAccessContext.Provider value={apiAccess}>
+          <ShopSearchContext.Provider value={shopSearch}>
+            <Story />
+          </ShopSearchContext.Provider>
+        </ApiAccessContext.Provider>
       );
     }
-  ]
+  ],
+  parameters: {
+    msw: {
+      handlers
+    }
+  }
 } satisfies Meta<typeof ShopSearchForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-
-export const Filled: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const areaSelect = canvas.getByRole("combobox", { name: "Area" });
-    const genreSelect = canvas.getByRole("combobox", { name: "Genre" });
-    const searchField = canvas.getByRole("searchbox", { name: "Shop Name" });
-
-    await userEvent.selectOptions(areaSelect, "2");
-    await userEvent.selectOptions(genreSelect, "3");
-    await userEvent.type(searchField, "test");
-  }
-};

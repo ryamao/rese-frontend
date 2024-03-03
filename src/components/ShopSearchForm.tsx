@@ -1,23 +1,25 @@
+import { useEffect, useState } from "react";
+
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
+import { GetAreasResult, GetGenresResult } from "../Client";
+import { useApiAccessContext } from "../contexts/ApiAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
-export interface ShopSearchQuery {
-  area: string;
-  genre: string;
-  search: string;
-}
-
-export interface SearchFormProps {
-  areas: { id: number; name: string }[];
-  genres: { id: number; name: string }[];
-}
-
-export function ShopSearchForm({ areas, genres }: SearchFormProps) {
+export function ShopSearchForm() {
+  const { getAreas, getGenres } = useApiAccessContext();
   const { params, setArea, setGenre, setSearch } = useShopSearchContext();
+  const [areas, setAreas] = useState<GetAreasResult["areas"]>([]);
+  const [genres, setGenres] = useState<GetGenresResult["genres"]>([]);
+
+  useEffect(() => {
+    getAreas().then(setAreas);
+    getGenres().then(setGenres);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form className={whitePanel} onSubmit={(e) => e.preventDefault()}>
@@ -27,13 +29,9 @@ export function ShopSearchForm({ areas, genres }: SearchFormProps) {
             aria-label="Area"
             name="area"
             value={params.area ? String(params.area) : ""}
-            onChange={(e) =>
-              setArea(e.target.value ? Number(e.target.value) : null)
-            }
+            onChange={(e) => setArea(stringToNumber(e.target.value))}
           >
-            <option value="" defaultChecked>
-              All area
-            </option>
+            <option defaultChecked>All area</option>
             {areas.map((area) => (
               <option key={area.id} value={area.id}>
                 {area.name}
@@ -47,13 +45,9 @@ export function ShopSearchForm({ areas, genres }: SearchFormProps) {
             aria-label="Genre"
             name="genre"
             value={params.genre ? String(params.genre) : ""}
-            onChange={(e) =>
-              setGenre(e.target.value ? Number(e.target.value) : null)
-            }
+            onChange={(e) => setGenre(stringToNumber(e.target.value))}
           >
-            <option value="" defaultChecked>
-              All genre
-            </option>
+            <option defaultChecked>All genre</option>
             {genres.map((genre) => (
               <option key={genre.id} value={genre.id}>
                 {genre.name}
@@ -76,6 +70,11 @@ export function ShopSearchForm({ areas, genres }: SearchFormProps) {
       </Inner>
     </form>
   );
+}
+
+function stringToNumber(value: string) {
+  const number = Number(value);
+  return isNaN(number) ? null : number;
 }
 
 const Inner = styled.div`
