@@ -19,6 +19,7 @@ import { RegisterPage } from "./pages/RegisterPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
 import { AuthContextProvider } from "./providers/AuthContextProvider";
+import { ApiAccessRoute } from "./routes/ApiAccessRoute";
 import { AppLayout } from "./routes/AppLayout";
 import { CustomersOnly } from "./routes/CustomersOnly";
 import { GuestsOnly } from "./routes/GuestsOnly";
@@ -48,7 +49,7 @@ async function loadShopListPageData() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
+      <Route element={<ApiAccessRoute />}>
         <Route
           path="/"
           element={
@@ -56,7 +57,9 @@ const router = createBrowserRouter(
           }
           loader={loadShopListPageData}
         />
+      </Route>
 
+      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
         <Route element={<GuestsOnly />}>
           <Route
             path="/register"

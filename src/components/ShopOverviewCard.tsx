@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
@@ -24,8 +26,9 @@ export function ShopOverviewCard({
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
   const { authStatus, addFavorite, removeFavorite } = useApiAccessContext();
+  const [favorite, setFavorite] = useState(favoriteStatus);
 
-  function handleClickFavoriteButton(
+  async function handleClickFavoriteButton(
     favoriteStatus: "unknown" | "marked" | "unmarked"
   ) {
     if (authStatus?.status !== "customer") {
@@ -34,10 +37,12 @@ export function ShopOverviewCard({
 
     switch (favoriteStatus) {
       case "marked":
-        removeFavorite(authStatus.id, id);
+        await removeFavorite(authStatus.id, id);
+        setFavorite("unmarked");
         break;
       case "unmarked":
-        addFavorite(authStatus.id, id);
+        await addFavorite(authStatus.id, id);
+        setFavorite("marked");
         break;
     }
   }
@@ -60,7 +65,7 @@ export function ShopOverviewCard({
             詳しくみる
           </button>
           <FavoriteButton
-            favoriteStatus={favoriteStatus}
+            favoriteStatus={favorite}
             onClick={handleClickFavoriteButton}
           />
         </ButtonLayout>
