@@ -36,9 +36,7 @@ const router = createBrowserRouter(
     <>
       <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage />} />
-      </Route>
 
-      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
         <Route element={<GuestsOnly />}>
           <Route
             path="/register"
@@ -46,7 +44,9 @@ const router = createBrowserRouter(
           />
           <Route path="/login" element={<LoginPage client={httpClient} />} />
         </Route>
+      </Route>
 
+      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
         <Route element={<CustomersOnly />}>
           <Route path="thanks" element={<ThanksPage />} />
           <Route

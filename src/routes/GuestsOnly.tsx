@@ -1,15 +1,13 @@
-import { useContext } from "react";
-
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { AuthContext } from "../providers/AuthContextProvider";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export function GuestsOnly() {
-  const auth = useContext(AuthContext).authStatus;
+  const { authStatus } = useBackendAccessContext();
 
   const location = useLocation();
 
-  switch (auth?.status) {
+  switch (authStatus?.status) {
     case null:
     case "customer":
       return (
