@@ -21,7 +21,6 @@ import {
 
 export interface ShopListPageProps {
   httpClient: Client;
-  postLogout: () => Promise<void>;
 }
 
 export interface ShopListPageLoaderData {
@@ -29,7 +28,7 @@ export interface ShopListPageLoaderData {
   genres: GetGenresResult["genres"];
 }
 
-export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
+export function ShopListPage({ httpClient }: ShopListPageProps) {
   const { data, isLoading, hasNextPage, fetchNextPage } =
     usePageQuery(httpClient);
   const shopSearchContextValue = useShopSearchState();
@@ -42,7 +41,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
 
   if (isLoading || !data) {
     return (
-      <PageBase postLogout={postLogout}>
+      <PageBase>
         <p>Loading...</p>
       </PageBase>
     );
@@ -51,7 +50,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   const shops = data.pages.flatMap((page) => page.data);
 
   return (
-    <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
+    <PageBase wrapperStyle={pageBaseStyle}>
       <ShopSearchContext.Provider value={shopSearchContextValue}>
         <ShopSearchForm />
         <ShopLayout>

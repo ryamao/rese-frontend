@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { css } from "@emotion/css";
 import { Global, css as reactCss } from "@emotion/react";
@@ -7,29 +7,19 @@ import { useNavigate } from "react-router-dom";
 
 import { MenuButton } from "../components/MenuButton";
 import { MenuButtonType, Overlay } from "../components/Overlay";
-import { AuthContext } from "../providers/AuthContextProvider";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export type LayoutType = "normal" | "search" | "detail";
 
 export interface PageBaseProps {
   children: React.ReactNode;
   wrapperStyle?: string;
-  postLogout: () => Promise<void>;
 }
 
-export function PageBase({
-  children,
-  wrapperStyle,
-  postLogout
-}: PageBaseProps) {
-  const [showOverlay, setShowOverlay] = useState<boolean>(false);
-  const { authStatus, setGuest } = useContext(AuthContext);
+export function PageBase({ children, wrapperStyle }: PageBaseProps) {
+  const { authStatus, logout } = useBackendAccessContext();
+  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(false);
   const navigate = useNavigate();
-
-  async function logout() {
-    await postLogout();
-    setGuest();
-  }
 
   async function handleClickMenuButton(type: MenuButtonType) {
     switch (type) {
@@ -53,7 +43,7 @@ export function PageBase({
         break;
     }
 
-    setShowOverlay(false);
+    setIsOverlayVisible(false);
   }
 
   return (
@@ -62,13 +52,13 @@ export function PageBase({
       <div className={wrapperStyle ?? normalStyle}>
         <Header>
           <HeaderInner>
-            <MenuButton onClick={() => setShowOverlay(true)} />
+            <MenuButton onClick={() => setIsOverlayVisible(true)} />
             <Title>Rese</Title>
           </HeaderInner>
         </Header>
         {children}
       </div>
-      {showOverlay && (
+      {isOverlayVisible && (
         <Overlay
           authStatus={authStatus?.status ?? "guest"}
           onClickMenuButton={handleClickMenuButton}
@@ -86,13 +76,13 @@ const global = reactCss`
 `;
 
 const normalStyle = css`
-  max-width: 1230px;
-  margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
   row-gap: 2rem;
+  max-width: 1230px;
   padding: 2rem;
+  margin: 0 auto;
 `;
 
 const Header = styled.header`

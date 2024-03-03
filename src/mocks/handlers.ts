@@ -1,5 +1,62 @@
 import { HttpResponse, http } from "msw";
 
+const sampleAreas = [
+  { id: 1, name: "東京都" },
+  { id: 2, name: "大阪府" },
+  { id: 3, name: "福岡県" }
+];
+
+const sampleGenres = [
+  { id: 1, name: "寿司" },
+  { id: 2, name: "焼肉" },
+  { id: 3, name: "居酒屋" },
+  { id: 4, name: "イタリアン" },
+  { id: 5, name: "ラーメン" }
+];
+
+const sampleShops = [
+  {
+    id: 1,
+    name: "飲食店1",
+    area: { id: 1, name: "東京都" },
+    genre: { id: 1, name: "寿司" },
+    image_url: "https://via.placeholder.com/800x500",
+    favorite_status: "unknown"
+  },
+  {
+    id: 2,
+    name: "飲食店2",
+    area: { id: 2, name: "大阪府" },
+    genre: { id: 2, name: "焼肉" },
+    image_url: "https://via.placeholder.com/800x500",
+    favorite_status: "unknown"
+  },
+  {
+    id: 3,
+    name: "飲食店3",
+    area: { id: 3, name: "福岡県" },
+    genre: { id: 3, name: "居酒屋" },
+    image_url: "https://via.placeholder.com/800x500",
+    favorite_status: "unknown"
+  },
+  {
+    id: 4,
+    name: "飲食店4",
+    area: { id: 1, name: "東京都" },
+    genre: { id: 4, name: "イタリアン" },
+    image_url: "https://via.placeholder.com/800x500",
+    favorite_status: "unknown"
+  },
+  {
+    id: 5,
+    name: "飲食店5",
+    area: { id: 2, name: "大阪府" },
+    genre: { id: 5, name: "ラーメン" },
+    image_url: "https://via.placeholder.com/800x500",
+    favorite_status: "unknown"
+  }
+];
+
 export const handlers = [
   http.get("*/sanctum/csrf-cookie", async () => {
     return HttpResponse.text(null, {
@@ -21,22 +78,49 @@ export const handlers = [
   }),
   http.get("*/areas", () => {
     return HttpResponse.json({
-      areas: [
-        { id: 1, name: "東京都" },
-        { id: 2, name: "大阪府" },
-        { id: 3, name: "福岡県" }
-      ]
+      areas: sampleAreas
     });
   }),
   http.get("*/genres", () => {
     return HttpResponse.json({
-      genres: [
-        { id: 1, name: "寿司" },
-        { id: 2, name: "焼肉" },
-        { id: 3, name: "居酒屋" },
-        { id: 4, name: "イタリアン" },
-        { id: 5, name: "ラーメン" }
-      ]
+      genres: sampleGenres
     });
+  }),
+  http.get("*/shops", () => {
+    return HttpResponse.json({
+      meta: {
+        current_page: 1,
+        from: 1,
+        last_page: 1,
+        path: "http://localhost:8000/shops",
+        per_page: 5,
+        to: 5,
+        total: 5
+      },
+      links: [
+        {
+          url: null,
+          label: "&laquo; Previous",
+          active: false
+        },
+        {
+          url: null,
+          label: "1",
+          active: false
+        },
+        {
+          url: null,
+          label: "Next &raquo;",
+          active: false
+        }
+      ],
+      data: sampleShops
+    });
+  }),
+  http.post("*/customer/{customerId}/shop/{shopId}/favorite", async () => {
+    return HttpResponse.text(null, { status: 204 });
+  }),
+  http.delete("*/customer/{customerId}/shop/{shopId}/favorite", async () => {
+    return HttpResponse.text(null, { status: 204 });
   })
 ];

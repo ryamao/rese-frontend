@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
 import { ShopListPage } from "./ShopListPage";
 import { Client } from "../Client";
-import { AuthContextProvider } from "../providers/AuthContextProvider";
+import {
+  BackendAccessContext,
+  useBackendAccessState
+} from "../contexts/BackendAccessContext";
+import { handlers } from "../mocks/handlers";
 
 const httpClient = new Client();
 
@@ -13,20 +17,28 @@ const meta = {
   component: ShopListPage,
   tags: ["autodocs"],
   parameters: {
-    layout: "fullscreen"
+    layout: "fullscreen",
+    msw: {
+      handlers
+    }
   },
   args: {
-    httpClient,
-    postLogout: fn()
+    httpClient
   },
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <AuthContextProvider>
-          <Story />
-        </AuthContextProvider>
-      </MemoryRouter>
-    )
+    (Story) => {
+      const queryClient = new QueryClient();
+      const backendAccess = useBackendAccessState(new Client());
+      return (
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <BackendAccessContext.Provider value={backendAccess}>
+              <Story />
+            </BackendAccessContext.Provider>
+          </QueryClientProvider>
+        </MemoryRouter>
+      );
+    }
   ]
 } satisfies Meta<typeof ShopListPage>;
 

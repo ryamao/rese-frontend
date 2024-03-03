@@ -3,9 +3,9 @@ import userEvent from "@testing-library/user-event";
 
 import { ShopOverviewCard } from "./ShopOverviewCard";
 import {
-  ApiAccessContext,
-  ApiAccessContextType
-} from "../contexts/ApiAccessContext";
+  BackendAccessContext,
+  BackendAccessContextType
+} from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
 
 describe("ShopOverviewCard", () => {
@@ -54,28 +54,28 @@ describe("ShopOverviewCard", () => {
   });
 
   test("お気に入りボタンがクリックされた時", async () => {
-    const { getByRole, apiAccess } = renderCard("unknown");
+    const { getByRole, backendAccess } = renderCard("unknown");
     const button = getByRole("button", { name: "お気に入り" });
     await userEvent.click(button);
-    expect(apiAccess.addFavorite).not.toHaveBeenCalled();
-    expect(apiAccess.removeFavorite).not.toHaveBeenCalled();
+    expect(backendAccess.addFavorite).not.toHaveBeenCalled();
+    expect(backendAccess.removeFavorite).not.toHaveBeenCalled();
   });
 
   test("お気に入り登録ボタンがクリックされた時", async () => {
-    const { getByRole, apiAccess } = renderCard("unmarked");
+    const { getByRole, backendAccess } = renderCard("unmarked");
     const button = getByRole("button", { name: "お気に入り登録" });
     await userEvent.click(button);
     await waitFor(() =>
-      expect(apiAccess.addFavorite).toHaveBeenCalledWith(111, 222)
+      expect(backendAccess.addFavorite).toHaveBeenCalledWith(111, 222)
     );
   });
 
   test("お気に入り解除ボタンがクリックされた時", async () => {
-    const { getByRole, apiAccess } = renderCard("marked");
+    const { getByRole, backendAccess } = renderCard("marked");
     const button = getByRole("button", { name: "お気に入り解除" });
     await userEvent.click(button);
     await waitFor(() =>
-      expect(apiAccess.removeFavorite).toHaveBeenCalledWith(111, 222)
+      expect(backendAccess.removeFavorite).toHaveBeenCalledWith(111, 222)
     );
   });
 });
@@ -83,13 +83,14 @@ describe("ShopOverviewCard", () => {
 function renderCard(
   favoriteStatus: "unknown" | "marked" | "unmarked" = "unknown"
 ) {
-  const authStatus: ApiAccessContextType["authStatus"] =
+  const authStatus: BackendAccessContextType["authStatus"] =
     favoriteStatus === "unknown"
       ? { status: "guest" }
       : { status: "customer", id: 111 };
 
-  const apiAccess: ApiAccessContextType = {
+  const backendAccess: BackendAccessContextType = {
     authStatus,
+    logout: vi.fn(),
     getAreas: vi.fn(),
     getGenres: vi.fn(),
     addFavorite: vi.fn(),
@@ -104,7 +105,7 @@ function renderCard(
   };
 
   const result = render(
-    <ApiAccessContext.Provider value={apiAccess}>
+    <BackendAccessContext.Provider value={backendAccess}>
       <ShopSearchContext.Provider value={shopSearch}>
         <ShopOverviewCard
           id={222}
@@ -115,8 +116,8 @@ function renderCard(
           favoriteStatus={favoriteStatus}
         />
       </ShopSearchContext.Provider>
-    </ApiAccessContext.Provider>
+    </BackendAccessContext.Provider>
   );
 
-  return { ...result, shopSearch, apiAccess };
+  return { ...result, shopSearch, backendAccess };
 }
