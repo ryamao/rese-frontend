@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ShopSearchForm } from "./ShopSearchForm";
 import { Client } from "../Client";
 import {
-  ApiAccessContext,
-  useApiAccessState
-} from "../contexts/ApiAccessContext";
+  BackendAccessContext,
+  useBackendAccessState
+} from "../contexts/BackendAccessContext";
 import {
   ShopSearchContext,
   useShopSearchState
@@ -18,14 +18,14 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => {
-      const apiAccess = useApiAccessState(new Client());
+      const backendAccess = useBackendAccessState(new Client());
       const shopSearch = useShopSearchState();
       return (
-        <ApiAccessContext.Provider value={apiAccess}>
+        <BackendAccessContext.Provider value={backendAccess}>
           <ShopSearchContext.Provider value={shopSearch}>
             <Story />
           </ShopSearchContext.Provider>
-        </ApiAccessContext.Provider>
+        </BackendAccessContext.Provider>
       );
     }
   ],

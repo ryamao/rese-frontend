@@ -4,9 +4,9 @@ import { MemoryRouter } from "react-router-dom";
 import { PageBase } from "./PageBase";
 import { Client } from "../Client";
 import {
-  ApiAccessContext,
-  useApiAccessState
-} from "../contexts/ApiAccessContext";
+  BackendAccessContext,
+  useBackendAccessState
+} from "../contexts/BackendAccessContext";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -24,12 +24,12 @@ const meta = {
   },
   decorators: [
     (Story) => {
-      const apiAccess = useApiAccessState(new Client());
+      const backendAccess = useBackendAccessState(new Client());
       return (
         <MemoryRouter>
-          <ApiAccessContext.Provider value={apiAccess}>
+          <BackendAccessContext.Provider value={backendAccess}>
             <Story />
-          </ApiAccessContext.Provider>
+          </BackendAccessContext.Provider>
         </MemoryRouter>
       );
     }

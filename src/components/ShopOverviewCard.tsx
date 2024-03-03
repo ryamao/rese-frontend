@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
-import { useApiAccessContext } from "../contexts/ApiAccessContext";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopOverviewProps {
@@ -25,7 +25,7 @@ export function ShopOverviewCard({
   favoriteStatus
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
-  const { authStatus, addFavorite, removeFavorite } = useApiAccessContext();
+  const { authStatus, addFavorite, removeFavorite } = useBackendAccessContext();
   const [favorite, setFavorite] = useState(favoriteStatus);
 
   async function handleClickFavoriteButton(

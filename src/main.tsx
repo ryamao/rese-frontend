@@ -18,7 +18,7 @@ import { RegisterPage } from "./pages/RegisterPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
 import { AuthContextProvider } from "./providers/AuthContextProvider";
-import { ApiAccessRoute } from "./routes/ApiAccessRoute";
+import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnly } from "./routes/CustomersOnly";
 import { GuestsOnly } from "./routes/GuestsOnly";
 import { UseAuthStatus } from "./routes/UseAuthStatus";
@@ -34,7 +34,7 @@ async function getAuthStatus() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route element={<ApiAccessRoute />}>
+      <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage httpClient={httpClient} />} />
       </Route>
 

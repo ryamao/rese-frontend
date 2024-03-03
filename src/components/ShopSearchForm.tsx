@@ -6,11 +6,11 @@ import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
 import { GetAreasResult, GetGenresResult } from "../Client";
-import { useApiAccessContext } from "../contexts/ApiAccessContext";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export function ShopSearchForm() {
-  const { getAreas, getGenres } = useApiAccessContext();
+  const { getAreas, getGenres } = useBackendAccessContext();
   const { params, setArea, setGenre, setSearch } = useShopSearchContext();
   const [areas, setAreas] = useState<GetAreasResult["areas"]>([]);
   const [genres, setGenres] = useState<GetGenresResult["genres"]>([]);

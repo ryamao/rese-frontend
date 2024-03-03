@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { MenuButton } from "../components/MenuButton";
 import { MenuButtonType, Overlay } from "../components/Overlay";
-import { useApiAccessContext } from "../contexts/ApiAccessContext";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export type LayoutType = "normal" | "search" | "detail";
 
@@ -17,7 +17,7 @@ export interface PageBaseProps {
 }
 
 export function PageBase({ children, wrapperStyle }: PageBaseProps) {
-  const { authStatus, logout } = useApiAccessContext();
+  const { authStatus, logout } = useBackendAccessContext();
   const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(false);
   const navigate = useNavigate();
 

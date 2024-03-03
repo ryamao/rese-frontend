@@ -7,7 +7,7 @@ import {
   GetGenresResult
 } from "../Client";
 
-export interface ApiAccessContextType {
+export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult | null;
   logout: () => Promise<void>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
@@ -16,15 +16,17 @@ export interface ApiAccessContextType {
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
 }
 
-export const ApiAccessContext = createContext<ApiAccessContextType>(
-  {} as ApiAccessContextType
+export const BackendAccessContext = createContext<BackendAccessContextType>(
+  {} as BackendAccessContextType
 );
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useApiAccessContext = () => useContext(ApiAccessContext);
+export const useBackendAccessContext = () => useContext(BackendAccessContext);
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useApiAccessState(httpClient: Client): ApiAccessContextType {
+export function useBackendAccessState(
+  httpClient: Client
+): BackendAccessContextType {
   const [authStatus, setAuthStatus] = useState<GetAuthStatusResult | null>(
     null
   );

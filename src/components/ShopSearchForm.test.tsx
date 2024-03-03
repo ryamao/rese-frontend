@@ -3,9 +3,9 @@ import userEvent from "@testing-library/user-event";
 
 import { ShopSearchForm } from "./ShopSearchForm";
 import {
-  ApiAccessContext,
-  ApiAccessContextType
-} from "../contexts/ApiAccessContext";
+  BackendAccessContext,
+  BackendAccessContextType
+} from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
 
 describe("ShopSearchForm", () => {
@@ -74,7 +74,7 @@ describe("ShopSearchForm", () => {
 });
 
 function renderForm() {
-  const apiAccess: ApiAccessContextType = {
+  const backendAccess: BackendAccessContextType = {
     authStatus: { status: "guest" },
     logout: vi.fn(),
     getAreas: () => Promise.resolve(sampleAreas),
@@ -91,14 +91,14 @@ function renderForm() {
   };
 
   const result = render(
-    <ApiAccessContext.Provider value={apiAccess}>
+    <BackendAccessContext.Provider value={backendAccess}>
       <ShopSearchContext.Provider value={shopSearch}>
         <ShopSearchForm />
       </ShopSearchContext.Provider>
-    </ApiAccessContext.Provider>
+    </BackendAccessContext.Provider>
   );
 
-  return { ...result, shopSearch, apiAccess };
+  return { ...result, shopSearch, backendAccess };
 }
 
 const sampleAreas = [
