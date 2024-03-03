@@ -1,27 +1,36 @@
-import { useContext } from "react";
-
+import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
-import { Client } from "../Client";
+import { PageBase } from "./PageBase";
 import { LoginForm } from "../components/LoginForm";
-import { AuthContext } from "../providers/AuthContextProvider";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
-export interface LoginPageProps {
-  client: Client;
-}
-
-export function LoginPage({ client }: LoginPageProps) {
-  const { setCustomer } = useContext(AuthContext);
+export function LoginPage() {
+  const { login } = useBackendAccessContext();
   const navigate = useNavigate();
 
-  async function handleLogin() {
-    const auth = await client.getAuthStatus();
-    if (auth.status !== "customer") {
-      throw new Error("ログインしていません");
+  async function handleLogin(email: string, password: string) {
+    const result = await login(email, password);
+    if (result.error) {
+      return result;
     }
-    setCustomer(auth.id);
+
     navigate("/mypage");
+
+    return { error: undefined };
   }
 
-  return <LoginForm client={client} onLogin={handleLogin} />;
+  return (
+    <PageBase>
+      <Main>
+        <LoginForm onLogin={handleLogin} />
+      </Main>
+    </PageBase>
+  );
 }
+
+const Main = styled.main`
+  display: flex;
+  justify-content: center;
+  padding: 10rem;
+`;

@@ -17,37 +17,26 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
-import { AuthContextProvider } from "./providers/AuthContextProvider";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
-import { CustomersOnly } from "./routes/CustomersOnly";
-import { GuestsOnly } from "./routes/GuestsOnly";
-import { UseAuthStatus } from "./routes/UseAuthStatus";
+import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
+import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 
 const httpClient = new Client();
 
 const queryClient = new QueryClient();
-
-async function getAuthStatus() {
-  return httpClient.getAuthStatus();
-}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage />} />
-      </Route>
 
-      <Route element={<UseAuthStatus />} loader={getAuthStatus}>
-        <Route element={<GuestsOnly />}>
-          <Route
-            path="/register"
-            element={<RegisterPage client={httpClient} />}
-          />
-          <Route path="/login" element={<LoginPage client={httpClient} />} />
+        <Route element={<GuestsOnlyRoute />}>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
 
-        <Route element={<CustomersOnly />}>
+        <Route element={<CustomersOnlyRoute />}>
           <Route path="thanks" element={<ThanksPage />} />
           <Route
             path="mypage"
@@ -71,10 +60,8 @@ const global = css`
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <Global styles={global} />
-        <RouterProvider router={router} />
-      </AuthContextProvider>
+      <Global styles={global} />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>
 );

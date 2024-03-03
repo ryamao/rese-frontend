@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { BrowserRouter } from "react-router-dom";
 
 import { LoginPage } from "./LoginPage";
-import { Client } from "../Client";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -21,9 +20,6 @@ const meta = {
     msw: {
       handlers
     }
-  },
-  args: {
-    client: new Client()
   }
 } satisfies Meta<typeof LoginPage>;
 
