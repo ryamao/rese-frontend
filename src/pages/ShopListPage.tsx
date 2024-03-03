@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
@@ -30,39 +31,33 @@ interface ShopOverview {
 
 export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   const { areas, genres } = useLoaderData() as ShopListPageLoaderData;
-  const [shops, setShops] = useState<Map<number, ShopOverview>>(new Map());
-  const [nextPage, setNextPage] = useState<number | null>(1);
   const [query, setQuery] = useState<ShopSearchQuery>({
     area: "",
     genre: "",
     search: ""
   });
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    usePageQuery(httpClient);
 
   function handleChangeSearchForm(query: ShopSearchQuery) {
     setQuery(query);
   }
 
   useEffect(() => {
-    console.log("Loading shops: " + nextPage);
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  }, [data, hasNextPage, fetchNextPage]);
 
-    if (!nextPage) return;
+  if (isLoading || !data) {
+    return (
+      <PageBase postLogout={postLogout}>
+        <p>Loading...</p>
+      </PageBase>
+    );
+  }
 
-    httpClient.getShops(nextPage).then(({ meta, data }) => {
-      setShops((prev) => {
-        const next = new Map(prev);
-        data.forEach((shop) => {
-          next.set(shop.id, shop);
-        });
-        return next;
-      });
-
-      if (nextPage < meta.last_page) {
-        setNextPage(nextPage + 1);
-      } else {
-        setNextPage(null);
-      }
-    });
-  }, [httpClient, nextPage]);
+  const shops = data.pages.flatMap((page) => page.data);
 
   return (
     <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
@@ -72,7 +67,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
         onChange={handleChangeSearchForm}
       />
       <ShopLayout>
-        {searchByQuery([...shops.values()], query).map((shop) => (
+        {searchByQuery(shops, query).map((shop) => (
           <ShopOverview
             key={shop.id}
             imageUrl={shop.image_url}
@@ -85,6 +80,19 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
       </ShopLayout>
     </PageBase>
   );
+}
+
+function usePageQuery(httpClient: Client) {
+  return useInfiniteQuery({
+    queryKey: ["shops"],
+    queryFn: ({ pageParam }) => httpClient.getShops(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      return lastPage.meta.current_page < lastPage.meta.last_page
+        ? lastPage.meta.current_page + 1
+        : undefined;
+    }
+  });
 }
 
 function searchByQuery(
@@ -101,13 +109,13 @@ function searchByQuery(
 }
 
 const pageBaseStyle = css`
-  max-width: 1230px;
-  margin: 0 auto;
   display: grid;
-  grid-template-columns: auto minmax(50%, 40rem);
   grid-template-rows: auto 1fr;
+  grid-template-columns: auto minmax(50%, 40rem);
   row-gap: 2rem;
+  max-width: 1230px;
   padding: 2rem;
+  margin: 0 auto;
 
   & > *:nth-child(1) {
     grid-column: 1 / 2;
@@ -121,25 +129,25 @@ const pageBaseStyle = css`
     grid-column: 1 / 3;
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (width <= 768px) {
     grid-template-rows: auto auto 1fr;
+    grid-template-columns: 1fr;
     row-gap: 1rem;
     padding: 1rem;
 
     & > *:nth-child(1) {
-      grid-column: 1 / 2;
       grid-row: 1 / 2;
+      grid-column: 1 / 2;
     }
 
     & > *:nth-child(2) {
-      grid-column: 1 / 2;
       grid-row: 2 / 3;
+      grid-column: 1 / 2;
     }
 
     & > *:nth-child(3) {
-      grid-column: 1 / 2;
       grid-row: 3 / 4;
+      grid-column: 1 / 2;
     }
   }
 `;
@@ -147,6 +155,5 @@ const pageBaseStyle = css`
 const ShopLayout = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  column-gap: 1rem;
-  row-gap: 2rem;
+  gap: 2rem 1rem;
 `;
