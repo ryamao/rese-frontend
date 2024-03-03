@@ -18,7 +18,6 @@ export type PostAuthLoginBody =
   api.components["requestBodies"]["post-auth-login"]["content"]["application/json"];
 
 export type PostAuthLoginResult = {
-  data: undefined;
   error?: api.components["responses"]["post-auth-login-422"]["content"]["application/json"];
 };
 
@@ -81,13 +80,11 @@ export class Client {
   async postAuthLogin(body: PostAuthLoginBody): Promise<PostAuthLoginResult> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.POST("/auth/login", {
+      return await this.client.POST("/auth/login", {
         body
       });
-      return { data, error };
     } catch (error) {
-      console.error(error);
-      return { data: undefined, error: { message: String(error), errors: {} } };
+      throw new Error(String(error));
     }
   }
 

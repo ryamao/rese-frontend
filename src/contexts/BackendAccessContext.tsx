@@ -6,6 +6,7 @@ import {
   GetAuthStatusResult,
   GetGenresResult,
   GetShopsResult,
+  PostAuthLoginResult,
   PostAuthRegisterResult
 } from "../Client";
 
@@ -16,6 +17,7 @@ export interface BackendAccessContextType {
     email: string,
     password: string
   ) => Promise<PostAuthRegisterResult>;
+  login: (email: string, password: string) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
@@ -59,9 +61,21 @@ export function useBackendAccessState(
     return { error: undefined };
   }
 
+  async function login(email: string, password: string) {
+    const result = await httpClient.postAuthLogin({ email, password });
+    if (result.error) {
+      return result;
+    }
+
+    setAuthStatus(await httpClient.getAuthStatus());
+
+    return { error: undefined };
+  }
+
   return {
     authStatus,
     register,
+    login,
     logout: async () => {
       await httpClient.postAuthLogout();
       setAuthStatus(await httpClient.getAuthStatus());
