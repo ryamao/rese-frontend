@@ -1,10 +1,9 @@
-import { useReducer } from "react";
-
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
+import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopSearchQuery {
   area: string;
@@ -15,23 +14,10 @@ export interface ShopSearchQuery {
 export interface SearchFormProps {
   areas: { id: number; name: string }[];
   genres: { id: number; name: string }[];
-  onChange: (query: ShopSearchQuery) => void;
 }
 
-export function SearchForm({ areas, genres, onChange }: SearchFormProps) {
-  function reducer(state: ShopSearchQuery, action: Action): ShopSearchQuery {
-    const newState = update(state, action);
-    if (newState !== state) {
-      onChange(newState);
-    }
-    return newState;
-  }
-
-  const [state, dispatch] = useReducer(reducer, {
-    area: "",
-    genre: "",
-    search: ""
-  });
+export function SearchForm({ areas, genres }: SearchFormProps) {
+  const { params, setArea, setGenre, setSearch } = useShopSearchContext();
 
   return (
     <form className={whitePanel} onSubmit={(e) => e.preventDefault()}>
@@ -40,16 +26,16 @@ export function SearchForm({ areas, genres, onChange }: SearchFormProps) {
           <ComboBox
             aria-label="Area"
             name="area"
-            value={state.area}
+            value={params.area ? String(params.area) : ""}
             onChange={(e) =>
-              dispatch({ type: "SET_AREA", payload: e.target.value })
+              setArea(e.target.value ? Number(e.target.value) : null)
             }
           >
             <option value="" defaultChecked>
               All area
             </option>
             {areas.map((area) => (
-              <option key={area.id} value={area.name}>
+              <option key={area.id} value={area.id}>
                 {area.name}
               </option>
             ))}
@@ -60,16 +46,16 @@ export function SearchForm({ areas, genres, onChange }: SearchFormProps) {
           <ComboBox
             aria-label="Genre"
             name="genre"
-            value={state.genre}
+            value={params.genre ? String(params.genre) : ""}
             onChange={(e) =>
-              dispatch({ type: "SET_GENRE", payload: e.target.value })
+              setGenre(e.target.value ? Number(e.target.value) : null)
             }
           >
             <option value="" defaultChecked>
               All genre
             </option>
             {genres.map((genre) => (
-              <option key={genre.id} value={genre.name}>
+              <option key={genre.id} value={genre.id}>
                 {genre.name}
               </option>
             ))}
@@ -83,31 +69,13 @@ export function SearchForm({ areas, genres, onChange }: SearchFormProps) {
             aria-label="Shop Name"
             name="search"
             placeholder="Search ..."
-            value={state.search}
-            onChange={(e) =>
-              dispatch({ type: "SET_SEARCH", payload: e.target.value })
-            }
+            value={params.search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </Field>
       </Inner>
     </form>
   );
-}
-
-type Action =
-  | { type: "SET_AREA"; payload: string }
-  | { type: "SET_GENRE"; payload: string }
-  | { type: "SET_SEARCH"; payload: string };
-
-function update(state: ShopSearchQuery, action: Action): ShopSearchQuery {
-  switch (action.type) {
-    case "SET_AREA":
-      return { ...state, area: action.payload };
-    case "SET_GENRE":
-      return { ...state, genre: action.payload };
-    case "SET_SEARCH":
-      return { ...state, search: action.payload };
-  }
 }
 
 const Inner = styled.div`
@@ -127,14 +95,14 @@ const Field = styled.div`
 `;
 
 const ComboBox = styled.select`
-  border: none;
   padding: 0.375rem 0.25rem;
+  border: none;
 `;
 
 const SearchBox = styled.input`
-  border: none;
-  padding: 0.375rem 0.5rem;
   width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: none;
 `;
 
 const searchIconStyle = css`

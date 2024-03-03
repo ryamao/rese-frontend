@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
@@ -12,8 +12,13 @@ import {
   GetGenresResult,
   GetShopsResult
 } from "../Client";
-import { SearchForm, ShopSearchQuery } from "../components/SearchForm";
+import { SearchForm } from "../components/SearchForm";
 import { ShopOverview } from "../components/ShopOverview";
+import {
+  ShopSearchContext,
+  ShopSearchParams,
+  useShopSearchState
+} from "../contexts/ShopSearchContext";
 
 export interface ShopListPageProps {
   httpClient: Client;
@@ -27,17 +32,9 @@ export interface ShopListPageLoaderData {
 
 export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
   const { areas, genres } = useLoaderData() as ShopListPageLoaderData;
-  const [query, setQuery] = useState<ShopSearchQuery>({
-    area: "",
-    genre: "",
-    search: ""
-  });
   const { data, isLoading, hasNextPage, fetchNextPage } =
     usePageQuery(httpClient);
-
-  function handleChangeSearchForm(query: ShopSearchQuery) {
-    setQuery(query);
-  }
+  const shopSearchContextValue = useShopSearchState();
 
   useEffect(() => {
     if (hasNextPage) {
@@ -57,23 +54,21 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
 
   return (
     <PageBase wrapperStyle={pageBaseStyle} postLogout={postLogout}>
-      <SearchForm
-        areas={areas}
-        genres={genres}
-        onChange={handleChangeSearchForm}
-      />
-      <ShopLayout>
-        {searchByQuery(shops, query).map((shop) => (
-          <ShopOverview
-            key={shop.id}
-            imageUrl={shop.image_url}
-            name={shop.name}
-            area={shop.area.name}
-            genre={shop.genre.name}
-            favoriteStatus={shop.favorite_status}
-          />
-        ))}
-      </ShopLayout>
+      <ShopSearchContext.Provider value={shopSearchContextValue}>
+        <SearchForm areas={areas} genres={genres} />
+        <ShopLayout>
+          {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
+            <ShopOverview
+              key={shop.id}
+              imageUrl={shop.image_url}
+              name={shop.name}
+              area={shop.area.name}
+              genre={shop.genre.name}
+              favoriteStatus={shop.favorite_status}
+            />
+          ))}
+        </ShopLayout>
+      </ShopSearchContext.Provider>
     </PageBase>
   );
 }
@@ -93,12 +88,12 @@ function usePageQuery(httpClient: Client) {
 
 function searchByQuery(
   shops: GetShopsResult["data"],
-  { area = "", genre = "", search }: ShopSearchQuery
+  { area, genre, search }: ShopSearchParams
 ) {
   return shops.filter((shop) => {
     return (
-      (area === "" || shop.area.name === area) &&
-      (genre === "" || shop.genre.name === genre) &&
+      (!area || shop.area.id === area) &&
+      (!genre || shop.genre.id === genre) &&
       (search === "" || shop.name.includes(search))
     );
   });
