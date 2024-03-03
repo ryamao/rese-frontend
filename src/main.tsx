@@ -33,23 +33,11 @@ async function getAuthStatus() {
   return httpClient.getAuthStatus();
 }
 
-async function postLogout() {
-  const { error } = await httpClient.postAuthLogout();
-  if (error) {
-    throw new Error(`ログアウトに失敗しました: ${error}`);
-  }
-}
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route element={<ApiAccessRoute />}>
-        <Route
-          path="/"
-          element={
-            <ShopListPage httpClient={httpClient} postLogout={postLogout} />
-          }
-        />
+        <Route path="/" element={<ShopListPage httpClient={httpClient} />} />
       </Route>
 
       <Route element={<UseAuthStatus />} loader={getAuthStatus}>

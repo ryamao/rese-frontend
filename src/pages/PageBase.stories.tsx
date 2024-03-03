@@ -1,29 +1,38 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
 import { MemoryRouter } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
-import { AuthContextProvider } from "../providers/AuthContextProvider";
+import { Client } from "../Client";
+import {
+  ApiAccessContext,
+  useApiAccessState
+} from "../contexts/ApiAccessContext";
+import { handlers } from "../mocks/handlers";
 
 const meta = {
   title: "Pages/PageBase",
   component: PageBase,
   tags: ["autodocs"],
   parameters: {
-    layout: "fullscreen"
+    layout: "fullscreen",
+    msw: {
+      handlers
+    }
   },
   args: {
-    children: "Hello, world!",
-    postLogout: fn()
+    children: "Hello, world!"
   },
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <AuthContextProvider>
-          <Story />
-        </AuthContextProvider>
-      </MemoryRouter>
-    )
+    (Story) => {
+      const apiAccess = useApiAccessState(new Client());
+      return (
+        <MemoryRouter>
+          <ApiAccessContext.Provider value={apiAccess}>
+            <Story />
+          </ApiAccessContext.Provider>
+        </MemoryRouter>
+      );
+    }
   ]
 } satisfies Meta<typeof PageBase>;
 
