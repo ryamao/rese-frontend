@@ -11,7 +11,6 @@ export type PostAuthRegisterBody =
   api.components["requestBodies"]["post-auth-register"]["content"]["application/json"];
 
 export type PostAuthRegisterResult = {
-  data: undefined;
   error?: api.components["responses"]["post-auth-register-422"]["content"]["application/json"];
 };
 
@@ -71,16 +70,11 @@ export class Client {
   ): Promise<PostAuthRegisterResult> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.POST("/auth/register", {
+      return await this.client.POST("/auth/register", {
         body
       });
-      return { data, error };
     } catch (error) {
-      console.error(error);
-      return {
-        data: undefined,
-        error: { message: String(error), errors: {} }
-      };
+      throw new Error(String(error));
     }
   }
 

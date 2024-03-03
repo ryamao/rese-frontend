@@ -5,11 +5,17 @@ import {
   GetAreasResult,
   GetAuthStatusResult,
   GetGenresResult,
-  GetShopsResult
+  GetShopsResult,
+  PostAuthRegisterResult
 } from "../Client";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult | null;
+  register: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<PostAuthRegisterResult>;
   logout: () => Promise<void>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
@@ -38,11 +44,27 @@ export function useBackendAccessState(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function register(name: string, email: string, password: string) {
+    const result = await httpClient.postAuthRegister({
+      name,
+      email,
+      password
+    });
+    if (result.error) {
+      return result;
+    }
+
+    setAuthStatus(await httpClient.getAuthStatus());
+
+    return { error: undefined };
+  }
+
   return {
     authStatus,
+    register,
     logout: async () => {
       await httpClient.postAuthLogout();
-      setAuthStatus({ status: "guest" });
+      setAuthStatus(await httpClient.getAuthStatus());
     },
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),

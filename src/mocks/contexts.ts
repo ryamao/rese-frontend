@@ -18,6 +18,7 @@ export function createMockBackendAccessState({
 }: CreateMockBackendAccessStateProps): BackendAccessContextType {
   return {
     authStatus,
+    register: vitest.fn(),
     logout: vitest.fn(),
     getAreas: getAreas ?? vitest.fn(),
     getGenres: getGenres ?? vitest.fn(),
