@@ -59,6 +59,41 @@ export const getCustomer = <TData = AxiosResponse<ShowCustomer200Response>>(
 };
 
 /**
+ * ユーザー(一般会員)が飲食店をお気に入り登録する
+ * @summary お気に入り登録
+ */
+export const postCustomerShopFavorite = <
+  TData = AxiosResponse<CreatedResponse>
+>(
+  user: number,
+  shop: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/customers/${user}/shops/${shop}/favorite`,
+    undefined,
+    options
+  );
+};
+
+/**
+ * ユーザー(一般会員)が飲食店のお気に入りを解除する
+ * @summary お気に入り解除
+ */
+export const deleteCustomerShopFavorite = <
+  TData = AxiosResponse<NoContentResponse>
+>(
+  user: number,
+  shop: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.delete(
+    `/customers/${user}/shops/${shop}/favorite`,
+    options
+  );
+};
+
+/**
  * ジャンル一覧を取得する
  * @summary ジャンル一覧取得
  */
@@ -133,6 +168,8 @@ export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
 export type GetAreasResult = AxiosResponse<GetAreas200Response>;
 export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
+export type PostCustomerShopFavoriteResult = AxiosResponse<CreatedResponse>;
+export type DeleteCustomerShopFavoriteResult = AxiosResponse<NoContentResponse>;
 export type GetGenresResult = AxiosResponse<GetGenres200Response>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -309,6 +346,30 @@ export const getGetCustomerMockHandler = (
   });
 };
 
+export const getPostCustomerShopFavoriteMockHandler = () => {
+  return http.post("*/customers/:user/shops/:shop/favorite", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
+export const getDeleteCustomerShopFavoriteMockHandler = () => {
+  return http.delete("*/customers/:user/shops/:shop/favorite", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getGetGenresMockHandler = (
   overrideResponse?: GetGenres200Response
 ) => {
@@ -398,6 +459,8 @@ export const getReseMock = () => [
   getGetAreasMockHandler(),
   getGetAuthStatusMockHandler(),
   getGetCustomerMockHandler(),
+  getPostCustomerShopFavoriteMockHandler(),
+  getDeleteCustomerShopFavoriteMockHandler(),
   getGetGenresMockHandler(),
   getGetShopsMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),

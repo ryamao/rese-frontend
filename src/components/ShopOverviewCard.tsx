@@ -1,10 +1,14 @@
+import { useState } from "react";
+
 import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
+import { useApiAccessContext } from "../contexts/ApiAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
 
 export interface ShopOverviewProps {
+  id: number;
   imageUrl: string;
   name: string;
   area: { id: number; name: string };
@@ -13,6 +17,7 @@ export interface ShopOverviewProps {
 }
 
 export function ShopOverviewCard({
+  id,
   imageUrl,
   name,
   area,
@@ -20,6 +25,27 @@ export function ShopOverviewCard({
   favoriteStatus
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
+  const { authStatus, addFavorite, removeFavorite } = useApiAccessContext();
+  const [favorite, setFavorite] = useState(favoriteStatus);
+
+  async function handleClickFavoriteButton(
+    favoriteStatus: "unknown" | "marked" | "unmarked"
+  ) {
+    if (authStatus?.status !== "customer") {
+      return;
+    }
+
+    switch (favoriteStatus) {
+      case "marked":
+        await removeFavorite(authStatus.id, id);
+        setFavorite("unmarked");
+        break;
+      case "unmarked":
+        await addFavorite(authStatus.id, id);
+        setFavorite("marked");
+        break;
+    }
+  }
 
   return (
     <div className={whitePanel}>
@@ -38,7 +64,10 @@ export function ShopOverviewCard({
           <button type="button" className={blueButton}>
             詳しくみる
           </button>
-          <FavoriteButton favoriteStatus={favoriteStatus} />
+          <FavoriteButton
+            favoriteStatus={favorite}
+            onClick={handleClickFavoriteButton}
+          />
         </ButtonLayout>
       </Content>
     </div>

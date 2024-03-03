@@ -50,6 +50,7 @@ const Button = styled.button`
   width: 2rem;
   height: 2rem;
   padding: 0;
+  cursor: pointer;
   background: none;
   border: none;
 `;

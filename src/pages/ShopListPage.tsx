@@ -60,6 +60,7 @@ export function ShopListPage({ httpClient, postLogout }: ShopListPageProps) {
           {searchByQuery(shops, shopSearchContextValue.params).map((shop) => (
             <ShopOverviewCard
               key={shop.id}
+              id={shop.id}
               imageUrl={shop.image_url}
               name={shop.name}
               area={shop.area}

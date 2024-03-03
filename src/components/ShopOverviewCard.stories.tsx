@@ -1,6 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ShopOverviewCard } from "./ShopOverviewCard";
+import { Client } from "../Client";
+import {
+  ApiAccessContext,
+  useApiAccessState
+} from "../contexts/ApiAccessContext";
 import {
   ShopSearchContext,
   useShopSearchState
@@ -11,6 +16,7 @@ const meta = {
   component: ShopOverviewCard,
   tags: ["autodocs"],
   args: {
+    id: 1,
     imageUrl: "https://via.placeholder.com/800x500",
     name: "仙人",
     area: { id: 1, name: "東京都" },
@@ -19,11 +25,14 @@ const meta = {
   },
   decorators: [
     (Story) => {
-      const value = useShopSearchState();
+      const apiAccess = useApiAccessState(new Client());
+      const shopSearch = useShopSearchState();
       return (
-        <ShopSearchContext.Provider value={value}>
-          <Story />
-        </ShopSearchContext.Provider>
+        <ApiAccessContext.Provider value={apiAccess}>
+          <ShopSearchContext.Provider value={shopSearch}>
+            <Story />
+          </ShopSearchContext.Provider>
+        </ApiAccessContext.Provider>
       );
     }
   ]

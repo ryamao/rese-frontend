@@ -69,6 +69,70 @@
         }
       }
     },
+    "/customers/{user}/shops/{shop}/favorite": {
+      "post": {
+        "tags": ["Favorite"],
+        "summary": "お気に入り登録",
+        "description": "ユーザー(一般会員)が飲食店をお気に入り登録する",
+        "operationId": "post-customer-shop-favorite",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/user-id"
+          },
+          {
+            "$ref": "#/components/parameters/shop-id"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/created"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/not-found"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable-entity"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Favorite"],
+        "summary": "お気に入り解除",
+        "description": "ユーザー(一般会員)が飲食店のお気に入りを解除する",
+        "operationId": "delete-customer-shop-favorite",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/user-id"
+          },
+          {
+            "$ref": "#/components/parameters/shop-id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/no-content"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/not-found"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable-entity"
+          }
+        }
+      }
+    },
     "/genres": {
       "get": {
         "tags": ["Genre"],
@@ -1065,6 +1129,17 @@
           "example": 1
         }
       },
+      "shop-id": {
+        "name": "shop",
+        "in": "path",
+        "description": "飲食店ID",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1
+        }
+      },
       "area-query": {
         "name": "area",
         "in": "query",
@@ -1181,6 +1256,10 @@
     {
       "name": "Customer",
       "description": "一般会員に関するAPI"
+    },
+    {
+      "name": "Favorite",
+      "description": "お気に入りに関するAPI"
     },
     {
       "name": "Genre",

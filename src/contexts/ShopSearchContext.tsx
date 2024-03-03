@@ -48,7 +48,6 @@ function shopSearchReducer(
   state: ShopSearchParams,
   action: ShopSearchAction
 ): ShopSearchParams {
-  console.log(state, action);
   switch (action.type) {
     case "SET_AREA":
       return {
