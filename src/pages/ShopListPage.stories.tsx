@@ -10,8 +10,6 @@ import {
 } from "../contexts/BackendAccessContext";
 import { handlers } from "../mocks/handlers";
 
-const httpClient = new Client();
-
 const meta = {
   title: "Pages/ShopListPage",
   component: ShopListPage,
@@ -21,9 +19,6 @@ const meta = {
     msw: {
       handlers
     }
-  },
-  args: {
-    httpClient
   },
   decorators: [
     (Story) => {

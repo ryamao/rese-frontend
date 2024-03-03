@@ -35,7 +35,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route element={<BackendAccessRoute />}>
-        <Route path="/" element={<ShopListPage httpClient={httpClient} />} />
+        <Route path="/" element={<ShopListPage />} />
       </Route>
 
       <Route element={<UseAuthStatus />} loader={getAuthStatus}>
