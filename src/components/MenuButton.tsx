@@ -44,11 +44,11 @@ const Button = styled.button`
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
+  cursor: pointer;
   background-color: #315dff;
   border: none;
   border-radius: 0.5rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
-  cursor: pointer;
 `;
 
 export interface MenuButtonProps {
@@ -57,5 +57,12 @@ export interface MenuButtonProps {
 }
 
 export function MenuButton({ isMenuOpened = false, onClick }: MenuButtonProps) {
-  return <Button onClick={onClick}>{isMenuOpened ? closeSvg : menuSvg}</Button>;
+  return (
+    <Button
+      onClick={onClick}
+      aria-label={isMenuOpened ? "メニューを閉じる" : "メニューを開く"}
+    >
+      {isMenuOpened ? closeSvg : menuSvg}
+    </Button>
+  );
 }
