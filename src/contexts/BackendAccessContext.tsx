@@ -4,6 +4,7 @@ import {
   Client,
   GetAreasResult,
   GetAuthStatusResult,
+  GetCustomerResult,
   GetGenresResult,
   GetShopsResult,
   PostAuthLoginResult,
@@ -19,6 +20,7 @@ export interface BackendAccessContextType {
   ) => Promise<PostAuthRegisterResult>;
   login: (email: string, password: string) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
+  getCustomer: (id: number) => Promise<GetCustomerResult>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
   getShops: (page: number) => Promise<GetShopsResult>;
@@ -80,6 +82,7 @@ export function useBackendAccessState(
       await httpClient.postAuthLogout();
       setAuthStatus(await httpClient.getAuthStatus());
     },
+    getCustomer: (id) => httpClient.getCustomer(id),
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),
     getShops: (page) => httpClient.getShops(page),

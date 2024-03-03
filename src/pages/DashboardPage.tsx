@@ -1,28 +1,41 @@
 import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
-import { useOutletContext } from "react-router-dom";
 
-import { Client } from "../Client";
+import { PageBase } from "./PageBase";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
-export interface DashboardPageProps {
-  client: Client;
-}
+export function DashboardPage() {
+  const { authStatus, getCustomer } = useBackendAccessContext();
 
-export function DashboardPage({ client }: DashboardPageProps) {
-  const { id } = useOutletContext<{ id: number }>();
-  const { data } = useQuery({
+  const id = authStatus?.status === "customer" ? authStatus.id : 0;
+
+  const { data, isLoading } = useQuery({
     queryKey: ["getCustomer", id],
-    queryFn: () => client.getCustomer(id)
+    queryFn: () => getCustomer(id)
   });
 
+  if (isLoading) {
+    return (
+      <PageBase>
+        <div>Loading...</div>
+      </PageBase>
+    );
+  }
+
   if (!data) {
-    return <div>Loading...</div>;
+    return (
+      <PageBase>
+        <div>Error</div>
+      </PageBase>
+    );
   }
 
   return (
-    <Inner>
-      <Name>{data.name}さん</Name>
-    </Inner>
+    <PageBase>
+      <Inner>
+        <Name>{data.name}さん</Name>
+      </Inner>
+    </PageBase>
   );
 }
 

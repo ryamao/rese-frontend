@@ -117,10 +117,15 @@ export const handlers = [
       data: sampleShops
     });
   }),
-  http.post("*/customer/{customerId}/shop/{shopId}/favorite", async () => {
+  http.get("*/customers/1", () => {
+    return HttpResponse.json({
+      name: "テストユーザー"
+    });
+  }),
+  http.post("*/customers/:customerId/shops/:shopId/favorite", async () => {
     return HttpResponse.text(null, { status: 204 });
   }),
-  http.delete("*/customer/{customerId}/shop/{shopId}/favorite", async () => {
+  http.delete("*/customers/:customerId/shops/:shopId/favorite", async () => {
     return HttpResponse.text(null, { status: 204 });
   })
 ];
