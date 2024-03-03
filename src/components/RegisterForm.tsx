@@ -8,11 +8,11 @@ import * as styles from "./styles";
 import { PostAuthRegisterBody, PostAuthRegisterResult } from "../Client";
 
 export interface RegisterFormProps {
-  onRegister: (body: {
-    name: string;
-    email: string;
-    password: string;
-  }) => Promise<PostAuthRegisterResult>;
+  onRegister: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<PostAuthRegisterResult>;
 }
 
 const registerFormSchema = z.object({
@@ -43,7 +43,7 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
   });
 
   const onValid: SubmitHandler<PostAuthRegisterBody> = async (body) => {
-    const { error } = await onRegister(body);
+    const { error } = await onRegister(body.name, body.email, body.password);
     if (error) {
       setError("email", { message: error.message });
     }

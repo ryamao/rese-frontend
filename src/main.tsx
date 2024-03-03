@@ -33,10 +33,7 @@ const router = createBrowserRouter(
         <Route path="/" element={<ShopListPage />} />
 
         <Route element={<GuestsOnlyRoute />}>
-          <Route
-            path="/register"
-            element={<RegisterPage client={httpClient} />}
-          />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage client={httpClient} />} />
         </Route>
 

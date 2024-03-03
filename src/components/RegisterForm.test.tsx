@@ -25,11 +25,11 @@ describe("RegisterForm", () => {
     await userEvent.type(screen.getByLabelText("Password"), "password");
     await userEvent.click(screen.getByText("登録"));
     await waitFor(() =>
-      expect(onRegister).toHaveBeenCalledWith({
-        name: "test",
-        email: "test@example.com",
-        password: "password"
-      })
+      expect(onRegister).toHaveBeenCalledWith(
+        "test",
+        "test@example.com",
+        "password"
+      )
     );
   });
 
