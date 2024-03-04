@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ShopSearchForm } from "./ShopSearchForm";
-import { Client } from "../Client";
 import {
   BackendAccessContext,
   useBackendAccessState
@@ -10,6 +9,7 @@ import {
   ShopSearchContext,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
+import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -18,7 +18,7 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => {
-      const backendAccess = useBackendAccessState(new Client());
+      const backendAccess = useBackendAccessState(new HttpClient());
       const shopSearch = useShopSearchState();
       return (
         <BackendAccessContext.Provider value={backendAccess}>

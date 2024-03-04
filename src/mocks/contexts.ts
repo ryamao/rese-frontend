@@ -1,9 +1,9 @@
+import { BackendAccessContextType } from "../contexts/BackendAccessContext";
 import {
   GetAreasResult,
   GetAuthStatusResult,
   GetGenresResult
-} from "../Client";
-import { BackendAccessContextType } from "../contexts/BackendAccessContext";
+} from "../HttpClient";
 
 export interface CreateMockBackendAccessStateProps {
   authStatus?: GetAuthStatusResult;

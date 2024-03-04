@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { PostAuthLoginBody, PostAuthLoginResult } from "../Client";
+import { PostAuthLoginBody, PostAuthLoginResult } from "../HttpClient";
 
 const loginFormSchema = z.object({
   email: z.string().min(1, "メールアドレスを入力してください"),

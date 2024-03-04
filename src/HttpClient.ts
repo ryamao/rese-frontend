@@ -56,7 +56,7 @@ const middleware: Middleware = {
   }
 };
 
-export class Client {
+export class HttpClient {
   private client: ReturnType<typeof createClient<api.paths>>;
 
   constructor(baseUrl: string = import.meta.env.VITE_API_URL) {

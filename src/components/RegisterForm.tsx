@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import * as styles from "./styles";
-import { PostAuthRegisterBody, PostAuthRegisterResult } from "../Client";
+import { PostAuthRegisterBody, PostAuthRegisterResult } from "../HttpClient";
 
 export interface RegisterFormProps {
   onRegister: (
