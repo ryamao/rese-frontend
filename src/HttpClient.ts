@@ -56,7 +56,7 @@ const middleware: Middleware = {
   }
 };
 
-export class Client {
+export class HttpClient {
   private client: ReturnType<typeof createClient<api.paths>>;
 
   constructor(baseUrl: string = import.meta.env.VITE_API_URL) {
@@ -121,8 +121,8 @@ export class Client {
   async getCustomer(id: number): Promise<GetCustomerResult> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.GET(`/customers/{user}`, {
-        params: { path: { user: id } }
+      const { data, error } = await this.client.GET(`/customers/{customer}`, {
+        params: { path: { customer: id } }
       });
       if (error) {
         throw new Error(error);
@@ -175,15 +175,15 @@ export class Client {
   }
 
   async postCustomerShopFavorite(
-    userId: number,
+    customerId: number,
     shopId: number
   ): Promise<void> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
       const { error } = await this.client.POST(
-        "/customers/{user}/shops/{shop}/favorite",
+        "/customers/{customer}/shops/{shop}/favorite",
         {
-          params: { path: { user: userId, shop: shopId } }
+          params: { path: { customer: customerId, shop: shopId } }
         }
       );
       if (error) {
@@ -195,15 +195,15 @@ export class Client {
   }
 
   async deleteCustomerShopFavorite(
-    userId: number,
+    customerId: number,
     shopId: number
   ): Promise<void> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
       const { error } = await this.client.DELETE(
-        "/customers/{user}/shops/{shop}/favorite",
+        "/customers/{customer}/shops/{shop}/favorite",
         {
-          params: { path: { user: userId, shop: shopId } }
+          params: { path: { customer: customerId, shop: shopId } }
         }
       );
       if (error) {

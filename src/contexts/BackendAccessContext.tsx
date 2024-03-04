@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import {
-  Client,
+  HttpClient,
   GetAreasResult,
   GetAuthStatusResult,
   GetCustomerResult,
@@ -9,7 +9,7 @@ import {
   GetShopsResult,
   PostAuthLoginResult,
   PostAuthRegisterResult
-} from "../Client";
+} from "../HttpClient";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult | null;
@@ -37,7 +37,7 @@ export const useBackendAccessContext = () => useContext(BackendAccessContext);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useBackendAccessState(
-  httpClient: Client
+  httpClient: HttpClient
 ): BackendAccessContextType {
   const [authStatus, setAuthStatus] = useState<GetAuthStatusResult | null>(
     null

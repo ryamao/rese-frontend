@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetShops200ResponseAllOfDataItemArea = {
-  id: number;
-  name: string;
+export type ReservationErrorErrors = {
+  number_of_guests?: string[];
+  reserved_at?: string[];
 };

@@ -5,7 +5,6 @@ import styled from "@emotion/styled";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { PageBase } from "./PageBase";
-import { GetShopsResult } from "../Client";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
 import { ShopSearchForm } from "../components/ShopSearchForm";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
@@ -14,6 +13,7 @@ import {
   ShopSearchParams,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
+import { GetShopsResult } from "../HttpClient";
 
 export function ShopListPage() {
   const { getShops } = useBackendAccessContext();

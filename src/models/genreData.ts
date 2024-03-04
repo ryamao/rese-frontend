@@ -6,7 +6,12 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetGenres200ResponseGenresItem = {
+/**
+ * ジャンル情報
+ */
+export interface GenreData {
+  /** ジャンルID */
   id: number;
+  /** ジャンル名 */
   name: string;
-};
+}

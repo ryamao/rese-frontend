@@ -5,8 +5,8 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { GetGenres200ResponseGenresItem } from "./getGenres200ResponseGenresItem";
+import type { GenreData } from "./genreData";
 
 export type GetGenres200Response = {
-  genres: GetGenres200ResponseGenresItem[];
+  genres: GenreData[];
 };

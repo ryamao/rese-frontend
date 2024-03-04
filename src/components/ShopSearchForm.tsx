@@ -5,9 +5,9 @@ import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
-import { GetAreasResult, GetGenresResult } from "../Client";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
+import { GetAreasResult, GetGenresResult } from "../HttpClient";
 
 export function ShopSearchForm() {
   const { getAreas, getGenres } = useBackendAccessContext();

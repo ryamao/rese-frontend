@@ -9,4 +9,4 @@
 /**
  * 現在のページの最後のレコード番号
  */
-export type PaginationMetaTo = null | number;
+export type PaginationMetaTo = number | null;

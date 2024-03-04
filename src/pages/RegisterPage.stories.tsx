@@ -2,7 +2,7 @@ import { Meta } from "@storybook/react";
 import { BrowserRouter } from "react-router-dom";
 
 import { RegisterPage } from "./RegisterPage";
-import { Client } from "../Client";
+import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -23,7 +23,7 @@ const meta = {
     }
   },
   args: {
-    client: new Client()
+    client: new HttpClient()
   }
 } satisfies Meta<typeof RegisterPage>;
 export default meta;

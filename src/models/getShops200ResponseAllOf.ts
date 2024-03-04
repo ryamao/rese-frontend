@@ -5,8 +5,8 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { GetShops200ResponseAllOfDataItem } from "./getShops200ResponseAllOfDataItem";
+import type { ShopData } from "./shopData";
 
 export type GetShops200ResponseAllOf = {
-  data: GetShops200ResponseAllOfDataItem[];
+  data: ShopData[];
 };

@@ -2,11 +2,11 @@ import { Meta, StoryObj } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
-import { Client } from "../Client";
 import {
   BackendAccessContext,
   useBackendAccessState
 } from "../contexts/BackendAccessContext";
+import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -24,7 +24,7 @@ const meta = {
   },
   decorators: [
     (Story) => {
-      const backendAccess = useBackendAccessState(new Client());
+      const backendAccess = useBackendAccessState(new HttpClient());
       return (
         <MemoryRouter>
           <BackendAccessContext.Provider value={backendAccess}>

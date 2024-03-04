@@ -11,7 +11,7 @@ import type { PaginationLinksPrev } from "./paginationLinksPrev";
 /**
  * ページネーションリンク
  */
-export type PaginationLinks = {
+export interface PaginationLinks {
   /** 最初のページのURL */
   first: string;
   /** 最後のページのURL */
@@ -20,4 +20,4 @@ export type PaginationLinks = {
   next: PaginationLinksNext;
   /** 前のページのURL */
   prev: PaginationLinksPrev;
-};
+}

@@ -6,7 +6,8 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetShops200ResponseAllOfDataItemGenre = {
-  id: number;
-  name: string;
+export type RegisterErrorErrors = {
+  email?: string[];
+  name?: string[];
+  password?: string[];
 };

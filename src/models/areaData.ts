@@ -6,7 +6,12 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetAreas200ResponseAreasItem = {
+/**
+ * エリア情報
+ */
+export interface AreaData {
+  /** エリアID */
   id: number;
+  /** エリア名 */
   name: string;
-};
+}

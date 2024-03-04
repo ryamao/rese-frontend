@@ -6,8 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type PostAuthRegister422ResponseErrors = {
+export type LoginErrorErrors = {
   email?: string[];
-  name?: string[];
   password?: string[];
 };

@@ -5,8 +5,8 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { GetAreas200ResponseAreasItem } from "./getAreas200ResponseAreasItem";
+import type { AreaData } from "./areaData";
 
 export type GetAreas200Response = {
-  areas: GetAreas200ResponseAreasItem[];
+  areas: AreaData[];
 };

@@ -16,13 +16,16 @@ import type {
   NoContentResponse,
   OkResponse,
   PostAuthLoginBody,
-  PostAuthRegisterBody
+  PostAuthRegisterBody,
+  PostCustomerShopReservationsBody
 } from "../models";
 import type {
   GetAreas200Response,
   GetAuthStatus200Response,
+  GetCustomerShopReservations200Response,
   GetGenres200Response,
   GetShops200Response,
+  PostCustomerShopReservations201Response,
   ShowCustomer200Response
 } from "../models";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -48,47 +51,100 @@ export const getAuthStatus = <TData = AxiosResponse<GetAuthStatus200Response>>(
 };
 
 /**
- * ユーザー(一般会員)の情報を取得する
- * @summary 会員情報取得
+ * セッション中の顧客情報を取得する
+ * @summary 顧客情報取得
  */
 export const getCustomer = <TData = AxiosResponse<ShowCustomer200Response>>(
-  user: number,
+  customer: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.default.get(`/customers/${user}`, options);
+  return axios.default.get(`/customers/${customer}`, options);
 };
 
 /**
- * ユーザー(一般会員)が飲食店をお気に入り登録する
+ * セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
+ * @summary マイページでの予約取り消し機能
+ */
+export const deleteCustomerReservations = <
+  TData = AxiosResponse<NoContentResponse>
+>(
+  customer: number,
+  reservation: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.delete(
+    `/customers/${customer}/reservations/${reservation}`,
+    options
+  );
+};
+
+/**
+ * セッション中の顧客が指定の飲食店をお気に入り登録する
  * @summary お気に入り登録
  */
 export const postCustomerShopFavorite = <
   TData = AxiosResponse<CreatedResponse>
 >(
-  user: number,
+  customer: number,
   shop: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.post(
-    `/customers/${user}/shops/${shop}/favorite`,
+    `/customers/${customer}/shops/${shop}/favorite`,
     undefined,
     options
   );
 };
 
 /**
- * ユーザー(一般会員)が飲食店のお気に入りを解除する
+ * セッション中の顧客が指定の飲食店のお気に入りを解除する
  * @summary お気に入り解除
  */
 export const deleteCustomerShopFavorite = <
   TData = AxiosResponse<NoContentResponse>
 >(
-  user: number,
+  customer: number,
   shop: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.delete(
-    `/customers/${user}/shops/${shop}/favorite`,
+    `/customers/${customer}/shops/${shop}/favorite`,
+    options
+  );
+};
+
+/**
+ * セッション中の顧客が指定の飲食店で行っている予約を一覧取得する
+ * @summary 飲食店詳細ページでの予約一覧取得機能
+ */
+export const getCustomerShopReservations = <
+  TData = AxiosResponse<GetCustomerShopReservations200Response>
+>(
+  customer: number,
+  shop: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(
+    `/customers/${customer}/shops/${shop}/reservations`,
+    options
+  );
+};
+
+/**
+ * セッション中の顧客が指定の飲食店で予約を追加する
+ * @summary 飲食店詳細ページでの予約追加機能
+ */
+export const postCustomerShopReservations = <
+  TData = AxiosResponse<PostCustomerShopReservations201Response>
+>(
+  customer: number,
+  shop: number,
+  postCustomerShopReservationsBody: PostCustomerShopReservationsBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/customers/${customer}/shops/${shop}/reservations`,
+    postCustomerShopReservationsBody,
     options
   );
 };
@@ -130,8 +186,8 @@ export const getSanctumCsrfCookie = <
 };
 
 /**
- * ユーザー(一般会員)を新規登録する
- * @summary 会員登録
+ * 顧客を新規登録する
+ * @summary 顧客登録
  */
 export const postAuthRegister = <
   TData = AxiosResponse<CreatedResponse | NoContentResponse>
@@ -143,7 +199,7 @@ export const postAuthRegister = <
 };
 
 /**
- * ユーザー(一般会員)のログイン処理を行う
+ * 顧客のログイン処理を行う
  * @summary ログイン
  */
 export const postAuthLogin = <
@@ -156,7 +212,7 @@ export const postAuthLogin = <
 };
 
 /**
- * ユーザー(一般会員)のログアウト処理を行う
+ * 顧客のログアウト処理を行う
  * @summary ログアウト
  */
 export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
@@ -168,8 +224,13 @@ export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
 export type GetAreasResult = AxiosResponse<GetAreas200Response>;
 export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
+export type DeleteCustomerReservationsResult = AxiosResponse<NoContentResponse>;
 export type PostCustomerShopFavoriteResult = AxiosResponse<CreatedResponse>;
 export type DeleteCustomerShopFavoriteResult = AxiosResponse<NoContentResponse>;
+export type GetCustomerShopReservationsResult =
+  AxiosResponse<GetCustomerShopReservations200Response>;
+export type PostCustomerShopReservationsResult =
+  AxiosResponse<PostCustomerShopReservations201Response>;
 export type GetGenresResult = AxiosResponse<GetGenres200Response>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -212,6 +273,77 @@ export const getGetCustomerResponseMock = (
   ...overrideResponse
 });
 
+export const getGetCustomerShopReservationsResponseMock = (
+  overrideResponse: any = {}
+): GetCustomerShopReservations200Response => ({
+  reservations: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    id: faker.number.int({ min: undefined, max: undefined }),
+    number_of_guests: faker.number.int({ min: 1, max: undefined }),
+    reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    shop: {
+      area: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      detail: faker.word.sample(),
+      favorite_status: faker.helpers.arrayElement([
+        "unknown",
+        "marked",
+        "unmarked"
+      ] as const),
+      genre: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      id: faker.number.int({ min: undefined, max: undefined }),
+      image_url: faker.internet.url(),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    ...overrideResponse
+  })),
+  ...overrideResponse
+});
+
+export const getPostCustomerShopReservationsResponseMock = (
+  overrideResponse: any = {}
+): PostCustomerShopReservations201Response => ({
+  reservation: {
+    id: faker.number.int({ min: undefined, max: undefined }),
+    number_of_guests: faker.number.int({ min: 1, max: undefined }),
+    reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    shop: {
+      area: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      detail: faker.word.sample(),
+      favorite_status: faker.helpers.arrayElement([
+        "unknown",
+        "marked",
+        "unmarked"
+      ] as const),
+      genre: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      id: faker.number.int({ min: undefined, max: undefined }),
+      image_url: faker.internet.url(),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    ...overrideResponse
+  },
+  ...overrideResponse
+});
+
 export const getGetGenresResponseMock = (
   overrideResponse: any = {}
 ): GetGenres200Response => ({
@@ -232,16 +364,13 @@ export const getGetShopsResponseMock = (
   links: {
     first: faker.internet.url(),
     last: faker.internet.url(),
-    next: faker.helpers.arrayElement([{}, faker.internet.url()]),
-    prev: faker.helpers.arrayElement([{}, faker.internet.url()]),
+    next: faker.internet.url(),
+    prev: faker.internet.url(),
     ...overrideResponse
   },
   meta: {
     current_page: faker.number.int({ min: 1, max: undefined }),
-    from: faker.helpers.arrayElement([
-      {},
-      faker.number.int({ min: 1, max: undefined })
-    ]),
+    from: {},
     last_page: faker.number.int({ min: 1, max: undefined }),
     links: Array.from(
       { length: faker.number.int({ min: 1, max: 10 }) },
@@ -249,15 +378,12 @@ export const getGetShopsResponseMock = (
     ).map(() => ({
       active: faker.datatype.boolean(),
       label: faker.word.sample(),
-      url: faker.helpers.arrayElement([{}, faker.internet.url()]),
+      url: faker.internet.url(),
       ...overrideResponse
     })),
     path: faker.internet.url(),
     per_page: faker.number.int({ min: 1, max: undefined }),
-    to: faker.helpers.arrayElement([
-      {},
-      faker.number.int({ min: 1, max: undefined })
-    ]),
+    to: {},
     total: faker.number.int({ min: 0, max: undefined }),
     ...overrideResponse
   },
@@ -271,6 +397,7 @@ export const getGetShopsResponseMock = (
       name: faker.word.sample(),
       ...overrideResponse
     },
+    detail: faker.word.sample(),
     favorite_status: faker.helpers.arrayElement([
       "unknown",
       "marked",
@@ -330,7 +457,7 @@ export const getGetAuthStatusMockHandler = (
 export const getGetCustomerMockHandler = (
   overrideResponse?: ShowCustomer200Response
 ) => {
-  return http.get("*/customers/:user", async () => {
+  return http.get("*/customers/:customer", async () => {
     await delay(1000);
     return new HttpResponse(
       JSON.stringify(
@@ -346,8 +473,23 @@ export const getGetCustomerMockHandler = (
   });
 };
 
+export const getDeleteCustomerReservationsMockHandler = () => {
+  return http.delete(
+    "*/customers/:customer/reservations/:reservation",
+    async () => {
+      await delay(1000);
+      return new HttpResponse(null, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    }
+  );
+};
+
 export const getPostCustomerShopFavoriteMockHandler = () => {
-  return http.post("*/customers/:user/shops/:shop/favorite", async () => {
+  return http.post("*/customers/:customer/shops/:shop/favorite", async () => {
     await delay(1000);
     return new HttpResponse(null, {
       status: 200,
@@ -359,7 +501,7 @@ export const getPostCustomerShopFavoriteMockHandler = () => {
 };
 
 export const getDeleteCustomerShopFavoriteMockHandler = () => {
-  return http.delete("*/customers/:user/shops/:shop/favorite", async () => {
+  return http.delete("*/customers/:customer/shops/:shop/favorite", async () => {
     await delay(1000);
     return new HttpResponse(null, {
       status: 200,
@@ -368,6 +510,54 @@ export const getDeleteCustomerShopFavoriteMockHandler = () => {
       }
     });
   });
+};
+
+export const getGetCustomerShopReservationsMockHandler = (
+  overrideResponse?: GetCustomerShopReservations200Response
+) => {
+  return http.get(
+    "*/customers/:customer/shops/:shop/reservations",
+    async () => {
+      await delay(1000);
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse
+            ? overrideResponse
+            : getGetCustomerShopReservationsResponseMock()
+        ),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
+  );
+};
+
+export const getPostCustomerShopReservationsMockHandler = (
+  overrideResponse?: PostCustomerShopReservations201Response
+) => {
+  return http.post(
+    "*/customers/:customer/shops/:shop/reservations",
+    async () => {
+      await delay(1000);
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse
+            ? overrideResponse
+            : getPostCustomerShopReservationsResponseMock()
+        ),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
+  );
 };
 
 export const getGetGenresMockHandler = (
@@ -459,8 +649,11 @@ export const getReseMock = () => [
   getGetAreasMockHandler(),
   getGetAuthStatusMockHandler(),
   getGetCustomerMockHandler(),
+  getDeleteCustomerReservationsMockHandler(),
   getPostCustomerShopFavoriteMockHandler(),
   getDeleteCustomerShopFavoriteMockHandler(),
+  getGetCustomerShopReservationsMockHandler(),
+  getPostCustomerShopReservationsMockHandler(),
   getGetGenresMockHandler(),
   getGetShopsMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
