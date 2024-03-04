@@ -9,4 +9,4 @@
 /**
  * リンクURL
  */
-export type PaginationMetaLinksItemUrl = null | string;
+export type PaginationMetaLinksItemUrl = string | null;

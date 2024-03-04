@@ -12,8 +12,6 @@ import type { PaginationMeta } from "./paginationMeta";
  * ページネーション
  */
 export interface Pagination {
-  /** ページネーションリンク */
   links: PaginationLinks;
-  /** ページネーションメタ情報 */
   meta: PaginationMeta;
 }

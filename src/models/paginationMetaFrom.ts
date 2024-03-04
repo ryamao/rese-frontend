@@ -9,4 +9,4 @@
 /**
  * 現在のページの最初のレコード番号
  */
-export type PaginationMetaFrom = null | number;
+export type PaginationMetaFrom = number | null;

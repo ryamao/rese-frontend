@@ -12,7 +12,7 @@ import type { PaginationMetaTo } from "./paginationMetaTo";
 /**
  * ページネーションメタ情報
  */
-export type PaginationMeta = {
+export interface PaginationMeta {
   /** 現在のページ番号 */
   current_page: number;
   /** 現在のページの最初のレコード番号 */
@@ -29,4 +29,4 @@ export type PaginationMeta = {
   to: PaginationMetaTo;
   /** 総件数 */
   total: number;
-};
+}

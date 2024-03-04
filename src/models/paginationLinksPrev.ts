@@ -9,4 +9,4 @@
 /**
  * 前のページのURL
  */
-export type PaginationLinksPrev = null | string;
+export type PaginationLinksPrev = string | null;

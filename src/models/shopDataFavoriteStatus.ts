@@ -6,11 +6,14 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetShops200ResponseAllOfDataItemFavoriteStatus =
-  (typeof GetShops200ResponseAllOfDataItemFavoriteStatus)[keyof typeof GetShops200ResponseAllOfDataItemFavoriteStatus];
+/**
+ * お気に入りステータス
+ */
+export type ShopDataFavoriteStatus =
+  (typeof ShopDataFavoriteStatus)[keyof typeof ShopDataFavoriteStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetShops200ResponseAllOfDataItemFavoriteStatus = {
+export const ShopDataFavoriteStatus = {
   unknown: "unknown",
   marked: "marked",
   unmarked: "unmarked"

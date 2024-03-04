@@ -9,7 +9,7 @@
 export type PostAuthRegisterBody = {
   /** メールアドレス */
   email: string;
-  /** ユーザー名 */
+  /** 顧客名 */
   name: string;
   /** パスワード */
   password: string;

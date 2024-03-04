@@ -18,24 +18,43 @@ export interface paths {
      */
     get: operations["get-auth-status"];
   };
-  "/customers/{user}": {
+  "/customers/{customer}": {
     /**
-     * 会員情報取得
-     * @description ユーザー(一般会員)の情報を取得する
+     * 顧客情報取得
+     * @description セッション中の顧客情報を取得する
      */
     get: operations["get-customer"];
   };
-  "/customers/{user}/shops/{shop}/favorite": {
+  "/customers/{customer}/reservations/{reservation}": {
+    /**
+     * マイページでの予約取り消し機能
+     * @description セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
+     */
+    delete: operations["delete-customer-reservations"];
+  };
+  "/customers/{customer}/shops/{shop}/favorite": {
     /**
      * お気に入り登録
-     * @description ユーザー(一般会員)が飲食店をお気に入り登録する
+     * @description セッション中の顧客が指定の飲食店をお気に入り登録する
      */
     post: operations["post-customer-shop-favorite"];
     /**
      * お気に入り解除
-     * @description ユーザー(一般会員)が飲食店のお気に入りを解除する
+     * @description セッション中の顧客が指定の飲食店のお気に入りを解除する
      */
     delete: operations["delete-customer-shop-favorite"];
+  };
+  "/customers/{customer}/shops/{shop}/reservations": {
+    /**
+     * 飲食店詳細ページでの予約一覧取得機能
+     * @description セッション中の顧客が指定の飲食店で行っている予約を一覧取得する
+     */
+    get: operations["get-customer-shop-reservations"];
+    /**
+     * 飲食店詳細ページでの予約追加機能
+     * @description セッション中の顧客が指定の飲食店で予約を追加する
+     */
+    post: operations["post-customer-shop-reservations"];
   };
   "/genres": {
     /**
@@ -60,22 +79,22 @@ export interface paths {
   };
   "/auth/register": {
     /**
-     * 会員登録
-     * @description ユーザー(一般会員)を新規登録する
+     * 顧客登録
+     * @description 顧客を新規登録する
      */
     post: operations["post-auth-register"];
   };
   "/auth/login": {
     /**
      * ログイン
-     * @description ユーザー(一般会員)のログイン処理を行う
+     * @description 顧客のログイン処理を行う
      */
     post: operations["post-auth-login"];
   };
   "/auth/logout": {
     /**
      * ログアウト
-     * @description ユーザー(一般会員)のログアウト処理を行う
+     * @description 顧客のログアウト処理を行う
      */
     post: operations["post-auth-logout"];
   };
@@ -85,54 +104,147 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    "register-error": {
+      message: string;
+      errors: {
+        name?: string[];
+        email?: string[];
+        password?: string[];
+      };
+    };
+    "login-error": {
+      message: string;
+      errors: {
+        email?: string[];
+        password?: string[];
+      };
+    };
+    /** @description エリア情報 */
+    "area-data": {
+      /**
+       * Format: int64
+       * @description エリアID
+       */
+      id: number;
+      /** @description エリア名 */
+      name: string;
+    };
+    /** @description ジャンル情報 */
+    "genre-data": {
+      /**
+       * Format: int64
+       * @description ジャンルID
+       */
+      id: number;
+      /** @description ジャンル名 */
+      name: string;
+    };
+    /** @description 飲食店情報 */
+    "shop-data": {
+      /**
+       * Format: int64
+       * @description 飲食店ID
+       */
+      id: number;
+      /** @description 飲食店名 */
+      name: string;
+      area: components["schemas"]["area-data"];
+      genre: components["schemas"]["genre-data"];
+      /**
+       * Format: uri
+       * @description 画像URL
+       */
+      image_url: string;
+      /** @description 飲食店詳細 */
+      detail: string;
+      /**
+       * @description お気に入りステータス
+       * @enum {string}
+       */
+      favorite_status: "unknown" | "marked" | "unmarked";
+    };
+    /** @description 予約情報 */
+    "reservation-data": {
+      /**
+       * Format: int64
+       * @description 予約ID
+       */
+      id: number;
+      shop: components["schemas"]["shop-data"];
+      /**
+       * Format: date-time
+       * @description 予約日時
+       */
+      reserved_at: string;
+      /** @description 予約人数 */
+      number_of_guests: number;
+    };
+    "reservation-error": {
+      message: string;
+      errors: {
+        reserved_at?: string[];
+        number_of_guests?: string[];
+      };
+    };
     /** @description ページネーション */
     pagination: {
-      /** @description ページネーションメタ情報 */
-      meta: {
-        /** @description 現在のページ番号 */
-        current_page: number;
-        /** @description 現在のページの最初のレコード番号 */
-        from: null | number;
-        /** @description 最終ページ番号 */
-        last_page: number;
-        /** @description ページネーションリンク */
-        links: {
-          /** @description リンクURL */
-          url: null | string;
-          /** @description リンクラベル */
-          label: string;
-          /** @description アクティブかどうか */
-          active: boolean;
-        }[];
-        /**
-         * Format: uri
-         * @description 現在のページのURL
-         */
-        path: string;
-        /** @description 1ページあたりの件数 */
-        per_page: number;
-        /** @description 現在のページの最後のレコード番号 */
-        to: null | number;
-        /** @description 総件数 */
-        total: number;
-      };
+      meta: components["schemas"]["pagination-meta"];
+      links: components["schemas"]["pagination-links"];
+    };
+    /** @description ページネーションメタ情報 */
+    "pagination-meta": {
+      /** @description 現在のページ番号 */
+      current_page: number;
+      /** @description 現在のページの最初のレコード番号 */
+      from: number | null;
+      /** @description 最終ページ番号 */
+      last_page: number;
       /** @description ページネーションリンク */
       links: {
         /**
          * Format: uri
-         * @description 最初のページのURL
+         * @description リンクURL
          */
-        first: string;
-        /**
-         * Format: uri
-         * @description 最後のページのURL
-         */
-        last: string;
-        /** @description 前のページのURL */
-        prev: null | string;
-        /** @description 次のページのURL */
-        next: null | string;
-      };
+        url: string | null;
+        /** @description リンクラベル */
+        label: string;
+        /** @description アクティブかどうか */
+        active: boolean;
+      }[];
+      /**
+       * Format: uri
+       * @description 現在のページのURL
+       */
+      path: string;
+      /** @description 1ページあたりの件数 */
+      per_page: number;
+      /** @description 現在のページの最後のレコード番号 */
+      to: number | null;
+      /** @description 総件数 */
+      total: number;
+    };
+    /** @description ページネーションリンク */
+    "pagination-links": {
+      /**
+       * Format: uri
+       * @description 最初のページのURL
+       */
+      first: string;
+      /**
+       * Format: uri
+       * @description 最後のページのURL
+       */
+      last: string;
+      /**
+       * Format: uri
+       * @description 前のページのURL
+       */
+      prev: string | null;
+      /**
+       * Format: uri
+       * @description 次のページのURL
+       */
+      next: string | null;
     };
   };
   responses: {
@@ -189,31 +301,6 @@ export interface components {
       };
       content: never;
     };
-    /** @description バリデーションエラーまたはメールアドレスが登録済み */
-    "post-auth-register-422": {
-      content: {
-        "application/json": {
-          message: string;
-          errors: {
-            name?: string[];
-            email?: string[];
-            password?: string[];
-          };
-        };
-      };
-    };
-    /** @description バリデーションエラーまたは未登録 */
-    "post-auth-login-422": {
-      content: {
-        "application/json": {
-          message: string;
-          errors: {
-            email?: string[];
-            password?: string[];
-          };
-        };
-      };
-    };
     /** @description 認証状態取得成功 */
     "get-auth-status-200": {
       content: {
@@ -225,15 +312,23 @@ export interface components {
         };
       };
     };
+    /** @description バリデーションエラーまたはメールアドレスが登録済み */
+    "post-auth-register-422": {
+      content: {
+        "application/json": components["schemas"]["register-error"];
+      };
+    };
+    /** @description バリデーションエラーまたは未登録 */
+    "post-auth-login-422": {
+      content: {
+        "application/json": components["schemas"]["login-error"];
+      };
+    };
     /** @description エリア一覧取得成功 */
     "get-areas-200": {
       content: {
         "application/json": {
-          areas: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-          }[];
+          areas: components["schemas"]["area-data"][];
         };
       };
     };
@@ -241,11 +336,7 @@ export interface components {
     "get-genres-200": {
       content: {
         "application/json": {
-          genres: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-          }[];
+          genres: components["schemas"]["genre-data"][];
         };
       };
     };
@@ -253,34 +344,40 @@ export interface components {
     "get-shops-200": {
       content: {
         "application/json": components["schemas"]["pagination"] & {
-          data: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-            area: {
-              /** Format: int64 */
-              id: number;
-              name: string;
-            };
-            genre: {
-              /** Format: int64 */
-              id: number;
-              name: string;
-            };
-            /** Format: uri */
-            image_url: string;
-            /** @enum {string} */
-            favorite_status: "unknown" | "marked" | "unmarked";
-          }[];
+          data: components["schemas"]["shop-data"][];
         };
+      };
+    };
+    /** @description 飲食店詳細ページの予約一覧取得成功 */
+    "get-customer-shop-reservations-200": {
+      content: {
+        "application/json": {
+          reservations: components["schemas"]["reservation-data"][];
+        };
+      };
+    };
+    /** @description 飲食店詳細ページの予約追加成功 */
+    "post-customer-shop-reservations-201": {
+      content: {
+        "application/json": {
+          reservation: components["schemas"]["reservation-data"];
+        };
+      };
+    };
+    /** @description 飲食店詳細ページの予約追加のバリデーションエラー */
+    "post-customer-shop-reservations-422": {
+      content: {
+        "application/json": components["schemas"]["reservation-error"];
       };
     };
   };
   parameters: {
-    /** @description ユーザーID */
-    "user-id": number;
+    /** @description 顧客ID */
+    "customer-id": number;
     /** @description 飲食店ID */
     "shop-id": number;
+    /** @description 予約ID */
+    "reservation-id": number;
     /** @description エリアID */
     "area-query"?: number;
     /** @description ジャンルID */
@@ -291,12 +388,12 @@ export interface components {
     "page-query"?: number;
   };
   requestBodies: {
-    /** @description ユーザー登録リクエスト */
+    /** @description 顧客登録リクエスト */
     "post-auth-register": {
       content: {
         "application/json": {
           /**
-           * @description ユーザー名
+           * @description 顧客名
            * @example テストユーザー
            */
           name: string;
@@ -332,6 +429,24 @@ export interface components {
         };
       };
     };
+    /** @description 予約追加リクエスト */
+    "post-customer-shop-reservations": {
+      content: {
+        "application/json": {
+          /**
+           * Format: date-time
+           * @description 予約日時
+           * @example 2021-12-31T23:59:59+09:00
+           */
+          reserved_at: string;
+          /**
+           * @description 予約人数
+           * @example 2
+           */
+          number_of_guests: number;
+        };
+      };
+    };
   };
   headers: never;
   pathItems: never;
@@ -361,13 +476,13 @@ export interface operations {
     };
   };
   /**
-   * 会員情報取得
-   * @description ユーザー(一般会員)の情報を取得する
+   * 顧客情報取得
+   * @description セッション中の顧客情報を取得する
    */
   "get-customer": {
     parameters: {
       path: {
-        user: components["parameters"]["user-id"];
+        customer: components["parameters"]["customer-id"];
       };
     };
     responses: {
@@ -378,13 +493,31 @@ export interface operations {
     };
   };
   /**
+   * マイページでの予約取り消し機能
+   * @description セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
+   */
+  "delete-customer-reservations": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+        reservation: components["parameters"]["reservation-id"];
+      };
+    };
+    responses: {
+      204: components["responses"]["no-content"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  /**
    * お気に入り登録
-   * @description ユーザー(一般会員)が飲食店をお気に入り登録する
+   * @description セッション中の顧客が指定の飲食店をお気に入り登録する
    */
   "post-customer-shop-favorite": {
     parameters: {
       path: {
-        user: components["parameters"]["user-id"];
+        customer: components["parameters"]["customer-id"];
         shop: components["parameters"]["shop-id"];
       };
     };
@@ -398,12 +531,12 @@ export interface operations {
   };
   /**
    * お気に入り解除
-   * @description ユーザー(一般会員)が飲食店のお気に入りを解除する
+   * @description セッション中の顧客が指定の飲食店のお気に入りを解除する
    */
   "delete-customer-shop-favorite": {
     parameters: {
       path: {
-        user: components["parameters"]["user-id"];
+        customer: components["parameters"]["customer-id"];
         shop: components["parameters"]["shop-id"];
       };
     };
@@ -413,6 +546,44 @@ export interface operations {
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
       422: components["responses"]["unprocessable-entity"];
+    };
+  };
+  /**
+   * 飲食店詳細ページでの予約一覧取得機能
+   * @description セッション中の顧客が指定の飲食店で行っている予約を一覧取得する
+   */
+  "get-customer-shop-reservations": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+        shop: components["parameters"]["shop-id"];
+      };
+    };
+    responses: {
+      200: components["responses"]["get-customer-shop-reservations-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  /**
+   * 飲食店詳細ページでの予約追加機能
+   * @description セッション中の顧客が指定の飲食店で予約を追加する
+   */
+  "post-customer-shop-reservations": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+        shop: components["parameters"]["shop-id"];
+      };
+    };
+    requestBody: components["requestBodies"]["post-customer-shop-reservations"];
+    responses: {
+      201: components["responses"]["post-customer-shop-reservations-201"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["post-customer-shop-reservations-422"];
     };
   };
   /**
@@ -451,8 +622,8 @@ export interface operations {
     };
   };
   /**
-   * 会員登録
-   * @description ユーザー(一般会員)を新規登録する
+   * 顧客登録
+   * @description 顧客を新規登録する
    */
   "post-auth-register": {
     requestBody: components["requestBodies"]["post-auth-register"];
@@ -464,7 +635,7 @@ export interface operations {
   };
   /**
    * ログイン
-   * @description ユーザー(一般会員)のログイン処理を行う
+   * @description 顧客のログイン処理を行う
    */
   "post-auth-login": {
     requestBody: components["requestBodies"]["post-auth-login"];
@@ -476,7 +647,7 @@ export interface operations {
   };
   /**
    * ログアウト
-   * @description ユーザー(一般会員)のログアウト処理を行う
+   * @description 顧客のログアウト処理を行う
    */
   "post-auth-logout": {
     responses: {
