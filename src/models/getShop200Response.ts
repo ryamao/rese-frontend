@@ -7,7 +7,6 @@
  */
 import type { ShopData } from "./shopData";
 
-/**
- * 飲食店情報取得成功
- */
-export type GetShop200Response = ShopData;
+export type GetShop200Response = {
+  data: ShopData;
+};

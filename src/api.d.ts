@@ -358,7 +358,9 @@ export interface components {
     /** @description 飲食店情報取得成功 */
     "get-shop-200": {
       content: {
-        "application/json": components["schemas"]["shop-data"];
+        "application/json": {
+          data: components["schemas"]["shop-data"];
+        };
       };
     };
     /** @description 飲食店詳細ページの予約一覧取得成功 */

@@ -432,25 +432,28 @@ export const getGetShopsResponseMock = (
 export const getGetShopResponseMock = (
   overrideResponse: any = {}
 ): GetShop200Response => ({
-  area: {
+  data: {
+    area: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    detail: faker.word.sample(),
+    favorite_status: faker.helpers.arrayElement([
+      "unknown",
+      "marked",
+      "unmarked"
+    ] as const),
+    genre: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
     id: faker.number.int({ min: undefined, max: undefined }),
+    image_url: faker.internet.url(),
     name: faker.word.sample(),
     ...overrideResponse
   },
-  detail: faker.word.sample(),
-  favorite_status: faker.helpers.arrayElement([
-    "unknown",
-    "marked",
-    "unmarked"
-  ] as const),
-  genre: {
-    id: faker.number.int({ min: undefined, max: undefined }),
-    name: faker.word.sample(),
-    ...overrideResponse
-  },
-  id: faker.number.int({ min: undefined, max: undefined }),
-  image_url: faker.internet.url(),
-  name: faker.word.sample(),
   ...overrideResponse
 });
 
