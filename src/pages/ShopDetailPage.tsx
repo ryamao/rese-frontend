@@ -1,30 +1,52 @@
 import { css } from "@emotion/css";
-import { Location, useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Location,
+  useLocation,
+  useNavigate,
+  useParams
+} from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { ShopData } from "../models";
 
 export function ShopDetailPage() {
-  // const { shopId } = useParams();
-  const { state: shop } = useLocation() as Location<ShopData | undefined>;
   const navigate = useNavigate();
-
   function handleClickBackButton() {
     navigate(-1);
   }
 
-  if (!shop) {
-    return <div>TODO: 飲食店詳細情報取得</div>;
+  const { data, isFetching } = useShopData();
+  if (isFetching) {
+    return <PageBase>Loading...</PageBase>;
+  }
+  if (!data) {
+    return <PageBase>Error</PageBase>;
   }
 
   return (
     <PageBase wrapperStyle={wrapperStyle}>
-      <ShopDetailArea shop={shop} onClickBackButton={handleClickBackButton} />
+      <ShopDetailArea shop={data} onClickBackButton={handleClickBackButton} />
       <ShopReservationArea />
     </PageBase>
   );
+}
+
+function useShopData() {
+  const { shopId } = useParams();
+  const { state } = useLocation() as Location<ShopData | undefined>;
+  const { getShop } = useBackendAccessContext();
+  return useQuery({
+    queryKey: ["shop", shopId],
+    queryFn: async () => {
+      return await getShop(Number(shopId));
+    },
+    enabled: !state,
+    initialData: state
+  });
 }
 
 const wrapperStyle = css`
