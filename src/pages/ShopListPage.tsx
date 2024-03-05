@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
@@ -14,13 +15,21 @@ import {
   useShopSearchState
 } from "../contexts/ShopSearchContext";
 import { GetShopsResult } from "../HttpClient";
+import { ShopData } from "../models";
 
 export function ShopListPage() {
   const { getShops } = useBackendAccessContext();
   const shopSearch = useShopSearchState();
+
+  const navigate = useNavigate();
+  function handleClickDetailButton(shop: ShopData) {
+    navigate(`/detail/${shop.id}`, {
+      state: shop
+    });
+  }
+
   const { data, isLoading, hasNextPage, fetchNextPage } =
     usePageQuery(getShops);
-
   useEffect(() => {
     if (hasNextPage) {
       fetchNextPage();
@@ -43,7 +52,11 @@ export function ShopListPage() {
         <ShopSearchForm />
         <ShopLayout>
           {searchByQuery(shops, shopSearch.params).map((shop) => (
-            <ShopOverviewCard key={shop.id} shop={shop} />
+            <ShopOverviewCard
+              key={shop.id}
+              shop={shop}
+              onClickDetailButton={handleClickDetailButton}
+            />
           ))}
         </ShopLayout>
       </ShopSearchContext.Provider>
