@@ -14,22 +14,24 @@ export function ReservationCard({
 
   return (
     <Table>
-      <tr>
-        <Head>Shop</Head>
-        <td>{shop.name}</td>
-      </tr>
-      <tr>
-        <Head>Date</Head>
-        <td>{datetime.format("YYYY-MM-DD")}</td>
-      </tr>
-      <tr>
-        <Head>Time</Head>
-        <td>{datetime.format("HH:mm")}</td>
-      </tr>
-      <tr>
-        <Head>Number</Head>
-        <td>{number_of_guests}人</td>
-      </tr>
+      <tbody>
+        <tr>
+          <Head>Shop</Head>
+          <td>{shop.name}</td>
+        </tr>
+        <tr>
+          <Head>Date</Head>
+          <td>{datetime.format("YYYY-MM-DD")}</td>
+        </tr>
+        <tr>
+          <Head>Time</Head>
+          <td>{datetime.format("HH:mm")}</td>
+        </tr>
+        <tr>
+          <Head>Number</Head>
+          <td>{number_of_guests}人</td>
+        </tr>
+      </tbody>
     </Table>
   );
 }
