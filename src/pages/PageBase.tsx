@@ -12,7 +12,7 @@ import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 export type LayoutType = "normal" | "search" | "detail";
 
 export interface PageBaseProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   wrapperStyle?: string;
 }
 
