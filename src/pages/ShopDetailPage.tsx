@@ -19,18 +19,21 @@ export function ShopDetailPage() {
     navigate("/");
   }
 
-  const { data, isFetching } = useShopData();
-  if (isFetching) {
+  const { data: shop, isFetching: isShopFetching } = useShopData();
+  const { data: reservations, isFetching: areReservationsFetching } =
+    useReservations();
+
+  if (isShopFetching || areReservationsFetching) {
     return <PageBase>Loading...</PageBase>;
   }
-  if (!data) {
+  if (!shop || !reservations) {
     return <PageBase>Error</PageBase>;
   }
 
   return (
     <PageBase wrapperStyle={wrapperStyle}>
-      <ShopDetailArea shop={data} onClickBackButton={handleClickBackButton} />
-      <ShopReservationArea />
+      <ShopDetailArea shop={shop} onClickBackButton={handleClickBackButton} />
+      <ShopReservationArea reservations={reservations} />
     </PageBase>
   );
 }
@@ -46,6 +49,22 @@ function useShopData() {
     },
     enabled: !state,
     initialData: state
+  });
+}
+
+function useReservations() {
+  const { authStatus, getReservations } = useBackendAccessContext();
+  const { shopId } = useParams();
+  return useQuery({
+    queryKey: ["reservations", authStatus, shopId],
+    queryFn: async () => {
+      if (authStatus?.status !== "customer") {
+        return [];
+      }
+      return await getReservations(authStatus.id, Number(shopId));
+    },
+    enabled: authStatus?.status === "customer",
+    initialData: []
   });
 }
 

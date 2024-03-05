@@ -4,33 +4,15 @@ import { ReservationCard } from "./ReservationCard";
 import { ReservationDateField } from "./ReservationDateField";
 import { ReservationNumberField } from "./ReservationNumberField";
 import { ReservationTimeField } from "./ReservationTimeField";
-import { ReservationData, ShopData } from "../models";
+import { ReservationData } from "../models";
 
-const sampleReservations = [
-  {
-    shop: {
-      name: "仙人"
-    } as ShopData,
-    reserved_at: "2021-12-31T12:00:00+09:00",
-    number_of_guests: 2
-  },
-  {
-    shop: {
-      name: "仙人"
-    } as ShopData,
-    reserved_at: "2021-12-31T12:00:00+09:00",
-    number_of_guests: 2
-  },
-  {
-    shop: {
-      name: "仙人"
-    } as ShopData,
-    reserved_at: "2021-12-31T12:00:00+09:00",
-    number_of_guests: 2
-  }
-] as ReservationData[];
+export interface ShopReservationAreaProps {
+  reservations: ReservationData[];
+}
 
-export function ShopReservationArea() {
+export function ShopReservationArea({
+  reservations
+}: ShopReservationAreaProps) {
   return (
     <Form>
       <Inner>
@@ -47,8 +29,8 @@ export function ShopReservationArea() {
           </div>
         </InputList>
         <ReservationList>
-          {sampleReservations.map((reservation, index) => (
-            <li key={index}>
+          {reservations.map((reservation) => (
+            <li key={reservation.id}>
               <ReservationCard reservation={reservation} />
             </li>
           ))}
