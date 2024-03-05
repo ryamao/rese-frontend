@@ -55,6 +55,17 @@ describe("ShopOverviewCard", () => {
     await waitFor(() => expect(shopSearch.setGenre).toHaveBeenCalledWith(444));
   });
 
+  test("詳細ボタンがクリックされた時", async () => {
+    const { getByRole, onClickDetailButton } = renderCard();
+    const button = getByRole("button", { name: "詳しくみる" });
+    await userEvent.click(button);
+    await waitFor(() =>
+      expect(onClickDetailButton).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 222 })
+      )
+    );
+  });
+
   test("お気に入りボタンがクリックされた時", async () => {
     const { getByRole, backendAccess } = renderCard("unknown");
     const button = getByRole("button", { name: "お気に入り" });
@@ -108,13 +119,18 @@ function renderCard(
     favorite_status: favoriteStatus
   } as ShopData;
 
+  const onClickDetailButton = vi.fn();
+
   const result = render(
     <BackendAccessContext.Provider value={backendAccess}>
       <ShopSearchContext.Provider value={shopSearch}>
-        <ShopOverviewCard shop={sampleShop} />
+        <ShopOverviewCard
+          shop={sampleShop}
+          onClickDetailButton={onClickDetailButton}
+        />
       </ShopSearchContext.Provider>
     </BackendAccessContext.Provider>
   );
 
-  return { ...result, shopSearch, backendAccess };
+  return { ...result, shopSearch, backendAccess, onClickDetailButton };
 }

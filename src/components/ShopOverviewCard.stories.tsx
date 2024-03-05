@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { ShopOverviewCard } from "./ShopOverviewCard";
 import {
@@ -24,7 +25,8 @@ const meta = {
       area: { id: 1, name: "東京都" },
       genre: { id: 1, name: "寿司" },
       favorite_status: "unknown"
-    } as ShopData
+    } as ShopData,
+    onClickDetailButton: fn()
   },
   decorators: [
     (Story) => {

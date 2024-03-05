@@ -10,9 +10,13 @@ import { ShopData } from "../models";
 
 export interface ShopOverviewProps {
   shop: ShopData;
+  onClickDetailButton?: (shop: ShopData) => void;
 }
 
-export function ShopOverviewCard({ shop }: ShopOverviewProps) {
+export function ShopOverviewCard({
+  shop,
+  onClickDetailButton
+}: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
   const { authStatus, addFavorite, removeFavorite } = useBackendAccessContext();
   const [favorite, setFavorite] = useState(shop.favorite_status);
@@ -50,7 +54,11 @@ export function ShopOverviewCard({ shop }: ShopOverviewProps) {
           </Tag>
         </TagLayout>
         <ButtonLayout>
-          <button type="button" className={blueButton}>
+          <button
+            type="button"
+            className={blueButton}
+            onClick={() => onClickDetailButton?.(shop)}
+          >
             詳しくみる
           </button>
           <FavoriteButton
