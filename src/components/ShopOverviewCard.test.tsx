@@ -8,6 +8,7 @@ import {
 } from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
 import { createMockBackendAccessState } from "../mocks/contexts";
+import { ShopData } from "../models";
 
 describe("ShopOverviewCard", () => {
   test("画像が表示されている", () => {
@@ -98,17 +99,19 @@ function renderCard(
     setSearch: vi.fn()
   };
 
+  const sampleShop = {
+    id: 222,
+    image_url: "https://via.placeholder.com/800x500",
+    name: "サンプルショップ",
+    area: { id: 333, name: "サンプルエリア" },
+    genre: { id: 444, name: "サンプルジャンル" },
+    favorite_status: favoriteStatus
+  } as ShopData;
+
   const result = render(
     <BackendAccessContext.Provider value={backendAccess}>
       <ShopSearchContext.Provider value={shopSearch}>
-        <ShopOverviewCard
-          id={222}
-          imageUrl="https://via.placeholder.com/800x500"
-          name="サンプルショップ"
-          area={{ id: 333, name: "サンプルエリア" }}
-          genre={{ id: 444, name: "サンプルジャンル" }}
-          favoriteStatus={favoriteStatus}
-        />
+        <ShopOverviewCard shop={sampleShop} />
       </ShopSearchContext.Provider>
     </BackendAccessContext.Provider>
   );

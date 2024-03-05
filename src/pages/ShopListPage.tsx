@@ -43,15 +43,7 @@ export function ShopListPage() {
         <ShopSearchForm />
         <ShopLayout>
           {searchByQuery(shops, shopSearch.params).map((shop) => (
-            <ShopOverviewCard
-              key={shop.id}
-              id={shop.id}
-              imageUrl={shop.image_url}
-              name={shop.name}
-              area={shop.area}
-              genre={shop.genre}
-              favoriteStatus={shop.favorite_status}
-            />
+            <ShopOverviewCard key={shop.id} shop={shop} />
           ))}
         </ShopLayout>
       </ShopSearchContext.Provider>
