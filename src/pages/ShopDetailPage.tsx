@@ -16,7 +16,7 @@ import { ShopData } from "../models";
 export function ShopDetailPage() {
   const navigate = useNavigate();
   function handleClickBackButton() {
-    navigate(-1);
+    navigate("/");
   }
 
   const { data, isFetching } = useShopData();
