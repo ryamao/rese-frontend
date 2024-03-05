@@ -21,6 +21,7 @@ const sampleShops = [
     area: { id: 1, name: "東京都" },
     genre: { id: 1, name: "寿司" },
     image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト1",
     favorite_status: "unknown"
   },
   {
@@ -29,6 +30,7 @@ const sampleShops = [
     area: { id: 2, name: "大阪府" },
     genre: { id: 2, name: "焼肉" },
     image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト2",
     favorite_status: "unknown"
   },
   {
@@ -37,6 +39,7 @@ const sampleShops = [
     area: { id: 3, name: "福岡県" },
     genre: { id: 3, name: "居酒屋" },
     image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト3",
     favorite_status: "unknown"
   },
   {
@@ -45,6 +48,7 @@ const sampleShops = [
     area: { id: 1, name: "東京都" },
     genre: { id: 4, name: "イタリアン" },
     image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト4",
     favorite_status: "unknown"
   },
   {
@@ -53,6 +57,7 @@ const sampleShops = [
     area: { id: 2, name: "大阪府" },
     genre: { id: 5, name: "ラーメン" },
     image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト5",
     favorite_status: "unknown"
   }
 ];
@@ -116,6 +121,9 @@ export const handlers = [
       ],
       data: sampleShops
     });
+  }),
+  http.get("*/shops/1", () => {
+    return HttpResponse.json({ data: sampleShops[0] });
   }),
   http.get("*/customers/1", () => {
     return HttpResponse.json({

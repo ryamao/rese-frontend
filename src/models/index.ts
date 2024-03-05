@@ -20,6 +20,7 @@ export * from "./getAuthStatus200ResponseStatus";
 export * from "./getCustomerShopReservations200Response";
 export * from "./getGenres200Response";
 export * from "./getSanctumCsrfCookie204Response";
+export * from "./getShop200Response";
 export * from "./getShops200Response";
 export * from "./getShops200ResponseAllOf";
 export * from "./getShopsParams";

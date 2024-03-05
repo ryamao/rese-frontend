@@ -267,6 +267,27 @@
         }
       }
     },
+    "/shops/{shop}": {
+      "get": {
+        "tags": ["Shop"],
+        "summary": "飲食店情報取得",
+        "description": "飲食店情報を個別に取得する",
+        "operationId": "get-shop",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/shop-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/get-shop-200"
+          },
+          "404": {
+            "$ref": "#/components/responses/not-found"
+          }
+        }
+      }
+    },
     "/sanctum/csrf-cookie": {
       "get": {
         "tags": ["Auth"],
@@ -849,6 +870,27 @@
               },
               "empty": {
                 "$ref": "#/components/examples/get-shops-200-empty"
+              }
+            }
+          }
+        }
+      },
+      "get-shop-200": {
+        "description": "飲食店情報取得成功",
+        "content": {
+          "application/json": {
+            "schema": {
+              "required": ["data"],
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/shop-data"
+                }
+              },
+              "type": "object"
+            },
+            "examples": {
+              "example": {
+                "$ref": "#/components/examples/get-shop-200"
               }
             }
           }
@@ -1440,6 +1482,26 @@
             }
           ],
           "data": []
+        }
+      },
+      "get-shop-200": {
+        "summary": "飲食店情報の例",
+        "value": {
+          "data": {
+            "id": 1,
+            "name": "店舗1",
+            "area": {
+              "id": 1,
+              "name": "東京都"
+            },
+            "genre": {
+              "id": 1,
+              "name": "和食"
+            },
+            "image_url": "https://api.rese.com/images/1.jpg",
+            "detail": "サンプルテキスト",
+            "favorite_status": "marked"
+          }
         }
       },
       "get-customer-shop-reservations-200-example": {

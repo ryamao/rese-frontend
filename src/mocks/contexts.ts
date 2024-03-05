@@ -25,6 +25,7 @@ export function createMockBackendAccessState({
     getAreas: getAreas ?? vitest.fn(),
     getGenres: getGenres ?? vitest.fn(),
     getShops: vitest.fn(),
+    getShop: vitest.fn(),
     addFavorite: vitest.fn(),
     removeFavorite: vitest.fn()
   };

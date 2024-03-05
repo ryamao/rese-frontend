@@ -10,6 +10,7 @@ import {
   PostAuthLoginResult,
   PostAuthRegisterResult
 } from "../HttpClient";
+import { ShopData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult | null;
@@ -24,6 +25,7 @@ export interface BackendAccessContextType {
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
   getShops: (page: number) => Promise<GetShopsResult>;
+  getShop: (id: number) => Promise<ShopData>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
 }
@@ -86,6 +88,7 @@ export function useBackendAccessState(
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),
     getShops: (page) => httpClient.getShops(page),
+    getShop: (id) => httpClient.getShop(id),
     addFavorite: (userId, shopId) =>
       httpClient.postCustomerShopFavorite(userId, shopId),
     removeFavorite: (userId, shopId) =>
