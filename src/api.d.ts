@@ -70,6 +70,13 @@ export interface paths {
      */
     get: operations["get-shops"];
   };
+  "/shops/{shop}": {
+    /**
+     * 飲食店情報取得
+     * @description 飲食店情報を個別に取得する
+     */
+    get: operations["get-shop"];
+  };
   "/sanctum/csrf-cookie": {
     /**
      * CSRFトークン取得
@@ -348,6 +355,12 @@ export interface components {
         };
       };
     };
+    /** @description 飲食店情報取得成功 */
+    "get-shop-200": {
+      content: {
+        "application/json": components["schemas"]["shop-data"];
+      };
+    };
     /** @description 飲食店詳細ページの予約一覧取得成功 */
     "get-customer-shop-reservations-200": {
       content: {
@@ -610,6 +623,21 @@ export interface operations {
     };
     responses: {
       200: components["responses"]["get-shops-200"];
+    };
+  };
+  /**
+   * 飲食店情報取得
+   * @description 飲食店情報を個別に取得する
+   */
+  "get-shop": {
+    parameters: {
+      path: {
+        shop: components["parameters"]["shop-id"];
+      };
+    };
+    responses: {
+      200: components["responses"]["get-shop-200"];
+      404: components["responses"]["not-found"];
     };
   };
   /**
