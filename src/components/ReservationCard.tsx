@@ -43,7 +43,7 @@ const Table = styled.table`
 `;
 
 const Head = styled.th`
-  width: 20%;
+  width: 7.5rem;
   padding: 0.25rem 0;
   font-weight: normal;
   text-align: left;
