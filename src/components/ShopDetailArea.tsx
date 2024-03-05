@@ -32,11 +32,13 @@ export function ShopDetailArea({
 
 const Header = styled.div`
   display: flex;
+  align-items: center;
   margin: 1.5rem 0.25rem;
 `;
 
 const Title = styled.h2`
   margin: 0 0.75rem;
+  font-size: 1.75rem;
 `;
 
 const Image = styled.div`
