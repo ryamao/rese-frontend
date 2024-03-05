@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { useParams } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
@@ -6,6 +7,12 @@ import { ShopReservationArea } from "../components/ShopReservationArea";
 import { ShopData } from "../models";
 
 export function ShopDetailPage() {
+  const { shopId } = useParams();
+
+  if (shopId !== "1") {
+    return <PageBase>Not Found</PageBase>;
+  }
+
   const sampleShop = {
     id: 1,
     name: "仙人",
@@ -47,6 +54,10 @@ const wrapperStyle = css`
   & > *:nth-child(3) {
     grid-row: 1 / 3;
     grid-column: 2 / 3;
+  }
+
+  @media (width <= 1024px) {
+    gap: 2rem;
   }
 
   @media (width <= 768px) {
