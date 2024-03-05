@@ -1,13 +1,17 @@
 import styled from "@emotion/styled";
 
-export function BackButton() {
-  return <Button>&lt;</Button>;
+export interface BackButtonProps {
+  onClick?: () => void;
+}
+
+export function BackButton({ onClick }: BackButtonProps) {
+  return <Button onClick={onClick}>&lt;</Button>;
 }
 
 const Button = styled.button`
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.125rem;
   background-color: #fff;
   border: none;
   border-radius: 0.25rem;

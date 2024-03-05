@@ -5,13 +5,17 @@ import { ShopData } from "../models";
 
 export interface ShopDetailAreaProps {
   shop: ShopData;
+  onClickBackButton?: () => void;
 }
 
-export function ShopDetailArea({ shop }: ShopDetailAreaProps) {
+export function ShopDetailArea({
+  shop,
+  onClickBackButton
+}: ShopDetailAreaProps) {
   return (
     <div>
       <Header>
-        <BackButton />
+        <BackButton onClick={onClickBackButton} />
         <Title>{shop.name}</Title>
       </Header>
       <Image>
@@ -28,11 +32,13 @@ export function ShopDetailArea({ shop }: ShopDetailAreaProps) {
 
 const Header = styled.div`
   display: flex;
+  align-items: center;
   margin: 1.5rem 0.25rem;
 `;
 
 const Title = styled.h2`
   margin: 0 0.75rem;
+  font-size: 1.75rem;
 `;
 
 const Image = styled.div`
