@@ -56,6 +56,10 @@ const wrapperStyle = css`
     grid-column: 2 / 3;
   }
 
+  @media (width <= 1024px) {
+    gap: 2rem;
+  }
+
   @media (width <= 768px) {
     grid-template-rows: auto auto 1fr;
     grid-template-columns: 1fr;
