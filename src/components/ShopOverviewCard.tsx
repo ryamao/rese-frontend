@@ -6,27 +6,20 @@ import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
+import { ShopData } from "../models";
 
 export interface ShopOverviewProps {
-  id: number;
-  imageUrl: string;
-  name: string;
-  area: { id: number; name: string };
-  genre: { id: number; name: string };
-  favoriteStatus: "unknown" | "marked" | "unmarked";
+  shop: ShopData;
+  onClickDetailButton?: (shop: ShopData) => void;
 }
 
 export function ShopOverviewCard({
-  id,
-  imageUrl,
-  name,
-  area,
-  genre,
-  favoriteStatus
+  shop,
+  onClickDetailButton
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
   const { authStatus, addFavorite, removeFavorite } = useBackendAccessContext();
-  const [favorite, setFavorite] = useState(favoriteStatus);
+  const [favorite, setFavorite] = useState(shop.favorite_status);
 
   async function handleClickFavoriteButton(
     favoriteStatus: "unknown" | "marked" | "unmarked"
@@ -37,11 +30,11 @@ export function ShopOverviewCard({
 
     switch (favoriteStatus) {
       case "marked":
-        await removeFavorite(authStatus.id, id);
+        await removeFavorite(authStatus.id, shop.id);
         setFavorite("unmarked");
         break;
       case "unmarked":
-        await addFavorite(authStatus.id, id);
+        await addFavorite(authStatus.id, shop.id);
         setFavorite("marked");
         break;
     }
@@ -49,19 +42,23 @@ export function ShopOverviewCard({
 
   return (
     <div className={whitePanel}>
-      <Image src={imageUrl} alt={genre.name} />
+      <Image src={shop.image_url} alt={shop.genre.name} />
       <Content>
-        <Name>{name}</Name>
+        <Name>{shop.name}</Name>
         <TagLayout>
-          <Tag type="button" onClick={() => setArea(area.id)}>
-            #{area.name}
+          <Tag type="button" onClick={() => setArea(shop.area.id)}>
+            #{shop.area.name}
           </Tag>
-          <Tag type="button" onClick={() => setGenre(genre.id)}>
-            #{genre.name}
+          <Tag type="button" onClick={() => setGenre(shop.genre.id)}>
+            #{shop.genre.name}
           </Tag>
         </TagLayout>
         <ButtonLayout>
-          <button type="button" className={blueButton}>
+          <button
+            type="button"
+            className={blueButton}
+            onClick={() => onClickDetailButton?.(shop)}
+          >
             詳しくみる
           </button>
           <FavoriteButton

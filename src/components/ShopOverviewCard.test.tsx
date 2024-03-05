@@ -8,6 +8,7 @@ import {
 } from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
 import { createMockBackendAccessState } from "../mocks/contexts";
+import { ShopData } from "../models";
 
 describe("ShopOverviewCard", () => {
   test("画像が表示されている", () => {
@@ -54,6 +55,17 @@ describe("ShopOverviewCard", () => {
     await waitFor(() => expect(shopSearch.setGenre).toHaveBeenCalledWith(444));
   });
 
+  test("詳細ボタンがクリックされた時", async () => {
+    const { getByRole, onClickDetailButton } = renderCard();
+    const button = getByRole("button", { name: "詳しくみる" });
+    await userEvent.click(button);
+    await waitFor(() =>
+      expect(onClickDetailButton).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 222 })
+      )
+    );
+  });
+
   test("お気に入りボタンがクリックされた時", async () => {
     const { getByRole, backendAccess } = renderCard("unknown");
     const button = getByRole("button", { name: "お気に入り" });
@@ -98,20 +110,27 @@ function renderCard(
     setSearch: vi.fn()
   };
 
+  const sampleShop = {
+    id: 222,
+    image_url: "https://via.placeholder.com/800x500",
+    name: "サンプルショップ",
+    area: { id: 333, name: "サンプルエリア" },
+    genre: { id: 444, name: "サンプルジャンル" },
+    favorite_status: favoriteStatus
+  } as ShopData;
+
+  const onClickDetailButton = vi.fn();
+
   const result = render(
     <BackendAccessContext.Provider value={backendAccess}>
       <ShopSearchContext.Provider value={shopSearch}>
         <ShopOverviewCard
-          id={222}
-          imageUrl="https://via.placeholder.com/800x500"
-          name="サンプルショップ"
-          area={{ id: 333, name: "サンプルエリア" }}
-          genre={{ id: 444, name: "サンプルジャンル" }}
-          favoriteStatus={favoriteStatus}
+          shop={sampleShop}
+          onClickDetailButton={onClickDetailButton}
         />
       </ShopSearchContext.Provider>
     </BackendAccessContext.Provider>
   );
 
-  return { ...result, shopSearch, backendAccess };
+  return { ...result, shopSearch, backendAccess, onClickDetailButton };
 }

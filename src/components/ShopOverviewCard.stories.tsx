@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { ShopOverviewCard } from "./ShopOverviewCard";
 import {
@@ -10,18 +11,22 @@ import {
   useShopSearchState
 } from "../contexts/ShopSearchContext";
 import { HttpClient } from "../HttpClient";
+import { ShopData } from "../models";
 
 const meta = {
   title: "Components/Shop/ShopOverviewCard",
   component: ShopOverviewCard,
   tags: ["autodocs"],
   args: {
-    id: 1,
-    imageUrl: "https://via.placeholder.com/800x500",
-    name: "仙人",
-    area: { id: 1, name: "東京都" },
-    genre: { id: 1, name: "寿司" },
-    favoriteStatus: "unknown"
+    shop: {
+      id: 1,
+      image_url: "https://via.placeholder.com/800x500",
+      name: "仙人",
+      area: { id: 1, name: "東京都" },
+      genre: { id: 1, name: "寿司" },
+      favorite_status: "unknown"
+    } as ShopData,
+    onClickDetailButton: fn()
   },
   decorators: [
     (Story) => {
