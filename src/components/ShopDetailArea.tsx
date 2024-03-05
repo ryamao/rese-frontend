@@ -3,7 +3,11 @@ import styled from "@emotion/styled";
 import { BackButton } from "./BackButton";
 import { ShopData } from "../models";
 
-export function ShopDetailArea(shop: ShopData) {
+export interface ShopDetailAreaProps {
+  shop: ShopData;
+}
+
+export function ShopDetailArea({ shop }: ShopDetailAreaProps) {
   return (
     <div>
       <Header>
