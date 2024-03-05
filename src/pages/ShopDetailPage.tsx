@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Location, useLocation } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
@@ -9,6 +9,11 @@ import { ShopData } from "../models";
 export function ShopDetailPage() {
   // const { shopId } = useParams();
   const { state: shop } = useLocation() as Location<ShopData | undefined>;
+  const navigate = useNavigate();
+
+  function handleClickBackButton() {
+    navigate(-1);
+  }
 
   if (!shop) {
     return <div>TODO: 飲食店詳細情報取得</div>;
@@ -16,7 +21,7 @@ export function ShopDetailPage() {
 
   return (
     <PageBase wrapperStyle={wrapperStyle}>
-      <ShopDetailArea shop={shop} />
+      <ShopDetailArea shop={shop} onClickBackButton={handleClickBackButton} />
       <ShopReservationArea />
     </PageBase>
   );
