@@ -1,7 +1,7 @@
 import createClient, { Middleware } from "openapi-fetch";
 
 import * as api from "./api";
-import { ShopData } from "./models";
+import { ReservationData, ShopData } from "./models";
 import { getCookieValue } from "./utils";
 
 export type GetSanctumCsrfCookieResult =
@@ -225,6 +225,27 @@ export class HttpClient {
       if (error) {
         throw new Error(error);
       }
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async getCustomerShopReservations(
+    customerId: number,
+    shopId: number
+  ): Promise<ReservationData[]> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, error } = await this.client.GET(
+        "/customers/{customer}/shops/{shop}/reservations",
+        {
+          params: { path: { customer: customerId, shop: shopId } }
+        }
+      );
+      if (error) {
+        throw new Error(error);
+      }
+      return data?.reservations;
     } catch (error) {
       throw new Error(String(error));
     }
