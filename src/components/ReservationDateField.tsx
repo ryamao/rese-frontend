@@ -5,7 +5,7 @@ export function ReservationDateField() {
 }
 
 const Input = styled.input`
-  width: 10rem;
+  width: 100%;
   padding: 0.375rem 0.625rem;
   border: none;
   border-radius: 0.25rem;

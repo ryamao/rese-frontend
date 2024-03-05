@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { BackButton } from "./BackButton";
 import { ShopData } from "../models";
 
-export function ShopDetail(shop: ShopData) {
+export function ShopDetailArea(shop: ShopData) {
   return (
     <div>
       <Header>
@@ -25,14 +25,10 @@ export function ShopDetail(shop: ShopData) {
 const Header = styled.div`
   display: flex;
   margin: 1.5rem 0.25rem;
-
-  & > * + * {
-    margin-left: 0.75rem;
-  }
 `;
 
 const Title = styled.h2`
-  margin: 0;
+  margin: 0 0.75rem;
 `;
 
 const Image = styled.div`
