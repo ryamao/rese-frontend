@@ -10,7 +10,7 @@ import {
   PostAuthLoginResult,
   PostAuthRegisterResult
 } from "../HttpClient";
-import { ShopData } from "../models";
+import { ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult | null;
@@ -28,6 +28,10 @@ export interface BackendAccessContextType {
   getShop: (id: number) => Promise<ShopData>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
+  getReservations: (
+    userId: number,
+    shopId: number
+  ) => Promise<ReservationData[]>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -92,6 +96,8 @@ export function useBackendAccessState(
     addFavorite: (userId, shopId) =>
       httpClient.postCustomerShopFavorite(userId, shopId),
     removeFavorite: (userId, shopId) =>
-      httpClient.deleteCustomerShopFavorite(userId, shopId)
+      httpClient.deleteCustomerShopFavorite(userId, shopId),
+    getReservations: (userId, shopId) =>
+      httpClient.getCustomerShopReservations(userId, shopId)
   };
 }
