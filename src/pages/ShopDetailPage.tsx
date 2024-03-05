@@ -82,6 +82,7 @@ const wrapperStyle = css`
     grid-template-columns: 1fr;
     gap: 0 0;
     padding: 1rem;
+    margin-bottom: 2rem;
 
     & > *:nth-child(1) {
       grid-row: 1 / 2;
