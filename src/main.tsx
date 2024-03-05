@@ -14,6 +14,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ShopDetailPage } from "./pages/ShopDetailPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
@@ -32,10 +33,11 @@ const router = createBrowserRouter(
     <>
       <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage />} />
+        <Route path="/detail/:shopId" element={<ShopDetailPage />} />
 
         <Route element={<GuestsOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />R
         </Route>
 
         <Route element={<CustomersOnlyRoute />}>
