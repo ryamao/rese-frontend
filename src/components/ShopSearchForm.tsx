@@ -1,25 +1,18 @@
-import { useEffect, useState } from "react";
-
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { FaSearch } from "react-icons/fa";
 
 import { whitePanel } from "./styles";
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
-import { GetAreasResult, GetGenresResult } from "../HttpClient";
+import { AreaData, GenreData } from "../models";
 
-export function ShopSearchForm() {
-  const { getAreas, getGenres } = useBackendAccessContext();
+export interface ShopSearchFormProps {
+  areas: AreaData[];
+  genres: GenreData[];
+}
+
+export function ShopSearchForm({ areas, genres }: ShopSearchFormProps) {
   const { params, setArea, setGenre, setSearch } = useShopSearchContext();
-  const [areas, setAreas] = useState<GetAreasResult["areas"]>([]);
-  const [genres, setGenres] = useState<GetGenresResult["genres"]>([]);
-
-  useEffect(() => {
-    getAreas().then(setAreas);
-    getGenres().then(setGenres);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <form className={whitePanel} onSubmit={(e) => e.preventDefault()}>
@@ -28,7 +21,7 @@ export function ShopSearchForm() {
           <ComboBox
             aria-label="Area"
             name="area"
-            value={params.area ? String(params.area) : ""}
+            value={params.area ? String(params.area) : "All area"}
             onChange={(e) => setArea(stringToNumber(e.target.value))}
           >
             <option defaultChecked>All area</option>
@@ -44,7 +37,7 @@ export function ShopSearchForm() {
           <ComboBox
             aria-label="Genre"
             name="genre"
-            value={params.genre ? String(params.genre) : ""}
+            value={params.genre ? String(params.genre) : "All genre"}
             onChange={(e) => setGenre(stringToNumber(e.target.value))}
           >
             <option defaultChecked>All genre</option>

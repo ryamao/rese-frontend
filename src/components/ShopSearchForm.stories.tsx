@@ -2,14 +2,9 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { ShopSearchForm } from "./ShopSearchForm";
 import {
-  BackendAccessContext,
-  useBackendAccessState
-} from "../contexts/BackendAccessContext";
-import {
   ShopSearchContext,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
-import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
 
 const meta = {
@@ -18,14 +13,11 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => {
-      const backendAccess = useBackendAccessState(new HttpClient());
       const shopSearch = useShopSearchState();
       return (
-        <BackendAccessContext.Provider value={backendAccess}>
-          <ShopSearchContext.Provider value={shopSearch}>
-            <Story />
-          </ShopSearchContext.Provider>
-        </BackendAccessContext.Provider>
+        <ShopSearchContext.Provider value={shopSearch}>
+          <Story />
+        </ShopSearchContext.Provider>
       );
     }
   ],
@@ -33,6 +25,16 @@ const meta = {
     msw: {
       handlers
     }
+  },
+  args: {
+    areas: [
+      { id: 1, name: "Area 1" },
+      { id: 2, name: "Area 2" }
+    ],
+    genres: [
+      { id: 1, name: "Genre 1" },
+      { id: 2, name: "Genre 2" }
+    ]
   }
 } satisfies Meta<typeof ShopSearchForm>;
 
