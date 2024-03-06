@@ -38,6 +38,9 @@ export type GetGenresResult =
 export type GetShopsResult =
   api.components["responses"]["get-shops-200"]["content"]["application/json"];
 
+export type PostCustomerShopReservationsBody =
+  api.components["requestBodies"]["post-customer-shop-reservations"]["content"]["application/json"];
+
 const middleware: Middleware = {
   async onRequest(req) {
     const headers: HeadersInit = {
@@ -246,6 +249,29 @@ export class HttpClient {
         throw new Error(error);
       }
       return data?.reservations;
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async postCustomerShopReservations(
+    customerId: number,
+    shopId: number,
+    body: PostCustomerShopReservationsBody
+  ): Promise<ReservationData> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, error } = await this.client.POST(
+        "/customers/{customer}/shops/{shop}/reservations",
+        {
+          params: { path: { customer: customerId, shop: shopId } },
+          body
+        }
+      );
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data.reservation;
     } catch (error) {
       throw new Error(String(error));
     }
