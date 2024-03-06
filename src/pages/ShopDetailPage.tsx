@@ -12,16 +12,22 @@ import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
+import { GetAuthStatusResult } from "../HttpClient";
 import { ShopData } from "../models";
 
 export function ShopDetailPage() {
+  const { open } = useMenuOverlayContext();
+
   const navigate = useNavigate();
   function handleClickBackButton() {
     navigate("/");
   }
 
-  const shop = useShopData();
-  const reservations = useReservations();
+  const { shopId } = useParams();
+  const { authStatus } = useBackendAccessContext();
+  const shop = useShopData(shopId);
+  const reservations = useReservations(authStatus, shopId);
 
   if (shop.isFetching || reservations.isFetching) {
     return <PageBase>Loading...</PageBase>;
@@ -34,6 +40,10 @@ export function ShopDetailPage() {
     reservations.mutate({ reservedAt, numberOfGuests });
   }
 
+  function handleClickLogin() {
+    open();
+  }
+
   return (
     <PageBase wrapperStyle={wrapperStyle}>
       <ShopDetailArea
@@ -41,15 +51,16 @@ export function ShopDetailPage() {
         onClickBackButton={handleClickBackButton}
       />
       <ShopReservationArea
+        authStatus={authStatus}
         reservations={reservations.data}
         onSubmit={handleSubmit}
+        onClickLogin={handleClickLogin}
       />
     </PageBase>
   );
 }
 
-function useShopData() {
-  const { shopId } = useParams();
+function useShopData(shopId?: string) {
   const { state } = useLocation() as Location<ShopData | undefined>;
   const { getShop } = useBackendAccessContext();
 
@@ -63,17 +74,15 @@ function useShopData() {
   });
 }
 
-function useReservations() {
+function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
   const { invalidateQueries } = useQueryClient();
-  const { shopId } = useParams();
-  const { authStatus, getReservations, postReservation } =
-    useBackendAccessContext();
+  const { getReservations, postReservation } = useBackendAccessContext();
 
   async function mutationFn(args: {
     reservedAt: Dayjs;
     numberOfGuests: number;
   }) {
-    if (authStatus?.status !== "customer" || !shopId) {
+    if (authStatus.status !== "customer" || !shopId) {
       return null;
     }
 
@@ -88,12 +97,12 @@ function useReservations() {
   const fetch = useQuery({
     queryKey: ["reservations", authStatus, shopId],
     queryFn: async () => {
-      if (authStatus?.status !== "customer") {
+      if (authStatus.status !== "customer") {
         return [];
       }
       return await getReservations(authStatus.id, Number(shopId));
     },
-    enabled: authStatus?.status === "customer",
+    enabled: authStatus.status === "customer",
     initialData: []
   });
 

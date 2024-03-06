@@ -1,13 +1,11 @@
-import { useState } from "react";
-
 import { css } from "@emotion/css";
-import { Global, css as reactCss } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
 import { MenuButton } from "../components/MenuButton";
 import { MenuButtonType, MenuOverlay } from "../components/MenuOverlay";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
 
 export type LayoutType = "normal" | "search" | "detail";
 
@@ -18,7 +16,7 @@ export interface PageBaseProps {
 
 export function PageBase({ children, wrapperStyle }: PageBaseProps) {
   const { authStatus, logout } = useBackendAccessContext();
-  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(false);
+  const { isOpen, open, close } = useMenuOverlayContext();
   const navigate = useNavigate();
 
   async function handleClickMenuButton(type: MenuButtonType) {
@@ -43,37 +41,27 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
         break;
     }
 
-    setIsOverlayVisible(false);
+    close();
   }
 
   return (
     <>
-      <Global styles={global} />
       <div className={wrapperStyle ?? normalStyle}>
         <Header>
-          <HeaderInner>
-            <MenuButton onClick={() => setIsOverlayVisible(true)} />
-            <Title>Rese</Title>
-          </HeaderInner>
+          <MenuButton onClick={open} />
+          <Title>Rese</Title>
         </Header>
         {children}
       </div>
-      {isOverlayVisible && (
+      {isOpen && (
         <MenuOverlay
-          authStatus={authStatus?.status ?? "guest"}
+          authStatus={authStatus.status}
           onClickMenuButton={handleClickMenuButton}
         />
       )}
     </>
   );
 }
-
-const global = reactCss`
-  body {
-    margin: 0;
-    background-color: #eee;
-  }
-`;
 
 const normalStyle = css`
   display: grid;
@@ -87,13 +75,6 @@ const normalStyle = css`
 
 const Header = styled.header`
   display: flex;
-  justify-content: center;
-  width: 100%;
-`;
-
-const HeaderInner = styled.div`
-  display: flex;
-  align-items: center;
   width: 100%;
 `;
 

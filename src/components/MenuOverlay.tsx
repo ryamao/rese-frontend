@@ -86,6 +86,7 @@ const OverlayHeader = styled.div`
   width: 100%;
   max-width: 1230px;
   padding: 2rem;
+  margin: 0 auto;
 `;
 
 const OverlayContent = styled.div`

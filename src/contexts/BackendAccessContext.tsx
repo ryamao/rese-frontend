@@ -15,7 +15,7 @@ import {
 import { ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
-  authStatus: GetAuthStatusResult | null;
+  authStatus: GetAuthStatusResult;
   register: (
     name: string,
     email: string,
@@ -53,9 +53,9 @@ export const useBackendAccessContext = () => useContext(BackendAccessContext);
 export function useBackendAccessState(
   httpClient: HttpClient
 ): BackendAccessContextType {
-  const [authStatus, setAuthStatus] = useState<GetAuthStatusResult | null>(
-    null
-  );
+  const [authStatus, setAuthStatus] = useState<GetAuthStatusResult>({
+    status: "guest"
+  });
 
   useEffect(() => {
     httpClient.getAuthStatus().then(setAuthStatus);

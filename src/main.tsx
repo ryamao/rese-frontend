@@ -10,6 +10,7 @@ import {
   createRoutesFromElements
 } from "react-router-dom";
 
+import { MenuOverlayProvider } from "./contexts/MenuOverlayContext";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -34,12 +35,10 @@ const router = createBrowserRouter(
       <Route element={<BackendAccessRoute />}>
         <Route path="/" element={<ShopListPage />} />
         <Route path="/detail/:shopId" element={<ShopDetailPage />} />
-
         <Route element={<GuestsOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />R
         </Route>
-
         <Route element={<CustomersOnlyRoute />}>
           <Route path="thanks" element={<ThanksPage />} />
           <Route path="mypage" element={<DashboardPage />} />
@@ -55,7 +54,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
       <Global styles={global} />
-      <RouterProvider router={router} />
+      <MenuOverlayProvider>
+        <RouterProvider router={router} />
+      </MenuOverlayProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
