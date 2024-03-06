@@ -16,7 +16,7 @@ import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
 import { GetAuthStatusResult, GetShopResult } from "../HttpClient";
-import { ShopData } from "../models";
+import { ReservationData, ShopData } from "../models";
 
 export function ShopDetailPage() {
   const { open } = useMenuOverlayContext();
@@ -34,22 +34,22 @@ export function ShopDetailPage() {
   if (shop.isError) {
     return <ErrorPage message={`500: ${shop.error.message}`} />;
   }
+  if (shop.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+  if (shop.data.status === 404) {
+    return <NotFoundPage message="お探しの店舗は存在しないか削除されました" />;
+  }
+
   if (reservations.isError) {
     return <ErrorPage message={`500: ${reservations.error.message}`} />;
   }
-  if (shop.data && shop.data.status === 404) {
-    return <NotFoundPage message="お探しの店舗は存在しないか削除されました" />;
-  }
-  if (!shop.data || reservations.isFetching) {
+  if (reservations.isPending) {
     return <PageBase>Loading...</PageBase>;
   }
 
   function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {
     reservations.mutate({ reservedAt, numberOfGuests });
-  }
-
-  function handleClickLogin() {
-    open();
   }
 
   return (
@@ -62,7 +62,7 @@ export function ShopDetailPage() {
         authStatus={authStatus}
         reservations={reservations.data}
         onSubmit={handleSubmit}
-        onClickLogin={handleClickLogin}
+        onClickLogin={open}
       />
     </PageBase>
   );
@@ -87,8 +87,9 @@ function useShopData(shopId?: string) {
 }
 
 function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
-  const { invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
   const { getReservations, postReservation } = useBackendAccessContext();
+  const queryKey = ["reservations", authStatus, shopId];
 
   async function mutationFn(args: {
     reservedAt: Dayjs;
@@ -107,7 +108,7 @@ function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
   }
 
   const fetch = useQuery({
-    queryKey: ["reservations", authStatus, shopId],
+    queryKey,
     queryFn: async () => {
       if (authStatus.status !== "customer") {
         return [];
@@ -115,16 +116,18 @@ function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
       return await getReservations(authStatus.id, Number(shopId));
     },
     enabled: authStatus.status === "customer",
-    initialData: []
+    initialData: [],
+    staleTime: Infinity
   });
 
   const { mutate } = useMutation({
     mutationFn,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data) {
-        invalidateQueries({
-          queryKey: ["reservations", authStatus, shopId]
-        });
+        await queryClient.setQueryData(
+          queryKey,
+          (oldData: ReservationData[]) => [...oldData, data]
+        );
       }
     }
   });

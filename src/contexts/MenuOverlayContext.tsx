@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export interface MenuOverlayContextType {
   isOpen: boolean;
@@ -16,10 +16,6 @@ export const useMenuOverlayContext = () => useContext(MenuOverlayContext);
 // eslint-disable-next-line react-refresh/only-export-components
 export function useMenuOverlayState(): MenuOverlayContextType {
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    console.log("useEffect", isOpen);
-  }, [isOpen]);
 
   return {
     isOpen,

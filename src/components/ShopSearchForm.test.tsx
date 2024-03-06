@@ -2,9 +2,7 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ShopSearchForm } from "./ShopSearchForm";
-import { BackendAccessContext } from "../contexts/BackendAccessContext";
 import { ShopSearchContext } from "../contexts/ShopSearchContext";
-import { createMockBackendAccessState } from "../mocks/contexts";
 
 describe("ShopSearchForm", () => {
   test("コンポーネント内に必要な要素が存在する", () => {
@@ -17,6 +15,56 @@ describe("ShopSearchForm", () => {
     expect(areaSelect).toBeInTheDocument();
     expect(genreSelect).toBeInTheDocument();
     expect(searchField).toBeInTheDocument();
+  });
+
+  test("エリアセレクトのオプションが表示される", async () => {
+    const { findByRole } = renderForm();
+
+    expect(
+      await findByRole("option", { name: "All area" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルエリア1" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルエリア2" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルエリア3" })
+    ).toBeInTheDocument();
+  });
+
+  test("ジャンルセレクトのオプションが表示される", async () => {
+    const { findByRole } = renderForm();
+
+    expect(
+      await findByRole("option", { name: "All genre" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルジャンル1" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルジャンル2" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルジャンル3" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルジャンル4" })
+    ).toBeInTheDocument();
+    expect(
+      await findByRole("option", { name: "サンプルジャンル5" })
+    ).toBeInTheDocument();
+  });
+
+  test("エリアセレクトの初期値", async () => {
+    const { getByRole } = renderForm();
+    expect(getByRole("combobox", { name: "Area" })).toHaveValue("All area");
+  });
+
+  test("ジャンルセレクトの初期値", async () => {
+    const { getByRole } = renderForm();
+    expect(getByRole("combobox", { name: "Genre" })).toHaveValue("All genre");
   });
 
   test("エリアセレクト", async () => {
@@ -72,11 +120,6 @@ describe("ShopSearchForm", () => {
 });
 
 function renderForm() {
-  const backendAccess = createMockBackendAccessState({
-    getAreas: () => Promise.resolve(sampleAreas),
-    getGenres: () => Promise.resolve(sampleGenres)
-  });
-
   const shopSearch = {
     params: { area: null, genre: null, search: "" },
     setArea: vi.fn(),
@@ -85,14 +128,12 @@ function renderForm() {
   };
 
   const result = render(
-    <BackendAccessContext.Provider value={backendAccess}>
-      <ShopSearchContext.Provider value={shopSearch}>
-        <ShopSearchForm />
-      </ShopSearchContext.Provider>
-    </BackendAccessContext.Provider>
+    <ShopSearchContext.Provider value={shopSearch}>
+      <ShopSearchForm areas={sampleAreas} genres={sampleGenres} />
+    </ShopSearchContext.Provider>
   );
 
-  return { ...result, shopSearch, backendAccess };
+  return { ...result, shopSearch };
 }
 
 const sampleAreas = [
