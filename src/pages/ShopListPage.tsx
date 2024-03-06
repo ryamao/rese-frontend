@@ -2,9 +2,10 @@ import { useEffect } from "react";
 
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+import { ErrorPage } from "./ErrorPage";
 import { PageBase } from "./PageBase";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
 import { ShopSearchForm } from "../components/ShopSearchForm";
@@ -14,44 +15,47 @@ import {
   ShopSearchParams,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
-import { GetShopsResult } from "../HttpClient";
 import { ShopData } from "../models";
 
 export function ShopListPage() {
-  const { getShops } = useBackendAccessContext();
+  const handleClickDetailButton = useClickDetailButtonHandler();
   const shopSearch = useShopSearchState();
+  const areas = useAreas();
+  const genres = useGenres();
+  const shops = useShops();
 
-  const navigate = useNavigate();
-  function handleClickDetailButton(shop: ShopData) {
-    navigate(`/detail/${shop.id}`, {
-      state: shop
-    });
+  if (areas.isError) {
+    return <ErrorPage message={`500: ${areas.error.message}`} />;
+  }
+  if (areas.isPending) {
+    return <PageBase>Loading...</PageBase>;
   }
 
-  const { data, isLoading, hasNextPage, fetchNextPage } =
-    usePageQuery(getShops);
-  useEffect(() => {
-    if (hasNextPage) {
-      fetchNextPage();
-    }
-  }, [data, hasNextPage, fetchNextPage]);
-
-  if (isLoading || !data) {
-    return (
-      <PageBase>
-        <p>Loading...</p>
-      </PageBase>
-    );
+  if (genres.isError) {
+    return <ErrorPage message={`500: ${genres.error.message}`} />;
+  }
+  if (genres.isPending) {
+    return <PageBase>Loading...</PageBase>;
   }
 
-  const shops = data.pages.flatMap((page) => page.data);
+  if (shops.isError) {
+    return <ErrorPage message={`500: ${shops.error.message}`} />;
+  }
+  if (shops.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+
+  const searchedShops = searchByQuery(
+    shops.data.pages.flatMap((page) => page.data),
+    shopSearch.params
+  );
 
   return (
     <PageBase wrapperStyle={pageBaseStyle}>
       <ShopSearchContext.Provider value={shopSearch}>
-        <ShopSearchForm />
+        <ShopSearchForm areas={areas.data ?? []} genres={genres.data ?? []} />
         <ShopLayout>
-          {searchByQuery(shops, shopSearch.params).map((shop) => (
+          {searchedShops.map((shop) => (
             <ShopOverviewCard
               key={shop.id}
               shop={shop}
@@ -64,30 +68,70 @@ export function ShopListPage() {
   );
 }
 
-function usePageQuery(getShops: (page: number) => Promise<GetShopsResult>) {
-  return useInfiniteQuery({
-    queryKey: ["shops"],
+function useClickDetailButtonHandler() {
+  const navigate = useNavigate();
+  return (shop: ShopData) => {
+    navigate(`/detail/${shop.id}`, {
+      state: shop
+    });
+  };
+}
+
+function useAreas() {
+  const { getAreas } = useBackendAccessContext();
+  const areas = useQuery({
+    queryKey: ["areas"],
+    queryFn: getAreas,
+    staleTime: Infinity
+  });
+
+  return areas;
+}
+
+function useGenres() {
+  const { getGenres } = useBackendAccessContext();
+  const genres = useQuery({
+    queryKey: ["genres"],
+    queryFn: getGenres,
+    staleTime: Infinity
+  });
+
+  return genres;
+}
+
+function useShops() {
+  const { authStatus, getShops } = useBackendAccessContext();
+  const shops = useInfiniteQuery({
+    queryKey: ["shops", authStatus],
     queryFn: async ({ pageParam }) => await getShops(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.meta.current_page < lastPage.meta.last_page
         ? lastPage.meta.current_page + 1
         : undefined;
-    }
+    },
+    staleTime: Infinity
   });
+
+  useEffect(() => {
+    if (shops.hasNextPage) {
+      shops.fetchNextPage();
+    }
+  }, [shops]);
+
+  return shops;
 }
 
 function searchByQuery(
-  shops: GetShopsResult["data"],
+  shops: ShopData[],
   { area, genre, search }: ShopSearchParams
 ) {
-  return shops.filter((shop) => {
-    return (
+  return shops.filter(
+    (shop) =>
       (!area || shop.area.id === area) &&
       (!genre || shop.genre.id === genre) &&
       (search === "" || shop.name.includes(search))
-    );
-  });
+  );
 }
 
 const pageBaseStyle = css`
