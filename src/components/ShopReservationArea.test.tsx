@@ -22,7 +22,10 @@ describe("ShopReservationArea", () => {
       }
     ] as ReservationData[];
     const { getByRole, getByLabelText, getByText } = render(
-      <ShopReservationArea reservations={reservations} />
+      <ShopReservationArea
+        authStatus={{ status: "customer", id: 1 }}
+        reservations={reservations}
+      />
     );
 
     expect(getByRole("heading")).toHaveTextContent("予約");
@@ -38,7 +41,11 @@ describe("ShopReservationArea", () => {
     const datetime = dayjs().add(1, "day").startOf("day").add(18, "hour");
     const onSubmit = vi.fn();
     const { getByRole, getByLabelText } = render(
-      <ShopReservationArea reservations={[]} onSubmit={onSubmit} />
+      <ShopReservationArea
+        authStatus={{ status: "customer", id: 1 }}
+        reservations={[]}
+        onSubmit={onSubmit}
+      />
     );
 
     fireEvent.change(getByLabelText("予約日"), {
@@ -56,7 +63,10 @@ describe("ShopReservationArea", () => {
 
   test("予約エラーが表示される", async () => {
     const { getByRole, findByText } = render(
-      <ShopReservationArea reservations={[]} />
+      <ShopReservationArea
+        authStatus={{ status: "customer", id: 1 }}
+        reservations={[]}
+      />
     );
 
     await userEvent.click(getByRole("button", { name: "予約する" }));
@@ -64,5 +74,22 @@ describe("ShopReservationArea", () => {
     expect(
       await findByText("日付を選択してください", { exact: false })
     ).toBeInTheDocument();
+  });
+
+  test("ログインボタンがクリックされたときに onClickLogin が呼ばれる", async () => {
+    const onClickLogin = vi.fn();
+    const { getByRole } = render(
+      <ShopReservationArea
+        authStatus={{ status: "guest" }}
+        reservations={[]}
+        onClickLogin={onClickLogin}
+      />
+    );
+
+    await userEvent.click(
+      getByRole("button", { name: "ログインして予約する" })
+    );
+
+    await waitFor(() => expect(onClickLogin).toHaveBeenCalled());
   });
 });

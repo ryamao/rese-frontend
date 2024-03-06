@@ -17,8 +17,10 @@ const meta = {
   component: ShopReservationArea,
   tags: ["autodocs"],
   args: {
+    authStatus: { status: "customer", id: 1 },
     reservations: [],
-    onSubmit: fn()
+    onSubmit: fn(),
+    onClickLogin: fn()
   }
 } satisfies Meta<typeof ShopReservationArea>;
 
@@ -91,5 +93,11 @@ export const WithSubmit: Story = {
         numberOfGuests: 2
       })
     );
+  }
+};
+
+export const WithLogin: Story = {
+  args: {
+    authStatus: { status: "guest" }
   }
 };

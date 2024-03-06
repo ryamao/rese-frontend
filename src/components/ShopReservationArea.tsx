@@ -6,17 +6,22 @@ import { ReservationCard } from "./ReservationCard";
 import { ReservationDateField } from "./ReservationDateField";
 import { ReservationNumberField } from "./ReservationNumberField";
 import { ReservationTimeField } from "./ReservationTimeField";
+import { GetAuthStatusResult } from "../HttpClient";
 import { ReservationData } from "../models";
 import { ReservationForm } from "../types";
 
 export interface ShopReservationAreaProps {
+  authStatus: GetAuthStatusResult;
   reservations: ReservationData[];
   onSubmit?: (reservedAt: Dayjs, numberOfGuests: number) => void;
+  onClickLogin?: () => void;
 }
 
 export function ShopReservationArea({
+  authStatus,
   reservations,
-  onSubmit
+  onSubmit,
+  onClickLogin
 }: ShopReservationAreaProps) {
   const {
     register,
@@ -31,7 +36,7 @@ export function ShopReservationArea({
   }
 
   return (
-    <Form onSubmit={handleSubmit(onValid, console.log)}>
+    <Form onSubmit={handleSubmit(onValid)}>
       <Inner>
         <Title>予約</Title>
         <InputList>
@@ -60,7 +65,14 @@ export function ShopReservationArea({
           ))}
         </ReservationList>
       </Inner>
-      <Submit type="submit">予約する</Submit>
+      {authStatus.status === "customer" && (
+        <Submit type="submit">予約する</Submit>
+      )}
+      {authStatus.status === "guest" && (
+        <Submit type="button" onClick={onClickLogin}>
+          ログインして予約する
+        </Submit>
+      )}
     </Form>
   );
 }
@@ -121,6 +133,7 @@ const Submit = styled.button`
   padding: 1rem;
   font-size: 1rem;
   color: #fff;
+  cursor: pointer;
   background-color: #0538ff;
   border: none;
   border-radius: 0 0 0.25rem 0.25rem;
