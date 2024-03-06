@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Dayjs } from "dayjs";
 import {
   Location,
   useLocation,
@@ -19,21 +20,30 @@ export function ShopDetailPage() {
     navigate("/");
   }
 
-  const { data: shop, isFetching: isShopFetching } = useShopData();
-  const { data: reservations, isFetching: areReservationsFetching } =
-    useReservations();
+  const shop = useShopData();
+  const reservations = useReservations();
 
-  if (isShopFetching || areReservationsFetching) {
+  if (shop.isFetching || reservations.isFetching) {
     return <PageBase>Loading...</PageBase>;
   }
-  if (!shop || !reservations) {
+  if (!shop.data || !reservations.data) {
     return <PageBase>Error</PageBase>;
+  }
+
+  function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {
+    reservations.mutate({ reservedAt, numberOfGuests });
   }
 
   return (
     <PageBase wrapperStyle={wrapperStyle}>
-      <ShopDetailArea shop={shop} onClickBackButton={handleClickBackButton} />
-      <ShopReservationArea reservations={reservations} />
+      <ShopDetailArea
+        shop={shop.data}
+        onClickBackButton={handleClickBackButton}
+      />
+      <ShopReservationArea
+        reservations={reservations.data}
+        onSubmit={handleSubmit}
+      />
     </PageBase>
   );
 }
@@ -42,6 +52,7 @@ function useShopData() {
   const { shopId } = useParams();
   const { state } = useLocation() as Location<ShopData | undefined>;
   const { getShop } = useBackendAccessContext();
+
   return useQuery({
     queryKey: ["shop", shopId],
     queryFn: async () => {
@@ -53,9 +64,28 @@ function useShopData() {
 }
 
 function useReservations() {
-  const { authStatus, getReservations } = useBackendAccessContext();
+  const { invalidateQueries } = useQueryClient();
   const { shopId } = useParams();
-  return useQuery({
+  const { authStatus, getReservations, postReservation } =
+    useBackendAccessContext();
+
+  async function mutationFn(args: {
+    reservedAt: Dayjs;
+    numberOfGuests: number;
+  }) {
+    if (authStatus?.status !== "customer" || !shopId) {
+      return null;
+    }
+
+    return await postReservation(
+      authStatus.id,
+      Number(shopId),
+      args.reservedAt,
+      args.numberOfGuests
+    );
+  }
+
+  const fetch = useQuery({
     queryKey: ["reservations", authStatus, shopId],
     queryFn: async () => {
       if (authStatus?.status !== "customer") {
@@ -66,6 +96,19 @@ function useReservations() {
     enabled: authStatus?.status === "customer",
     initialData: []
   });
+
+  const { mutate } = useMutation({
+    mutationFn,
+    onSuccess: (data) => {
+      if (data) {
+        invalidateQueries({
+          queryKey: ["reservations", authStatus, shopId]
+        });
+      }
+    }
+  });
+
+  return { ...fetch, mutate };
 }
 
 const wrapperStyle = css`

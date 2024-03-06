@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+import { Dayjs } from "dayjs";
+
 import {
   HttpClient,
   GetAreasResult,
@@ -32,6 +34,12 @@ export interface BackendAccessContextType {
     userId: number,
     shopId: number
   ) => Promise<ReservationData[]>;
+  postReservation: (
+    userId: number,
+    shopId: number,
+    reservedAt: Dayjs,
+    numberOfGuests: number
+  ) => Promise<ReservationData>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -98,6 +106,11 @@ export function useBackendAccessState(
     removeFavorite: (userId, shopId) =>
       httpClient.deleteCustomerShopFavorite(userId, shopId),
     getReservations: (userId, shopId) =>
-      httpClient.getCustomerShopReservations(userId, shopId)
+      httpClient.getCustomerShopReservations(userId, shopId),
+    postReservation: (userId, shopId, reservedAt, numberOfGuests) =>
+      httpClient.postCustomerShopReservations(userId, shopId, {
+        reserved_at: reservedAt.format(),
+        number_of_guests: numberOfGuests
+      })
   };
 }

@@ -159,5 +159,15 @@ export const handlers = [
         }
       ]
     });
+  }),
+  http.post("*/customers/:customerId/shops/:shopId/reservations", async () => {
+    return HttpResponse.json({
+      reservation: {
+        id: 4,
+        shop: { id: 1, name: "飲食店1" },
+        reserved_at: "2022-01-04T21:00:00+09:00",
+        number_of_guests: 8
+      }
+    });
   })
 ];
