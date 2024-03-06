@@ -8,12 +8,14 @@ import {
   useParams
 } from "react-router-dom";
 
+import { ErrorPage } from "./ErrorPage";
+import { NotFoundPage } from "./NotFoundPage";
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
-import { GetAuthStatusResult } from "../HttpClient";
+import { GetAuthStatusResult, GetShopResult } from "../HttpClient";
 import { ShopData } from "../models";
 
 export function ShopDetailPage() {
@@ -29,11 +31,17 @@ export function ShopDetailPage() {
   const shop = useShopData(shopId);
   const reservations = useReservations(authStatus, shopId);
 
-  if (shop.isFetching || reservations.isFetching) {
-    return <PageBase>Loading...</PageBase>;
+  if (shop.isError) {
+    return <ErrorPage message={`500: ${shop.error.message}`} />;
   }
-  if (!shop.data || !reservations.data) {
-    return <PageBase>Error</PageBase>;
+  if (reservations.isError) {
+    return <ErrorPage message={`500: ${reservations.error.message}`} />;
+  }
+  if (shop.data && shop.data.status === 404) {
+    return <NotFoundPage message="お探しの店舗は存在しないか削除されました" />;
+  }
+  if (!shop.data || reservations.isFetching) {
+    return <PageBase>Loading...</PageBase>;
   }
 
   function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {
@@ -47,7 +55,7 @@ export function ShopDetailPage() {
   return (
     <PageBase wrapperStyle={wrapperStyle}>
       <ShopDetailArea
-        shop={shop.data}
+        shop={shop.data.data}
         onClickBackButton={handleClickBackButton}
       />
       <ShopReservationArea
@@ -64,13 +72,17 @@ function useShopData(shopId?: string) {
   const { state } = useLocation() as Location<ShopData | undefined>;
   const { getShop } = useBackendAccessContext();
 
+  const data: GetShopResult | undefined = state
+    ? { status: 200, data: state }
+    : undefined;
+
   return useQuery({
     queryKey: ["shop", shopId],
     queryFn: async () => {
       return await getShop(Number(shopId));
     },
     enabled: !state,
-    initialData: state
+    initialData: data
   });
 }
 
