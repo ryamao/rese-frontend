@@ -1,31 +1,55 @@
 import styled from "@emotion/styled";
+import dayjs, { Dayjs } from "dayjs";
+import { useForm } from "react-hook-form";
 
 import { ReservationCard } from "./ReservationCard";
 import { ReservationDateField } from "./ReservationDateField";
 import { ReservationNumberField } from "./ReservationNumberField";
 import { ReservationTimeField } from "./ReservationTimeField";
 import { ReservationData } from "../models";
+import { ReservationForm } from "../types";
 
 export interface ShopReservationAreaProps {
   reservations: ReservationData[];
+  onSubmit?: (reservedAt: Dayjs, numberOfGuests: number) => void;
 }
 
 export function ShopReservationArea({
-  reservations
+  reservations,
+  onSubmit
 }: ShopReservationAreaProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<ReservationForm>();
+
+  function onValid(data: ReservationForm) {
+    const reservedAt = dayjs(`${data.date}T${data.time}`);
+    const numberOfGuests = parseInt(data.number, 10);
+    onSubmit?.(reservedAt, numberOfGuests);
+  }
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onValid, console.log)}>
       <Inner>
         <Title>予約</Title>
         <InputList>
-          <DateItem>
-            <ReservationDateField />
-          </DateItem>
+          <li>
+            <DateItem>
+              <DateField>
+                <ReservationDateField register={register} />
+              </DateField>
+              {errors.date && (
+                <ErrorMessage>⚠ {errors.date.message}</ErrorMessage>
+              )}
+            </DateItem>
+          </li>
+          <li>
+            <ReservationTimeField register={register} />
+          </li>
           <div>
-            <ReservationTimeField />
-          </div>
-          <div>
-            <ReservationNumberField />
+            <ReservationNumberField register={register} />
           </div>
         </InputList>
         <ReservationList>
@@ -36,7 +60,7 @@ export function ShopReservationArea({
           ))}
         </ReservationList>
       </Inner>
-      <Submit>予約する</Submit>
+      <Submit type="submit">予約する</Submit>
     </Form>
   );
 }
@@ -68,8 +92,19 @@ const InputList = styled.ul`
   }
 `;
 
-const DateItem = styled.li`
+const DateItem = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DateField = styled.div`
   width: 10rem;
+`;
+
+const ErrorMessage = styled.p`
+  margin: 0 0 0 2rem;
+  font-size: 0.875rem;
+  color: #fde047;
 `;
 
 const ReservationList = styled.ul`

@@ -1,8 +1,22 @@
 import styled from "@emotion/styled";
+import { UseFormRegister } from "react-hook-form";
 
-export function ReservationNumberField() {
+import { ReservationForm } from "../types";
+
+export interface ReservationNumberFieldProps {
+  register: UseFormRegister<ReservationForm>;
+}
+
+export function ReservationNumberField({
+  register
+}: ReservationNumberFieldProps) {
   return (
-    <Select>
+    <Select
+      {...register("number", {
+        required: "人数を選択してください"
+      })}
+      aria-label="予約人数"
+    >
       {[...Array(100)].map((_, i) => (
         <option key={i} value={i + 1}>
           {i + 1}人
