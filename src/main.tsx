@@ -21,6 +21,7 @@ import { ThanksPage } from "./pages/ThanksPage";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
+import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
 
 const global = css`
   body {
@@ -32,20 +33,21 @@ const global = css`
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route element={<BackendAccessRoute />}>
-        <Route path="/" element={<ShopListPage />} />
-        <Route path="/detail/:shopId" element={<ShopDetailPage />} />
-        <Route element={<GuestsOnlyRoute />}>
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />R
+      <Route element={<ScrollRestorationRoute />}>
+        <Route element={<BackendAccessRoute />}>
+          <Route path="/" element={<ShopListPage />} />
+          <Route path="/detail/:shopId" element={<ShopDetailPage />} />
+          <Route element={<GuestsOnlyRoute />}>
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />R
+          </Route>
+          <Route element={<CustomersOnlyRoute />}>
+            <Route path="thanks" element={<ThanksPage />} />
+            <Route path="mypage" element={<DashboardPage />} />
+          </Route>
         </Route>
-        <Route element={<CustomersOnlyRoute />}>
-          <Route path="thanks" element={<ThanksPage />} />
-          <Route path="mypage" element={<DashboardPage />} />
-        </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
-
-      <Route path="*" element={<NotFoundPage />} />
     </>
   )
 );
