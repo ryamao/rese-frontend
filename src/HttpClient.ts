@@ -38,6 +38,8 @@ export type GetGenresResult =
 export type GetShopsResult =
   api.components["responses"]["get-shops-200"]["content"]["application/json"];
 
+export type GetShopResult = { status: 200; data: ShopData } | { status: 404 };
+
 export type PostCustomerShopReservationsBody =
   api.components["requestBodies"]["post-customer-shop-reservations"]["content"]["application/json"];
 
@@ -178,16 +180,16 @@ export class HttpClient {
     }
   }
 
-  async getShop(id: number): Promise<ShopData> {
+  async getShop(id: number): Promise<GetShopResult> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.GET(`/shops/{shop}`, {
+      const { data, response } = await this.client.GET(`/shops/{shop}`, {
         params: { path: { shop: id } }
       });
-      if (error) {
-        throw new Error(error);
+      if (response.status === 200 && data) {
+        return { status: 200, data: data.data };
       }
-      return data?.data;
+      return { status: 404 };
     } catch (error) {
       throw new Error(String(error));
     }
