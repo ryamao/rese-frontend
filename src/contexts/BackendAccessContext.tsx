@@ -10,9 +10,10 @@ import {
   GetGenresResult,
   GetShopsResult,
   PostAuthLoginResult,
-  PostAuthRegisterResult
+  PostAuthRegisterResult,
+  GetShopResult
 } from "../HttpClient";
-import { ReservationData, ShopData } from "../models";
+import { ReservationData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult;
@@ -27,7 +28,7 @@ export interface BackendAccessContextType {
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
   getShops: (page: number) => Promise<GetShopsResult>;
-  getShop: (id: number) => Promise<ShopData>;
+  getShop: (id: number) => Promise<GetShopResult>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
   getReservations: (
