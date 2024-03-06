@@ -1,7 +1,25 @@
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
+import { UseFormRegister } from "react-hook-form";
 
-export function ReservationDateField() {
-  return <Input type="date" />;
+import { ReservationForm } from "../types";
+
+export interface ReservationDateFieldProps {
+  register: UseFormRegister<ReservationForm>;
+}
+
+export function ReservationDateField({ register }: ReservationDateFieldProps) {
+  const today = dayjs().format("YYYY-MM-DD");
+  return (
+    <Input
+      type="date"
+      min={today}
+      {...register("date", {
+        required: "日付を選択してください"
+      })}
+      aria-label="予約日"
+    />
+  );
 }
 
 const Input = styled.input`

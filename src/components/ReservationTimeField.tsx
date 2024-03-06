@@ -1,8 +1,20 @@
 import styled from "@emotion/styled";
+import { UseFormRegister } from "react-hook-form";
 
-export function ReservationTimeField() {
+import { ReservationForm } from "../types";
+
+export interface ReservationTimeFieldProps {
+  register: UseFormRegister<ReservationForm>;
+}
+
+export function ReservationTimeField({ register }: ReservationTimeFieldProps) {
   return (
-    <Select>
+    <Select
+      {...register("time", {
+        required: "時間を選択してください"
+      })}
+      aria-label="予約時刻"
+    >
       {times.map((time) => (
         <option key={time} value={time}>
           {time}
