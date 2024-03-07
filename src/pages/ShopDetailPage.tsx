@@ -19,17 +19,12 @@ import { GetAuthStatusResult, GetShopResult } from "../HttpClient";
 import { ShopData } from "../models";
 
 export function ShopDetailPage() {
-  const { open } = useMenuOverlayContext();
-
-  const navigate = useNavigate();
-  function handleClickBackButton() {
-    navigate("/");
-  }
-
   const { shopId } = useParams();
   const { authStatus } = useBackendAccessContext();
   const shop = useShopData(shopId);
   const reservations = useReservations(authStatus, shopId);
+  const { open } = useMenuOverlayContext();
+  const navigate = useNavigate();
 
   if (shop.isError) {
     return <ErrorPage message={`500: ${shop.error.message}`} />;
@@ -48,8 +43,13 @@ export function ShopDetailPage() {
     return <PageBase>Loading...</PageBase>;
   }
 
+  function handleClickBackButton() {
+    navigate("/");
+  }
+
   function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {
     reservations.mutate({ reservedAt, numberOfGuests });
+    navigate("/done");
   }
 
   return (
