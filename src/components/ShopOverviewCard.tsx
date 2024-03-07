@@ -81,7 +81,7 @@ const Content = styled.div`
   padding: 1rem 1.25rem 1.25rem;
 `;
 
-const Name = styled.h2`
+const Name = styled.h3`
   margin: 0;
   font-size: 1.25rem;
 `;

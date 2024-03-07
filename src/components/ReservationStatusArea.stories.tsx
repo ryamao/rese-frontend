@@ -4,7 +4,7 @@ import { ReservationStatusArea } from "./ReservationStatusArea";
 import { ReservationData } from "../models";
 
 const meta = {
-  title: "Components/Reservation/ReservationStatusArea",
+  title: "Components/Dashboard/ReservationStatusArea",
   component: ReservationStatusArea,
   tags: ["autodocs"],
   args: {
