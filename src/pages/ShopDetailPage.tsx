@@ -16,7 +16,7 @@ import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
 import { GetAuthStatusResult, GetShopResult } from "../HttpClient";
-import { ReservationData, ShopData } from "../models";
+import { ShopData } from "../models";
 
 export function ShopDetailPage() {
   const { open } = useMenuOverlayContext();
@@ -124,10 +124,7 @@ function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
     mutationFn,
     onSuccess: async (data) => {
       if (data) {
-        await queryClient.setQueryData(
-          queryKey,
-          (oldData: ReservationData[]) => [...oldData, data]
-        );
+        await queryClient.invalidateQueries({ queryKey });
       }
     }
   });
