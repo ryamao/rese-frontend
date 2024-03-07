@@ -8,6 +8,7 @@ const meta = {
   component: ReservationStatusCard,
   tags: ["autodocs"],
   args: {
+    title: "予約1",
     reservation: {
       id: 1,
       shop: {

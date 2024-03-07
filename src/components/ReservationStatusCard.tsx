@@ -6,10 +6,12 @@ import { ReservationStatusIcon } from "./ReservationStatusIcon";
 import { ReservationData } from "../models";
 
 export interface ReservationStatusCardProps {
+  title: string;
   reservation: ReservationData;
 }
 
 export function ReservationStatusCard({
+  title,
   reservation
 }: ReservationStatusCardProps) {
   const reservedAt = dayjs(reservation.reserved_at);
@@ -24,7 +26,7 @@ export function ReservationStatusCard({
               minute={reservedAt.minute()}
             />
           </IconWrapper>
-          <Title>予約1</Title>
+          <Title>{title}</Title>
         </TitleWithIcon>
         <RemovalButtonWrapper>
           <ReservationRemovalButton />
