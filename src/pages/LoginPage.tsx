@@ -10,14 +10,11 @@ export function LoginPage() {
   const navigate = useNavigate();
 
   async function handleLogin(email: string, password: string) {
-    const result = await login(email, password);
-    if (result.error) {
-      return result;
+    const result = await login({ email, password });
+    if (!result.error) {
+      navigate("/mypage");
     }
-
-    navigate("/mypage");
-
-    return { error: undefined };
+    return result;
   }
 
   return (

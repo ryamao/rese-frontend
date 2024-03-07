@@ -4,7 +4,7 @@ import { fn } from "@storybook/test";
 import { ShopOverviewCard } from "./ShopOverviewCard";
 import {
   BackendAccessContext,
-  useBackendAccessState
+  createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
 import {
   ShopSearchContext,
@@ -30,7 +30,11 @@ const meta = {
   },
   decorators: [
     (Story) => {
-      const backendAccess = useBackendAccessState(new HttpClient());
+      const backendAccess = createBackendAccessContextType({
+        httpClient: new HttpClient(),
+        authStatus: { status: "customer", id: 1 },
+        invalidateAuthStatus: () => Promise.resolve()
+      });
       const shopSearch = useShopSearchState();
       return (
         <BackendAccessContext.Provider value={backendAccess}>

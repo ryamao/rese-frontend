@@ -14,6 +14,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
 import { ShopDetailPage } from "./pages/ShopDetailPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
@@ -31,14 +32,15 @@ const router = createBrowserRouter(
           <Route path="/detail/:shopId" element={<ShopDetailPage />} />
           <Route element={<GuestsOnlyRoute />}>
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />R
+            <Route path="/login" element={<LoginPage />} />
           </Route>
           <Route element={<CustomersOnlyRoute />}>
-            <Route path="thanks" element={<ThanksPage />} />
-            <Route path="mypage" element={<DashboardPage />} />
+            <Route path="/thanks" element={<ThanksPage />} />
+            <Route path="/mypage" element={<DashboardPage />} />
+            <Route path="/done" element={<ReservationCompletedPage />} />
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </>
   )

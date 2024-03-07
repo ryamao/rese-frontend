@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ShopDetailPage } from "./ShopDetailPage";
 import {
   BackendAccessContext,
-  useBackendAccessState
+  createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
 import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
@@ -23,7 +23,11 @@ const meta = {
   decorators: [
     (Story) => {
       const queryClient = new QueryClient();
-      const backendAccess = useBackendAccessState(new HttpClient());
+      const backendAccess = createBackendAccessContextType({
+        httpClient: new HttpClient(),
+        authStatus: { status: "customer", id: 1 },
+        invalidateAuthStatus: () => Promise.resolve()
+      });
       return (
         <QueryClientProvider client={queryClient}>
           <BackendAccessContext.Provider value={backendAccess}>
