@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import * as emotion from "@emotion/react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
@@ -46,6 +47,7 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
 
   return (
     <>
+      <emotion.Global styles={global} />
       <div className={wrapperStyle ?? normalStyle}>
         <Header>
           <MenuButton onClick={open} />
@@ -62,6 +64,13 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
     </>
   );
 }
+
+const global = emotion.css`
+  body {
+    margin: 0;
+    background-color: #eee;
+  }
+`;
 
 const normalStyle = css`
   display: grid;
