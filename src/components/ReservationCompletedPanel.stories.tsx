@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { ReservationCompletedPanel } from "./ReservationCompletedPanel";
 
@@ -8,6 +9,9 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "centered"
+  },
+  args: {
+    onConfirm: fn()
   }
 } satisfies Meta<typeof ReservationCompletedPanel>;
 
