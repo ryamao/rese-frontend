@@ -2,11 +2,17 @@ import styled from "@emotion/styled";
 
 import * as styles from "./styles";
 
-export function ReservationCompletedPanel() {
+export interface ReservationCompletedPanelProps {
+  onConfirm?: () => void;
+}
+
+export function ReservationCompletedPanel({
+  onConfirm
+}: ReservationCompletedPanelProps) {
   return (
     <Panel className={styles.whitePanel}>
       <Text>ご予約ありがとうございます</Text>
-      <button type="button" className={styles.blueButton}>
+      <button type="button" className={styles.blueButton} onClick={onConfirm}>
         戻る
       </button>
     </Panel>
