@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 
 import { Dayjs } from "dayjs";
 
@@ -6,6 +6,8 @@ import {
   HttpClient,
   GetAreasResult,
   GetAuthStatusResult,
+  PostAuthRegisterBody,
+  PostAuthLoginBody,
   GetCustomerResult,
   GetGenresResult,
   GetShopsResult,
@@ -17,12 +19,8 @@ import { ReservationData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult;
-  register: (
-    name: string,
-    email: string,
-    password: string
-  ) => Promise<PostAuthRegisterResult>;
-  login: (email: string, password: string) => Promise<PostAuthLoginResult>;
+  register: (body: PostAuthRegisterBody) => Promise<PostAuthRegisterResult>;
+  login: (body: PostAuthLoginBody) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
   getCustomer: (id: number) => Promise<GetCustomerResult>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
@@ -50,53 +48,44 @@ export const BackendAccessContext = createContext<BackendAccessContextType>(
 // eslint-disable-next-line react-refresh/only-export-components
 export const useBackendAccessContext = () => useContext(BackendAccessContext);
 
+export interface CreateBackendAccessContextTypeProps {
+  httpClient: HttpClient;
+  authStatus: GetAuthStatusResult;
+  invalidateAuthStatus: () => Promise<void>;
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
-export function useBackendAccessState(
-  httpClient: HttpClient
-): BackendAccessContextType {
-  const [authStatus, setAuthStatus] = useState<GetAuthStatusResult>({
-    status: "guest"
-  });
-
-  useEffect(() => {
-    httpClient.getAuthStatus().then(setAuthStatus);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function register(name: string, email: string, password: string) {
-    const result = await httpClient.postAuthRegister({
-      name,
-      email,
-      password
-    });
-    if (result.error) {
-      return result;
+export function createBackendAccessContextType({
+  httpClient,
+  authStatus,
+  invalidateAuthStatus
+}: CreateBackendAccessContextTypeProps): BackendAccessContextType {
+  async function register(body: PostAuthRegisterBody) {
+    const result = await httpClient.postAuthRegister(body);
+    if (!result.error) {
+      await invalidateAuthStatus();
     }
-
-    setAuthStatus(await httpClient.getAuthStatus());
-
-    return { error: undefined };
+    return result;
   }
 
-  async function login(email: string, password: string) {
-    const result = await httpClient.postAuthLogin({ email, password });
-    if (result.error) {
-      return result;
+  async function login(body: PostAuthLoginBody) {
+    const result = await httpClient.postAuthLogin(body);
+    if (!result.error) {
+      await invalidateAuthStatus();
     }
+    return result;
+  }
 
-    setAuthStatus(await httpClient.getAuthStatus());
-
-    return { error: undefined };
+  async function logout() {
+    await httpClient.postAuthLogout();
+    await invalidateAuthStatus();
   }
 
   return {
     authStatus,
     register,
     login,
-    logout: async () => {
-      await httpClient.postAuthLogout();
-      setAuthStatus(await httpClient.getAuthStatus());
-    },
+    logout,
     getCustomer: (id) => httpClient.getCustomer(id),
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),

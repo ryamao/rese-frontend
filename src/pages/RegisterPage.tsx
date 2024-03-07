@@ -10,14 +10,11 @@ export function RegisterPage() {
   const navigate = useNavigate();
 
   async function handleRegister(name: string, email: string, password: string) {
-    const result = await register(name, email, password);
-    if (result.error) {
-      return result;
+    const result = await register({ name, email, password });
+    if (!result.error) {
+      navigate("/thanks");
     }
-
-    navigate("/thanks");
-
-    return { error: undefined };
+    return result;
   }
 
   return (
