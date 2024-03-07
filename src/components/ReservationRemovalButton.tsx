@@ -6,8 +6,6 @@ export function ReservationRemovalButton() {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 100 100"
-        width="24"
-        height="24"
         stroke="#fff"
       >
         <circle cx="50" cy="50" r="45" fill="none" strokeWidth="9" />
@@ -19,6 +17,9 @@ export function ReservationRemovalButton() {
 }
 
 const Button = styled.button`
+  width: 100%;
+  height: 100%;
+  padding: 0;
   cursor: pointer;
   background: none;
   border: none;
