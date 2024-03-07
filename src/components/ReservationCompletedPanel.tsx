@@ -18,7 +18,7 @@ const Panel = styled.div`
   flex-direction: column;
   align-items: center;
   width: fit-content;
-  padding: 5rem 4rem;
+  padding: 5.5rem 4rem;
 
   & > * + * {
     margin-top: 2.5rem;

@@ -1,6 +1,5 @@
 import React from "react";
 
-import { Global, css } from "@emotion/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ReactDOM from "react-dom/client";
 import {
@@ -22,13 +21,6 @@ import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
-
-const global = css`
-  body {
-    margin: 0;
-    background-color: #eee;
-  }
-`;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,7 +47,6 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
-      <Global styles={global} />
       <MenuOverlayProvider>
         <RouterProvider router={router} />
       </MenuOverlayProvider>
