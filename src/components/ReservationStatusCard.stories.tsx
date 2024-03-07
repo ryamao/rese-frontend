@@ -4,7 +4,7 @@ import { ReservationStatusCard } from "./ReservationStatusCard";
 import { ReservationData } from "../models";
 
 const meta = {
-  title: "Components/Reservation/ReservationStatusCard",
+  title: "Components/Dashboard/ReservationStatusCard",
   component: ReservationStatusCard,
   tags: ["autodocs"],
   args: {

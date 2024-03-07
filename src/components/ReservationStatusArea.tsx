@@ -36,6 +36,6 @@ const List = styled.ul`
   list-style: none;
 
   & > * + * {
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
 `;
