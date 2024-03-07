@@ -26,12 +26,22 @@ export function ShopReservationArea({
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<ReservationForm>();
 
   function onValid(data: ReservationForm) {
     const reservedAt = dayjs(`${data.date}T${data.time}`);
     const numberOfGuests = parseInt(data.number, 10);
+
+    if (reservedAt.isBefore(dayjs())) {
+      setError("date", {
+        type: "manual",
+        message: "過去の日時は指定できません"
+      });
+      return;
+    }
+
     onSubmit?.(reservedAt, numberOfGuests);
   }
 
