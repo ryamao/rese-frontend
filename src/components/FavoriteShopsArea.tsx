@@ -26,6 +26,10 @@ const Heading = styled.h2`
 
 const ShopLayout = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 4rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  @media (width <= 1024px) {
+    grid-template-columns: 1fr;
+  }
 `;

@@ -57,7 +57,6 @@ export function ReservationStatusCard({
 }
 
 const Card = styled.div`
-  width: 100%;
   padding: 2rem;
   color: #fff;
   background-color: #315dff;
@@ -95,6 +94,7 @@ const RemovalButtonWrapper = styled.div`
 `;
 
 const TableHeader = styled.th`
-  padding: 0.5rem 3rem 0.5rem 0;
+  padding: 0.5rem 0;
+  padding-right: 3rem;
   text-align: left;
 `;
