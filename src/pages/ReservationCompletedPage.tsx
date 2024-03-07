@@ -1,13 +1,20 @@
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { ReservationCompletedPanel } from "../components/ReservationCompletedPanel";
 
 export function ReservationCompletedPage() {
+  const navigate = useNavigate();
+
+  function handleConfirm() {
+    navigate(-1);
+  }
+
   return (
     <PageBase>
       <Main>
-        <ReservationCompletedPanel />
+        <ReservationCompletedPanel onConfirm={handleConfirm} />
       </Main>
     </PageBase>
   );
