@@ -1,12 +1,14 @@
 import createClient, { Middleware } from "openapi-fetch";
 
 import * as api from "./api";
-import { ReservationData, ShopData } from "./models";
+import { Pagination, ReservationData, ShopData } from "./models";
 import { getCookieValue } from "./utils";
 
 export type EndpointResponse<T> =
   | { success: true; data: T }
   | { success: false; status: number; message?: string };
+
+export type Paginated<T> = Pagination & { data: T[] };
 
 export type GetSanctumCsrfCookieResult =
   | { status: 204 }
@@ -199,6 +201,39 @@ export class HttpClient {
     }
   }
 
+  async getCustomerFavorites(
+    customerId: number,
+    page?: number
+  ): Promise<EndpointResponse<Paginated<ShopData>>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.GET(
+        "/customers/{customer}/favorites",
+        {
+          params: {
+            path: { customer: customerId },
+            query: { page }
+          }
+        }
+      );
+      if (response.status === 200 && data) {
+        return { success: true, data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
   async postCustomerShopFavorite(
     customerId: number,
     shopId: number
@@ -246,9 +281,7 @@ export class HttpClient {
       await this.client.GET("/sanctum/csrf-cookie");
       const { data, response } = await this.client.GET(
         "/customers/{customer}/reservations",
-        {
-          params: { path: { customer: customerId } }
-        }
+        { params: { path: { customer: customerId } } }
       );
       if (response.status === 200 && data) {
         return { success: true, data: data.data };

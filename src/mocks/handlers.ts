@@ -62,6 +62,36 @@ const sampleShops = [
   }
 ];
 
+const samplePaginatedShops = {
+  meta: {
+    current_page: 1,
+    from: 1,
+    last_page: 1,
+    path: "http://localhost:8000/shops",
+    per_page: 5,
+    to: 5,
+    total: 5
+  },
+  links: [
+    {
+      url: null,
+      label: "&laquo; Previous",
+      active: false
+    },
+    {
+      url: null,
+      label: "1",
+      active: false
+    },
+    {
+      url: null,
+      label: "Next &raquo;",
+      active: false
+    }
+  ],
+  data: sampleShops
+};
+
 const sampleReservations = [
   {
     id: 1,
@@ -113,35 +143,7 @@ export const handlers = [
     });
   }),
   http.get("*/shops", () => {
-    return HttpResponse.json({
-      meta: {
-        current_page: 1,
-        from: 1,
-        last_page: 1,
-        path: "http://localhost:8000/shops",
-        per_page: 5,
-        to: 5,
-        total: 5
-      },
-      links: [
-        {
-          url: null,
-          label: "&laquo; Previous",
-          active: false
-        },
-        {
-          url: null,
-          label: "1",
-          active: false
-        },
-        {
-          url: null,
-          label: "Next &raquo;",
-          active: false
-        }
-      ],
-      data: sampleShops
-    });
+    return HttpResponse.json(samplePaginatedShops);
   }),
   http.get("*/shops/1", () => {
     return HttpResponse.json({ data: sampleShops[0] });
@@ -150,6 +152,9 @@ export const handlers = [
     return HttpResponse.json({
       name: "テストユーザー"
     });
+  }),
+  http.get("*/customers/:customerId/favorites", async () => {
+    return HttpResponse.json(samplePaginatedShops);
   }),
   http.post("*/customers/:customerId/shops/:shopId/favorite", async () => {
     return HttpResponse.text(null, { status: 204 });

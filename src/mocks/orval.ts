@@ -11,6 +11,7 @@ import { HttpResponse, delay, http } from "msw";
 
 import type {
   CreatedResponse,
+  GetCustomerFavoritesParams,
   GetSanctumCsrfCookie204Response,
   GetShopsParams,
   NoContentResponse,
@@ -72,9 +73,13 @@ export const getCustomerFavorites = <
   TData = AxiosResponse<GetCustomerFavorites200Response>
 >(
   customer: number,
+  params?: GetCustomerFavoritesParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.default.get(`/customers/${customer}/favorites`, options);
+  return axios.default.get(`/customers/${customer}/favorites`, {
+    ...options,
+    params: { ...params, ...options?.params }
+  });
 };
 
 /**
