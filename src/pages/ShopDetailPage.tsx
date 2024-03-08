@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dayjs } from "dayjs";
 import {
   Location,
@@ -15,20 +14,17 @@ import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
-import {
-  EndpointResponse,
-  GetAuthStatusResult,
-  GetShopResult
-} from "../HttpClient";
-import { ReservationData, ShopData } from "../models";
+import { useShop, useShopReservations } from "../hooks/queries";
+import { ShopData } from "../models";
 
 export function ShopDetailPage() {
   const { shopId: shopIdString } = useParams();
   const shopId = shopIdString ? Number(shopIdString) : NaN;
 
   const { authStatus } = useBackendAccessContext();
-  const shop = useShopData(shopId);
-  const reservations = useReservations(authStatus, shopId);
+  const { state } = useLocation() as Location<ShopData | undefined>;
+  const shop = useShop(shopId, state);
+  const reservations = useShopReservations(shopId);
   const { open } = useMenuOverlayContext();
   const navigate = useNavigate();
 
@@ -61,7 +57,7 @@ export function ShopDetailPage() {
   }
 
   function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {
-    reservations.mutate({ reservedAt, numberOfGuests });
+    reservations.reserve({ reservedAt, numberOfGuests });
     navigate("/done");
   }
 
@@ -79,80 +75,6 @@ export function ShopDetailPage() {
       />
     </PageBase>
   );
-}
-
-function useShopData(shopId: number) {
-  const { state } = useLocation() as Location<ShopData | undefined>;
-  const { getShop } = useBackendAccessContext();
-
-  const data: GetShopResult | undefined = state
-    ? { status: 200, data: state }
-    : undefined;
-
-  return useQuery({
-    queryKey: ["shop", shopId],
-    queryFn: async () => {
-      if (isNaN(shopId)) {
-        return { status: 404 } as GetShopResult;
-      } else {
-        return await getShop(shopId);
-      }
-    },
-    enabled: !data,
-    initialData: data
-  });
-}
-
-function useReservations(authStatus: GetAuthStatusResult, shopId: number) {
-  const queryClient = useQueryClient();
-  const { getReservations, postReservation } = useBackendAccessContext();
-  const queryKey = ["reservations", authStatus, shopId];
-
-  const enabled = authStatus.status === "customer" && !isNaN(shopId);
-  const empty: EndpointResponse<ReservationData[]> = {
-    success: true,
-    data: []
-  };
-  const fetch = useQuery({
-    queryKey,
-    queryFn: async () => {
-      if (enabled) {
-        return await getReservations(authStatus.id, shopId);
-      } else {
-        return empty;
-      }
-    },
-    enabled,
-    initialData: empty,
-    staleTime: Infinity
-  });
-
-  async function mutationFn(args: {
-    reservedAt: Dayjs;
-    numberOfGuests: number;
-  }) {
-    if (authStatus.status !== "customer" || isNaN(shopId)) {
-      return null;
-    }
-
-    return await postReservation(
-      authStatus.id,
-      shopId,
-      args.reservedAt,
-      args.numberOfGuests
-    );
-  }
-
-  const { mutate } = useMutation({
-    mutationFn,
-    onSuccess: async (data) => {
-      if (data) {
-        await queryClient.invalidateQueries({ queryKey });
-      }
-    }
-  });
-
-  return { ...fetch, mutate };
 }
 
 const wrapperStyle = css`

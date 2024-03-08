@@ -1,21 +1,15 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Outlet } from "react-router-dom";
 
 import {
   BackendAccessContext,
   createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
+import { useAuthStatus } from "../hooks/queries";
 import { HttpClient } from "../HttpClient";
 
 export function BackendAccessRoute() {
   const httpClient = new HttpClient();
-  const queryClient = useQueryClient();
-
-  const authStatus = useQuery({
-    queryKey: ["authStatus"],
-    queryFn: () => httpClient.getAuthStatus(),
-    staleTime: Infinity
-  });
+  const authStatus = useAuthStatus(httpClient);
 
   if (authStatus.isError) {
     return (
@@ -33,8 +27,7 @@ export function BackendAccessRoute() {
   const value = createBackendAccessContextType({
     httpClient,
     authStatus: authStatus.data,
-    invalidateAuthStatus: () =>
-      queryClient.invalidateQueries({ queryKey: ["authStatus"] })
+    invalidateAuthStatus: () => authStatus.invalidate()
   });
 
   return (

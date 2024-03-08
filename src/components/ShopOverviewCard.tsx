@@ -4,9 +4,9 @@ import styled from "@emotion/styled";
 
 import { FavoriteButton } from "./FavoriteButton";
 import { blueButton, whitePanel } from "./styles";
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useShopSearchContext } from "../contexts/ShopSearchContext";
-import { ShopData } from "../models";
+import { useFavoriteMutation } from "../hooks/queries";
+import { ShopData, ShopDataFavoriteStatus } from "../models";
 
 export interface ShopOverviewProps {
   shop: ShopData;
@@ -18,23 +18,19 @@ export function ShopOverviewCard({
   onClickDetailButton
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
-  const { authStatus, addFavorite, removeFavorite } = useBackendAccessContext();
   const [favorite, setFavorite] = useState(shop.favorite_status);
+  const mutation = useFavoriteMutation();
 
   async function handleClickFavoriteButton(
-    favoriteStatus: "unknown" | "marked" | "unmarked"
+    favoriteStatus: ShopDataFavoriteStatus
   ) {
-    if (authStatus?.status !== "customer") {
-      return;
-    }
-
     switch (favoriteStatus) {
       case "marked":
-        await removeFavorite(authStatus.id, shop.id);
+        mutation.remove(shop.id);
         setFavorite("unmarked");
         break;
       case "unmarked":
-        await addFavorite(authStatus.id, shop.id);
+        mutation.add(shop.id);
         setFavorite("marked");
         break;
     }
