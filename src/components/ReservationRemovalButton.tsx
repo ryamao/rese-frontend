@@ -1,8 +1,14 @@
 import styled from "@emotion/styled";
 
-export function ReservationRemovalButton() {
+export interface ReservationRemovalButtonProps {
+  onClick?: () => void;
+}
+
+export function ReservationRemovalButton({
+  onClick
+}: ReservationRemovalButtonProps) {
   return (
-    <Button>
+    <Button onClick={onClick} aria-label="予約キャンセル">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 100 100"

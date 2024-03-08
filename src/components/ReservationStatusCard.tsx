@@ -1,20 +1,31 @@
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
 import { ReservationRemovalButton } from "./ReservationRemovalButton";
 import { ReservationStatusIcon } from "./ReservationStatusIcon";
 import { ReservationData } from "../models";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 export interface ReservationStatusCardProps {
   title: string;
   reservation: ReservationData;
+  onRemove?: (reservation: ReservationData) => void;
 }
 
 export function ReservationStatusCard({
   title,
-  reservation
+  reservation,
+  onRemove
 }: ReservationStatusCardProps) {
-  const reservedAt = dayjs(reservation.reserved_at);
+  const reservedAt = dayjs(reservation.reserved_at).tz("Asia/Tokyo");
+
+  function handleRemove() {
+    onRemove?.(reservation);
+  }
 
   return (
     <Card>
@@ -29,7 +40,7 @@ export function ReservationStatusCard({
           <Title>{title}</Title>
         </TitleWithIcon>
         <RemovalButtonWrapper>
-          <ReservationRemovalButton />
+          <ReservationRemovalButton onClick={handleRemove} />
         </RemovalButtonWrapper>
       </TitleLayout>
       <table>

@@ -172,5 +172,11 @@ export const handlers = [
         number_of_guests: 8
       }
     });
-  })
+  }),
+  http.delete(
+    "*/customers/:customerId/reservations/:reservationId",
+    async () => {
+      return HttpResponse.text(null, { status: 204 });
+    }
+  )
 ];

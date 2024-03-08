@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { ShopData } from "../models";
+import { ReservationData, ShopData } from "../models";
 
 export function DashboardPage() {
   const customer = useCustomer();
@@ -32,11 +32,28 @@ export function DashboardPage() {
     );
   }
 
+  function handleReservationRemove(reservation: ReservationData) {
+    const yes = window.confirm(
+      [
+        `以下の予約をキャンセルします`,
+        `店舗名：${reservation.shop.name}`,
+        `予約日時：${reservation.reserved_at}`,
+        `予約人数：${reservation.number_of_guests}人`
+      ].join("\n")
+    );
+    if (yes) {
+      reservations.cancel(reservation);
+    }
+  }
+
   return (
     <PageBase>
       <Inner>
         <Name>{customer.data.name}さん</Name>
-        <ReservationStatusArea reservations={reservations.data.data} />
+        <ReservationStatusArea
+          reservations={reservations.data.data}
+          onRemove={handleReservationRemove}
+        />
         <FavoriteShopsArea favorites={sampleFavorites} />
       </Inner>
     </PageBase>
@@ -56,15 +73,30 @@ function useCustomer() {
 }
 
 function useReservations() {
-  const { authStatus, getReservations } = useBackendAccessContext();
+  const queryClient = useQueryClient();
+  const { authStatus, getReservations, deleteReservation } =
+    useBackendAccessContext();
   const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const queryKey = ["getReservations", customerId];
+
   const reservations = useQuery({
-    queryKey: ["getReservations", customerId],
+    queryKey,
     queryFn: () => getReservations(customerId),
     enabled: !isNaN(customerId)
   });
 
-  return reservations;
+  const cancel = useMutation({
+    mutationFn: (reservation: ReservationData) => {
+      return deleteReservation(customerId, reservation.id);
+    },
+    onSuccess: async (data) => {
+      if (data.success) {
+        await queryClient.invalidateQueries({ queryKey });
+      }
+    }
+  });
+
+  return { ...reservations, cancel: cancel.mutate };
 }
 
 const Inner = styled.div`

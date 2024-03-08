@@ -268,6 +268,36 @@ export class HttpClient {
     }
   }
 
+  async deleteCustomerReservation(
+    customerId: number,
+    reservationId: number
+  ): Promise<EndpointResponse<undefined>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response } = await this.client.DELETE(
+        "/customers/{customer}/reservations/{reservation}",
+        {
+          params: { path: { customer: customerId, reservation: reservationId } }
+        }
+      );
+      if (response.status === 204) {
+        return { success: true, data: undefined };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
   async getCustomerShopReservations(
     customerId: number,
     shopId: number

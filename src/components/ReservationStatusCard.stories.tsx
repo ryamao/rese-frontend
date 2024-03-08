@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { ReservationStatusCard } from "./ReservationStatusCard";
 import { ReservationData } from "../models";
@@ -16,7 +17,8 @@ const meta = {
       },
       reserved_at: "2021-04-01T17:00:00+09:00",
       number_of_guests: 1
-    } as ReservationData
+    } as ReservationData,
+    onRemove: fn()
   }
 } satisfies Meta<typeof ReservationStatusCard>;
 
