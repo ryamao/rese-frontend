@@ -4,6 +4,10 @@ import * as api from "./api";
 import { ReservationData, ShopData } from "./models";
 import { getCookieValue } from "./utils";
 
+export type EndpointResponse<T> =
+  | { success: true; data: T }
+  | { success: false; status: number; message?: string };
+
 export type GetSanctumCsrfCookieResult =
   | { status: 204 }
   | { status: 500; response: Response };
@@ -235,24 +239,62 @@ export class HttpClient {
     }
   }
 
+  async getCustomerReservations(
+    customerId: number
+  ): Promise<EndpointResponse<ReservationData[]>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.GET(
+        "/customers/{customer}/reservations",
+        {
+          params: { path: { customer: customerId } }
+        }
+      );
+      if (response.status === 200 && data) {
+        return { success: true, data: data.data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
   async getCustomerShopReservations(
     customerId: number,
     shopId: number
-  ): Promise<ReservationData[]> {
+  ): Promise<EndpointResponse<ReservationData[]>> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.GET(
+      const { data, response } = await this.client.GET(
         "/customers/{customer}/shops/{shop}/reservations",
         {
           params: { path: { customer: customerId, shop: shopId } }
         }
       );
-      if (error) {
-        throw new Error(error);
+      if (response.status === 200 && data) {
+        return { success: true, data: data.reservations };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
       }
-      return data?.reservations;
     } catch (error) {
-      throw new Error(String(error));
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
     }
   }
 

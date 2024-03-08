@@ -25,6 +25,20 @@ export interface paths {
      */
     get: operations["get-customer"];
   };
+  "/customers/{customer}/favorites": {
+    /**
+     * マイページでのお気に入り一覧取得機能
+     * @description セッション中の顧客がお気に入り登録している飲食店の一覧を取得する
+     */
+    get: operations["get-customer-favorites"];
+  };
+  "/customers/{customer}/reservations": {
+    /**
+     * マイページでの予約一覧取得機能
+     * @description セッション中の顧客が行っている予約の一覧を取得する
+     */
+    get: operations["get-customer-reservations"];
+  };
   "/customers/{customer}/reservations/{reservation}": {
     /**
      * マイページでの予約取り消し機能
@@ -363,6 +377,22 @@ export interface components {
         };
       };
     };
+    /** @description マイページのお気に入り一覧取得成功 */
+    "get-customer-favorites-200": {
+      content: {
+        "application/json": components["schemas"]["pagination"] & {
+          data: components["schemas"]["shop-data"][];
+        };
+      };
+    };
+    /** @description マイページの予約一覧取得成功 */
+    "get-customer-reservations-200": {
+      content: {
+        "application/json": {
+          data: components["schemas"]["reservation-data"][];
+        };
+      };
+    };
     /** @description 飲食店詳細ページの予約一覧取得成功 */
     "get-customer-shop-reservations-200": {
       content: {
@@ -502,6 +532,40 @@ export interface operations {
     };
     responses: {
       200: components["responses"]["show-customer-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  /**
+   * マイページでのお気に入り一覧取得機能
+   * @description セッション中の顧客がお気に入り登録している飲食店の一覧を取得する
+   */
+  "get-customer-favorites": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+      };
+    };
+    responses: {
+      200: components["responses"]["get-customer-favorites-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  /**
+   * マイページでの予約一覧取得機能
+   * @description セッション中の顧客が行っている予約の一覧を取得する
+   */
+  "get-customer-reservations": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+      };
+    };
+    responses: {
+      200: components["responses"]["get-customer-reservations-200"];
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];

@@ -15,11 +15,17 @@ import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
-import { GetAuthStatusResult, GetShopResult } from "../HttpClient";
-import { ShopData } from "../models";
+import {
+  EndpointResponse,
+  GetAuthStatusResult,
+  GetShopResult
+} from "../HttpClient";
+import { ReservationData, ShopData } from "../models";
 
 export function ShopDetailPage() {
-  const { shopId } = useParams();
+  const { shopId: shopIdString } = useParams();
+  const shopId = shopIdString ? Number(shopIdString) : NaN;
+
   const { authStatus } = useBackendAccessContext();
   const shop = useShopData(shopId);
   const reservations = useReservations(authStatus, shopId);
@@ -42,6 +48,13 @@ export function ShopDetailPage() {
   if (reservations.isPending) {
     return <PageBase>Loading...</PageBase>;
   }
+  if (!reservations.data.success) {
+    return (
+      <ErrorPage
+        message={`${reservations.data.status}: ${reservations.data.message}`}
+      />
+    );
+  }
 
   function handleClickBackButton() {
     navigate("/");
@@ -60,7 +73,7 @@ export function ShopDetailPage() {
       />
       <ShopReservationArea
         authStatus={authStatus}
-        reservations={reservations.data}
+        reservations={reservations.data.data}
         onSubmit={handleSubmit}
         onClickLogin={open}
       />
@@ -68,7 +81,7 @@ export function ShopDetailPage() {
   );
 }
 
-function useShopData(shopId?: string) {
+function useShopData(shopId: number) {
   const { state } = useLocation() as Location<ShopData | undefined>;
   const { getShop } = useBackendAccessContext();
 
@@ -79,46 +92,56 @@ function useShopData(shopId?: string) {
   return useQuery({
     queryKey: ["shop", shopId],
     queryFn: async () => {
-      return await getShop(Number(shopId));
+      if (isNaN(shopId)) {
+        return { status: 404 } as GetShopResult;
+      } else {
+        return await getShop(shopId);
+      }
     },
-    enabled: !state,
+    enabled: !data,
     initialData: data
   });
 }
 
-function useReservations(authStatus: GetAuthStatusResult, shopId?: string) {
+function useReservations(authStatus: GetAuthStatusResult, shopId: number) {
   const queryClient = useQueryClient();
   const { getReservations, postReservation } = useBackendAccessContext();
   const queryKey = ["reservations", authStatus, shopId];
+
+  const enabled = authStatus.status === "customer" && !isNaN(shopId);
+  const empty: EndpointResponse<ReservationData[]> = {
+    success: true,
+    data: []
+  };
+  const fetch = useQuery({
+    queryKey,
+    queryFn: async () => {
+      if (enabled) {
+        return await getReservations(authStatus.id, shopId);
+      } else {
+        return empty;
+      }
+    },
+    enabled,
+    initialData: empty,
+    staleTime: Infinity
+  });
 
   async function mutationFn(args: {
     reservedAt: Dayjs;
     numberOfGuests: number;
   }) {
-    if (authStatus.status !== "customer" || !shopId) {
+    if (authStatus.status !== "customer" || isNaN(shopId)) {
       return null;
     }
 
     return await postReservation(
       authStatus.id,
-      Number(shopId),
+      shopId,
       args.reservedAt,
       args.numberOfGuests
     );
   }
-
-  const fetch = useQuery({
-    queryKey,
-    queryFn: async () => {
-      if (authStatus.status !== "customer") {
-        return [];
-      }
-      return await getReservations(authStatus.id, Number(shopId));
-    },
-    enabled: authStatus.status === "customer",
-    initialData: [],
-    staleTime: Infinity
-  });
 
   const { mutate } = useMutation({
     mutationFn,

@@ -1,22 +1,15 @@
 import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { ReservationData, ShopData } from "../models";
+import { ShopData } from "../models";
 
 export function DashboardPage() {
-  const { authStatus, getCustomer } = useBackendAccessContext();
-
-  const customerId = authStatus.status === "customer" ? authStatus.id : 0;
-
-  const customer = useQuery({
-    queryKey: ["getCustomer", customerId],
-    queryFn: () => getCustomer(customerId)
-  });
+  const customer = useCustomer();
+  const reservations = useReservations();
 
   if (customer.isError) {
     return <PageBase>Error: {customer.error.message}</PageBase>;
@@ -25,15 +18,53 @@ export function DashboardPage() {
     return <PageBase>Loading...</PageBase>;
   }
 
+  if (reservations.isError) {
+    return <PageBase>Error: {reservations.error.message}</PageBase>;
+  }
+  if (reservations.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+  if (!reservations.data.success) {
+    return (
+      <PageBase>
+        {reservations.data.status}: {reservations.data.message}
+      </PageBase>
+    );
+  }
+
   return (
     <PageBase>
       <Inner>
         <Name>{customer.data.name}さん</Name>
-        <ReservationStatusArea reservations={sampleReservations} />
+        <ReservationStatusArea reservations={reservations.data.data} />
         <FavoriteShopsArea favorites={sampleFavorites} />
       </Inner>
     </PageBase>
   );
+}
+
+function useCustomer() {
+  const { authStatus, getCustomer } = useBackendAccessContext();
+  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const customer = useQuery({
+    queryKey: ["getCustomer", customerId],
+    queryFn: () => getCustomer(customerId),
+    enabled: !isNaN(customerId)
+  });
+
+  return customer;
+}
+
+function useReservations() {
+  const { authStatus, getReservations } = useBackendAccessContext();
+  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const reservations = useQuery({
+    queryKey: ["getReservations", customerId],
+    queryFn: () => getReservations(customerId),
+    enabled: !isNaN(customerId)
+  });
+
+  return reservations;
 }
 
 const Inner = styled.div`
@@ -88,17 +119,6 @@ const Name = styled.h2`
   margin: 0 auto;
   font-size: 1.75rem;
 `;
-
-const sampleReservations = Array.from(
-  { length: 3 },
-  (_, index) =>
-    ({
-      id: index,
-      shop: { id: index, name: `Shop ${index}` },
-      reserved_at: dayjs().add(index, "day").format("YYYY-MM-DDTHH:mm:ssZ"),
-      number_of_guests: 2
-    }) as ReservationData
-);
 
 const sampleFavorites = Array.from(
   { length: 10 },
