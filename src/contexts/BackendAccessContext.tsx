@@ -13,7 +13,8 @@ import {
   GetShopsResult,
   PostAuthLoginResult,
   PostAuthRegisterResult,
-  GetShopResult
+  GetShopResult,
+  EndpointResponse
 } from "../HttpClient";
 import { ReservationData } from "../models";
 
@@ -31,8 +32,8 @@ export interface BackendAccessContextType {
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
   getReservations: (
     userId: number,
-    shopId: number
-  ) => Promise<ReservationData[]>;
+    shopId?: number
+  ) => Promise<EndpointResponse<ReservationData[]>>;
   postReservation: (
     userId: number,
     shopId: number,
@@ -81,6 +82,14 @@ export function createBackendAccessContextType({
     await invalidateAuthStatus();
   }
 
+  async function getReservations(userId: number, shopId?: number) {
+    if (shopId) {
+      return await httpClient.getCustomerShopReservations(userId, shopId);
+    } else {
+      return await httpClient.getCustomerReservations(userId);
+    }
+  }
+
   return {
     authStatus,
     register,
@@ -95,8 +104,7 @@ export function createBackendAccessContextType({
       httpClient.postCustomerShopFavorite(userId, shopId),
     removeFavorite: (userId, shopId) =>
       httpClient.deleteCustomerShopFavorite(userId, shopId),
-    getReservations: (userId, shopId) =>
-      httpClient.getCustomerShopReservations(userId, shopId),
+    getReservations,
     postReservation: (userId, shopId, reservedAt, numberOfGuests) =>
       httpClient.postCustomerShopReservations(userId, shopId, {
         reserved_at: reservedAt.format(),

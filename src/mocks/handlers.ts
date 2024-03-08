@@ -62,6 +62,27 @@ const sampleShops = [
   }
 ];
 
+const sampleReservations = [
+  {
+    id: 1,
+    shop: { id: 1, name: "飲食店1" },
+    reserved_at: "2022-01-01T18:00:00+09:00",
+    number_of_guests: 2
+  },
+  {
+    id: 2,
+    shop: { id: 1, name: "飲食店1" },
+    reserved_at: "2022-01-02T19:00:00+09:00",
+    number_of_guests: 4
+  },
+  {
+    id: 3,
+    shop: { id: 1, name: "飲食店1" },
+    reserved_at: "2022-01-03T20:00:00+09:00",
+    number_of_guests: 6
+  }
+];
+
 export const handlers = [
   http.get("*/sanctum/csrf-cookie", async () => {
     return HttpResponse.text(null, {
@@ -136,29 +157,11 @@ export const handlers = [
   http.delete("*/customers/:customerId/shops/:shopId/favorite", async () => {
     return HttpResponse.text(null, { status: 204 });
   }),
+  http.get("*/customers/:customerId/reservations", () => {
+    return HttpResponse.json({ data: sampleReservations });
+  }),
   http.get("*/customers/:customerId/shops/:shopId/reservations", () => {
-    return HttpResponse.json({
-      reservations: [
-        {
-          id: 1,
-          shop: { id: 1, name: "飲食店1" },
-          reserved_at: "2022-01-01T18:00:00+09:00",
-          number_of_guests: 2
-        },
-        {
-          id: 2,
-          shop: { id: 1, name: "飲食店1" },
-          reserved_at: "2022-01-02T19:00:00+09:00",
-          number_of_guests: 4
-        },
-        {
-          id: 3,
-          shop: { id: 1, name: "飲食店1" },
-          reserved_at: "2022-01-03T20:00:00+09:00",
-          number_of_guests: 6
-        }
-      ]
-    });
+    return HttpResponse.json({ reservations: sampleReservations });
   }),
   http.post("*/customers/:customerId/shops/:shopId/reservations", async () => {
     return HttpResponse.json({
