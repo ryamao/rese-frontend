@@ -57,3 +57,6 @@ export * from "./shopDataFavoriteStatus";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from "./getCustomerFavorites200Response";
+export * from "./getCustomerFavorites200ResponseAllOf";
+export * from "./getCustomerReservations200Response";

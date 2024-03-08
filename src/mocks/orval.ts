@@ -22,6 +22,8 @@ import type {
 import type {
   GetAreas200Response,
   GetAuthStatus200Response,
+  GetCustomerFavorites200Response,
+  GetCustomerReservations200Response,
   GetCustomerShopReservations200Response,
   GetGenres200Response,
   GetShop200Response,
@@ -60,6 +62,32 @@ export const getCustomer = <TData = AxiosResponse<ShowCustomer200Response>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.get(`/customers/${customer}`, options);
+};
+
+/**
+ * セッション中の顧客がお気に入り登録している飲食店の一覧を取得する
+ * @summary マイページでのお気に入り一覧取得機能
+ */
+export const getCustomerFavorites = <
+  TData = AxiosResponse<GetCustomerFavorites200Response>
+>(
+  customer: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/customers/${customer}/favorites`, options);
+};
+
+/**
+ * セッション中の顧客が行っている予約の一覧を取得する
+ * @summary マイページでの予約一覧取得機能
+ */
+export const getCustomerReservations = <
+  TData = AxiosResponse<GetCustomerReservations200Response>
+>(
+  customer: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/customers/${customer}/reservations`, options);
 };
 
 /**
@@ -236,6 +264,10 @@ export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
 export type GetAreasResult = AxiosResponse<GetAreas200Response>;
 export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
+export type GetCustomerFavoritesResult =
+  AxiosResponse<GetCustomerFavorites200Response>;
+export type GetCustomerReservationsResult =
+  AxiosResponse<GetCustomerReservations200Response>;
 export type DeleteCustomerReservationsResult = AxiosResponse<NoContentResponse>;
 export type PostCustomerShopFavoriteResult = AxiosResponse<CreatedResponse>;
 export type DeleteCustomerShopFavoriteResult = AxiosResponse<NoContentResponse>;
@@ -283,6 +315,101 @@ export const getGetCustomerResponseMock = (
   overrideResponse: any = {}
 ): ShowCustomer200Response => ({
   name: faker.word.sample(),
+  ...overrideResponse
+});
+
+export const getGetCustomerFavoritesResponseMock = (
+  overrideResponse: any = {}
+): GetCustomerFavorites200Response => ({
+  links: {
+    first: faker.internet.url(),
+    last: faker.internet.url(),
+    next: faker.internet.url(),
+    prev: faker.internet.url(),
+    ...overrideResponse
+  },
+  meta: {
+    current_page: faker.number.int({ min: 1, max: undefined }),
+    from: {},
+    last_page: faker.number.int({ min: 1, max: undefined }),
+    links: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1
+    ).map(() => ({
+      active: faker.datatype.boolean(),
+      label: faker.word.sample(),
+      url: faker.internet.url(),
+      ...overrideResponse
+    })),
+    path: faker.internet.url(),
+    per_page: faker.number.int({ min: 1, max: undefined }),
+    to: {},
+    total: faker.number.int({ min: 0, max: undefined }),
+    ...overrideResponse
+  },
+  ...overrideResponse,
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    area: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    detail: faker.word.sample(),
+    favorite_status: faker.helpers.arrayElement([
+      "unknown",
+      "marked",
+      "unmarked"
+    ] as const),
+    genre: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    id: faker.number.int({ min: undefined, max: undefined }),
+    image_url: faker.internet.url(),
+    name: faker.word.sample(),
+    ...overrideResponse
+  })),
+  ...overrideResponse
+});
+
+export const getGetCustomerReservationsResponseMock = (
+  overrideResponse: any = {}
+): GetCustomerReservations200Response => ({
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    id: faker.number.int({ min: undefined, max: undefined }),
+    number_of_guests: faker.number.int({ min: 1, max: undefined }),
+    reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    shop: {
+      area: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      detail: faker.word.sample(),
+      favorite_status: faker.helpers.arrayElement([
+        "unknown",
+        "marked",
+        "unmarked"
+      ] as const),
+      genre: {
+        id: faker.number.int({ min: undefined, max: undefined }),
+        name: faker.word.sample(),
+        ...overrideResponse
+      },
+      id: faker.number.int({ min: undefined, max: undefined }),
+      image_url: faker.internet.url(),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    ...overrideResponse
+  })),
   ...overrideResponse
 });
 
@@ -514,6 +641,48 @@ export const getGetCustomerMockHandler = (
   });
 };
 
+export const getGetCustomerFavoritesMockHandler = (
+  overrideResponse?: GetCustomerFavorites200Response
+) => {
+  return http.get("*/customers/:customer/favorites", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse
+          ? overrideResponse
+          : getGetCustomerFavoritesResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
+export const getGetCustomerReservationsMockHandler = (
+  overrideResponse?: GetCustomerReservations200Response
+) => {
+  return http.get("*/customers/:customer/reservations", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse
+          ? overrideResponse
+          : getGetCustomerReservationsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
 export const getDeleteCustomerReservationsMockHandler = () => {
   return http.delete(
     "*/customers/:customer/reservations/:reservation",
@@ -709,6 +878,8 @@ export const getReseMock = () => [
   getGetAreasMockHandler(),
   getGetAuthStatusMockHandler(),
   getGetCustomerMockHandler(),
+  getGetCustomerFavoritesMockHandler(),
+  getGetCustomerReservationsMockHandler(),
   getDeleteCustomerReservationsMockHandler(),
   getPostCustomerShopFavoriteMockHandler(),
   getDeleteCustomerShopFavoriteMockHandler(),
