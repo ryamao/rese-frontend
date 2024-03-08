@@ -543,6 +543,9 @@ export interface operations {
    */
   "get-customer-favorites": {
     parameters: {
+      query?: {
+        page?: components["parameters"]["page-query"];
+      };
       path: {
         customer: components["parameters"]["customer-id"];
       };
