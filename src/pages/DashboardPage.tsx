@@ -1,15 +1,23 @@
+import { useEffect } from "react";
+
 import styled from "@emotion/styled";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from "@tanstack/react-query";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { ReservationData, ShopData } from "../models";
+import { ReservationData } from "../models";
 
 export function DashboardPage() {
   const customer = useCustomer();
   const reservations = useReservations();
+  const favorites = useFavorites();
 
   if (customer.isError) {
     return <PageBase>Error: {customer.error.message}</PageBase>;
@@ -31,6 +39,17 @@ export function DashboardPage() {
       </PageBase>
     );
   }
+
+  if (favorites.isError) {
+    return <PageBase>Error: {favorites.error.message}</PageBase>;
+  }
+  if (favorites.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+
+  const favoriteShops = favorites.data.pages.flatMap((page) =>
+    page.success ? page.data.data : []
+  );
 
   function handleReservationRemove(reservation: ReservationData) {
     const yes = window.confirm(
@@ -54,7 +73,7 @@ export function DashboardPage() {
           reservations={reservations.data.data}
           onRemove={handleReservationRemove}
         />
-        <FavoriteShopsArea favorites={sampleFavorites} />
+        <FavoriteShopsArea favorites={favoriteShops} />
       </Inner>
     </PageBase>
   );
@@ -97,6 +116,37 @@ function useReservations() {
   });
 
   return { ...reservations, cancel: cancel.mutate };
+}
+
+function useFavorites() {
+  const { authStatus, getFavorites } = useBackendAccessContext();
+  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const queryKey = ["getFavorites", customerId];
+
+  const favorites = useInfiniteQuery({
+    queryKey,
+    queryFn: ({ pageParam }) => getFavorites(customerId, pageParam),
+    initialPageParam: 1,
+    enabled: !isNaN(customerId),
+    getNextPageParam: (lastPage) => {
+      if (
+        lastPage.success &&
+        lastPage.data.meta.current_page < lastPage.data.meta.last_page
+      ) {
+        return lastPage.data.meta.current_page + 1;
+      } else {
+        return undefined;
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (favorites.hasNextPage) {
+      favorites.fetchNextPage();
+    }
+  }, [favorites]);
+
+  return favorites;
 }
 
 const Inner = styled.div`
@@ -151,17 +201,3 @@ const Name = styled.h2`
   margin: 0 auto;
   font-size: 1.75rem;
 `;
-
-const sampleFavorites = Array.from(
-  { length: 10 },
-  (_, index) =>
-    ({
-      id: index,
-      name: `Shop ${index}`,
-      area: { name: `Area ${index % 3}`, id: index },
-      genre: { name: `Genre ${index % 3}`, id: index },
-      image_url: `https://source.unsplash.com/160x90/?restaurant,${index}`,
-      detail: `Detail ${index}`,
-      favorite_status: "marked"
-    }) as ShopData
-);
