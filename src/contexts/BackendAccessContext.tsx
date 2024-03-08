@@ -40,6 +40,10 @@ export interface BackendAccessContextType {
     reservedAt: Dayjs,
     numberOfGuests: number
   ) => Promise<ReservationData>;
+  deleteReservation: (
+    userId: number,
+    reservationId: number
+  ) => Promise<EndpointResponse<undefined>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -109,6 +113,8 @@ export function createBackendAccessContextType({
       httpClient.postCustomerShopReservations(userId, shopId, {
         reserved_at: reservedAt.format(),
         number_of_guests: numberOfGuests
-      })
+      }),
+    deleteReservation: (userId, reservationId) =>
+      httpClient.deleteCustomerReservation(userId, reservationId)
   };
 }
