@@ -1,20 +1,17 @@
-import { useEffect } from "react";
-
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { ErrorPage } from "./ErrorPage";
 import { PageBase } from "./PageBase";
 import { ShopOverviewCard } from "../components/ShopOverviewCard";
 import { ShopSearchForm } from "../components/ShopSearchForm";
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import {
   ShopSearchContext,
   ShopSearchParams,
   useShopSearchState
 } from "../contexts/ShopSearchContext";
+import { useAreas, useGenres, useShops } from "../hooks/queries";
 import { ShopData } from "../models";
 
 export function ShopListPage() {
@@ -75,51 +72,6 @@ function useClickDetailButtonHandler() {
       state: shop
     });
   };
-}
-
-function useAreas() {
-  const { getAreas } = useBackendAccessContext();
-  const areas = useQuery({
-    queryKey: ["areas"],
-    queryFn: getAreas,
-    staleTime: Infinity
-  });
-
-  return areas;
-}
-
-function useGenres() {
-  const { getGenres } = useBackendAccessContext();
-  const genres = useQuery({
-    queryKey: ["genres"],
-    queryFn: getGenres,
-    staleTime: Infinity
-  });
-
-  return genres;
-}
-
-function useShops() {
-  const { authStatus, getShops } = useBackendAccessContext();
-  const shops = useInfiniteQuery({
-    queryKey: ["shops", authStatus],
-    queryFn: async ({ pageParam }) => await getShops(pageParam),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      return lastPage.meta.current_page < lastPage.meta.last_page
-        ? lastPage.meta.current_page + 1
-        : undefined;
-    },
-    staleTime: Infinity
-  });
-
-  useEffect(() => {
-    if (shops.hasNextPage) {
-      shops.fetchNextPage();
-    }
-  }, [shops]);
-
-  return shops;
 }
 
 function searchByQuery(

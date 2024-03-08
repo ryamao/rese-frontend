@@ -1,17 +1,9 @@
-import { useEffect } from "react";
-
 import styled from "@emotion/styled";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from "@tanstack/react-query";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { useCustomer, useFavorites, useReservations } from "../hooks/queries";
 import { ReservationData } from "../models";
 
 export function DashboardPage() {
@@ -77,76 +69,6 @@ export function DashboardPage() {
       </Inner>
     </PageBase>
   );
-}
-
-function useCustomer() {
-  const { authStatus, getCustomer } = useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
-  const customer = useQuery({
-    queryKey: ["getCustomer", customerId],
-    queryFn: () => getCustomer(customerId),
-    enabled: !isNaN(customerId)
-  });
-
-  return customer;
-}
-
-function useReservations() {
-  const queryClient = useQueryClient();
-  const { authStatus, getReservations, deleteReservation } =
-    useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
-  const queryKey = ["getReservations", customerId];
-
-  const reservations = useQuery({
-    queryKey,
-    queryFn: () => getReservations(customerId),
-    enabled: !isNaN(customerId)
-  });
-
-  const cancel = useMutation({
-    mutationFn: (reservation: ReservationData) => {
-      return deleteReservation(customerId, reservation.id);
-    },
-    onSuccess: async (data) => {
-      if (data.success) {
-        await queryClient.invalidateQueries({ queryKey });
-      }
-    }
-  });
-
-  return { ...reservations, cancel: cancel.mutate };
-}
-
-function useFavorites() {
-  const { authStatus, getFavorites } = useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
-  const queryKey = ["getFavorites", customerId];
-
-  const favorites = useInfiniteQuery({
-    queryKey,
-    queryFn: ({ pageParam }) => getFavorites(customerId, pageParam),
-    initialPageParam: 1,
-    enabled: !isNaN(customerId),
-    getNextPageParam: (lastPage) => {
-      if (
-        lastPage.success &&
-        lastPage.data.meta.current_page < lastPage.data.meta.last_page
-      ) {
-        return lastPage.data.meta.current_page + 1;
-      } else {
-        return undefined;
-      }
-    }
-  });
-
-  useEffect(() => {
-    if (favorites.hasNextPage) {
-      favorites.fetchNextPage();
-    }
-  }, [favorites]);
-
-  return favorites;
 }
 
 const Inner = styled.div`

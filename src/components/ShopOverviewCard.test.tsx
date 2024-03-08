@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
@@ -121,16 +122,23 @@ function renderCard(
 
   const onClickDetailButton = vi.fn();
 
-  const result = render(
-    <BackendAccessContext.Provider value={backendAccess}>
-      <ShopSearchContext.Provider value={shopSearch}>
-        <ShopOverviewCard
-          shop={sampleShop}
-          onClickDetailButton={onClickDetailButton}
-        />
-      </ShopSearchContext.Provider>
-    </BackendAccessContext.Provider>
-  );
+  const Node = () => {
+    const queryClient = new QueryClient();
+    return (
+      <QueryClientProvider client={queryClient}>
+        <BackendAccessContext.Provider value={backendAccess}>
+          <ShopSearchContext.Provider value={shopSearch}>
+            <ShopOverviewCard
+              shop={sampleShop}
+              onClickDetailButton={onClickDetailButton}
+            />
+          </ShopSearchContext.Provider>
+        </BackendAccessContext.Provider>
+      </QueryClientProvider>
+    );
+  };
+
+  const result = render(<Node />);
 
   return { ...result, shopSearch, backendAccess, onClickDetailButton };
 }
