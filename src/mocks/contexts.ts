@@ -26,6 +26,7 @@ export function createMockBackendAccessState({
     getGenres: getGenres ?? vitest.fn(),
     getShops: vitest.fn(),
     getShop: vitest.fn(),
+    getFavorites: vitest.fn(),
     addFavorite: vitest.fn(),
     removeFavorite: vitest.fn(),
     getReservations: vitest.fn(),

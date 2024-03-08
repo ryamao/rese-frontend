@@ -14,9 +14,10 @@ import {
   PostAuthLoginResult,
   PostAuthRegisterResult,
   GetShopResult,
-  EndpointResponse
+  EndpointResponse,
+  Paginated
 } from "../HttpClient";
-import { ReservationData } from "../models";
+import { ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus: GetAuthStatusResult;
@@ -28,6 +29,10 @@ export interface BackendAccessContextType {
   getGenres: () => Promise<GetGenresResult["genres"]>;
   getShops: (page: number) => Promise<GetShopsResult>;
   getShop: (id: number) => Promise<GetShopResult>;
+  getFavorites: (
+    userId: number,
+    page?: number
+  ) => Promise<EndpointResponse<Paginated<ShopData>>>;
   addFavorite: (userId: number, shopId: number) => Promise<void>;
   removeFavorite: (userId: number, shopId: number) => Promise<void>;
   getReservations: (
@@ -104,6 +109,8 @@ export function createBackendAccessContextType({
     getGenres: () => httpClient.getGenres().then((result) => result.genres),
     getShops: (page) => httpClient.getShops(page),
     getShop: (id) => httpClient.getShop(id),
+    getFavorites: (userId, page) =>
+      httpClient.getCustomerFavorites(userId, page),
     addFavorite: (userId, shopId) =>
       httpClient.postCustomerShopFavorite(userId, shopId),
     removeFavorite: (userId, shopId) =>
