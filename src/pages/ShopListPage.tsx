@@ -13,13 +13,15 @@ import {
 } from "../contexts/ShopSearchContext";
 import { useAreas, useGenres, useShops } from "../hooks/queries";
 import { ShopData } from "../models";
+import { useAuthStatus } from "../routes/BackendAccessRoute";
 
 export function ShopListPage() {
+  const { authStatus } = useAuthStatus();
   const handleClickDetailButton = useClickDetailButtonHandler();
   const shopSearch = useShopSearchState();
   const areas = useAreas();
   const genres = useGenres();
-  const shops = useShops();
+  const shops = useShops(authStatus);
 
   if (areas.isError) {
     return <ErrorPage message={`500: ${areas.error.message}`} />;
@@ -47,6 +49,9 @@ export function ShopListPage() {
     shopSearch.params
   );
 
+  const customerId =
+    authStatus.status === "customer" ? authStatus.id : undefined;
+
   return (
     <PageBase wrapperStyle={pageBaseStyle}>
       <ShopSearchContext.Provider value={shopSearch}>
@@ -55,6 +60,7 @@ export function ShopListPage() {
           {searchedShops.map((shop) => (
             <ShopOverviewCard
               key={shop.id}
+              customerId={customerId}
               shop={shop}
               onClickDetailButton={handleClickDetailButton}
             />

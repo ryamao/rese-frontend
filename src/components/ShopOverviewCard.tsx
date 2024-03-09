@@ -9,17 +9,19 @@ import { useFavoriteMutation } from "../hooks/queries";
 import { ShopData, ShopDataFavoriteStatus } from "../models";
 
 export interface ShopOverviewProps {
+  customerId?: number;
   shop: ShopData;
   onClickDetailButton?: (shop: ShopData) => void;
 }
 
 export function ShopOverviewCard({
+  customerId,
   shop,
   onClickDetailButton
 }: ShopOverviewProps) {
   const { setArea, setGenre } = useShopSearchContext();
   const [favorite, setFavorite] = useState(shop.favorite_status);
-  const mutation = useFavoriteMutation();
+  const mutation = useFavoriteMutation(customerId);
 
   async function handleClickFavoriteButton(
     favoriteStatus: ShopDataFavoriteStatus

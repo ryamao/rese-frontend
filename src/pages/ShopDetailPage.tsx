@@ -12,19 +12,21 @@ import { NotFoundPage } from "./NotFoundPage";
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
 import { useShop, useShopReservations } from "../hooks/queries";
 import { ShopData } from "../models";
+import { useAuthStatus } from "../routes/BackendAccessRoute";
 
 export function ShopDetailPage() {
   const { shopId: shopIdString } = useParams();
   const shopId = shopIdString ? Number(shopIdString) : NaN;
 
-  const { authStatus } = useBackendAccessContext();
+  const { authStatus } = useAuthStatus();
+  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+
   const { state } = useLocation() as Location<ShopData | undefined>;
   const shop = useShop(shopId, state);
-  const reservations = useShopReservations(shopId);
+  const reservations = useShopReservations(customerId, shopId);
   const { open } = useMenuOverlayContext();
   const navigate = useNavigate();
 

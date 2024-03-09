@@ -1,15 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 
 import {
   BackendAccessContext,
   createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
-import { useAuthStatus } from "../hooks/queries";
-import { HttpClient } from "../HttpClient";
+import * as queries from "../hooks/queries";
+import { GetAuthStatusResult, HttpClient } from "../HttpClient";
 
 export function BackendAccessRoute() {
   const httpClient = new HttpClient();
-  const authStatus = useAuthStatus(httpClient);
+  const authStatus = queries.useAuthStatus(httpClient);
 
   if (authStatus.isError) {
     return (
@@ -32,7 +32,12 @@ export function BackendAccessRoute() {
 
   return (
     <BackendAccessContext.Provider value={value}>
-      <Outlet />
+      <Outlet context={{ authStatus: authStatus.data }} />
     </BackendAccessContext.Provider>
   );
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useAuthStatus() {
+  return useOutletContext<{ authStatus: GetAuthStatusResult }>();
 }

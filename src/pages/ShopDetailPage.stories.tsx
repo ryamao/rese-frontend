@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import { ShopDetailPage } from "./ShopDetailPage";
 import {
@@ -28,12 +28,17 @@ const meta = {
         authStatus: { status: "customer", id: 1 },
         invalidateAuthStatus: () => Promise.resolve()
       });
+      const DummyRoute = () => (
+        <Outlet context={{ authStatus: { status: "guest" } }} />
+      );
       return (
         <QueryClientProvider client={queryClient}>
           <BackendAccessContext.Provider value={backendAccess}>
             <MemoryRouter initialEntries={["/detail/1"]}>
               <Routes>
-                <Route path="/detail/:shopId" element={<Story />} />
+                <Route element={<DummyRoute />}>
+                  <Route path="/detail/:shopId" element={<Story />} />
+                </Route>
               </Routes>
             </MemoryRouter>
           </BackendAccessContext.Provider>

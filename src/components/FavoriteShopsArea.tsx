@@ -4,16 +4,24 @@ import { ShopOverviewCard } from "./ShopOverviewCard";
 import { ShopData } from "../models";
 
 export interface FavoriteShopsAreaProps {
+  customerId: number;
   favorites: ShopData[];
 }
 
-export function FavoriteShopsArea({ favorites }: FavoriteShopsAreaProps) {
+export function FavoriteShopsArea({
+  customerId,
+  favorites
+}: FavoriteShopsAreaProps) {
   return (
     <div>
       <Heading>お気に入り店舗</Heading>
       <ShopLayout>
         {favorites.map((favorite) => (
-          <ShopOverviewCard key={favorite.id} shop={favorite} />
+          <ShopOverviewCard
+            key={favorite.id}
+            customerId={customerId}
+            shop={favorite}
+          />
         ))}
       </ShopLayout>
     </div>

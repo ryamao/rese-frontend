@@ -5,11 +5,13 @@ import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
 import { useCustomer, useFavorites, useReservations } from "../hooks/queries";
 import { ReservationData } from "../models";
+import { useCustomerId } from "../routes/CustomersOnlyRoute";
 
 export function DashboardPage() {
-  const customer = useCustomer();
-  const reservations = useReservations();
-  const favorites = useFavorites();
+  const { customerId } = useCustomerId();
+  const customer = useCustomer(customerId);
+  const reservations = useReservations(customerId);
+  const favorites = useFavorites(customerId);
 
   if (customer.isError) {
     return <PageBase>Error: {customer.error.message}</PageBase>;
@@ -65,7 +67,7 @@ export function DashboardPage() {
           reservations={reservations.data.data}
           onRemove={handleReservationRemove}
         />
-        <FavoriteShopsArea favorites={favoriteShops} />
+        <FavoriteShopsArea customerId={customerId} favorites={favoriteShops} />
       </Inner>
     </PageBase>
   );

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ShopOverviewCard } from "./ShopOverviewCard";
 import {
@@ -30,6 +31,7 @@ const meta = {
   },
   decorators: [
     (Story) => {
+      const queryClient = new QueryClient();
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
         authStatus: { status: "customer", id: 1 },
@@ -37,11 +39,13 @@ const meta = {
       });
       const shopSearch = useShopSearchState();
       return (
-        <BackendAccessContext.Provider value={backendAccess}>
-          <ShopSearchContext.Provider value={shopSearch}>
-            <Story />
-          </ShopSearchContext.Provider>
-        </BackendAccessContext.Provider>
+        <QueryClientProvider client={queryClient}>
+          <BackendAccessContext.Provider value={backendAccess}>
+            <ShopSearchContext.Provider value={shopSearch}>
+              <Story />
+            </ShopSearchContext.Provider>
+          </BackendAccessContext.Provider>
+        </QueryClientProvider>
       );
     }
   ]

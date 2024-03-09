@@ -101,6 +101,8 @@ function renderCard(
     favoriteStatus === "unknown"
       ? { status: "guest" }
       : { status: "customer", id: 111 };
+  const customerId =
+    authStatus.status === "customer" ? authStatus.id : undefined;
 
   const backendAccess = createMockBackendAccessState({ authStatus });
 
@@ -129,6 +131,7 @@ function renderCard(
         <BackendAccessContext.Provider value={backendAccess}>
           <ShopSearchContext.Provider value={shopSearch}>
             <ShopOverviewCard
+              customerId={customerId}
               shop={sampleShop}
               onClickDetailButton={onClickDetailButton}
             />
