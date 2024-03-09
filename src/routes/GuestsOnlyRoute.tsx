@@ -1,14 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { useAuthStatus } from "./BackendAccessRoute";
 
 export function GuestsOnlyRoute() {
-  const { authStatus } = useBackendAccessContext();
+  const { authStatus } = useAuthStatus();
 
   const location = useLocation();
 
-  switch (authStatus?.status) {
-    case null:
+  switch (authStatus.status) {
     case "customer":
       return (
         <Navigate to="/mypage" state={{ from: location }} replace={false} />

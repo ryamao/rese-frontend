@@ -9,7 +9,12 @@ import {
 import { Dayjs } from "dayjs";
 
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { EndpointResponse, GetShopResult, HttpClient } from "../HttpClient";
+import {
+  EndpointResponse,
+  GetAuthStatusResult,
+  GetShopResult,
+  HttpClient
+} from "../HttpClient";
 import { ReservationData, ShopData } from "../models";
 
 export function useAuthStatus(httpClient: HttpClient) {
@@ -27,11 +32,10 @@ export function useAuthStatus(httpClient: HttpClient) {
   return { ...authStatus, invalidate };
 }
 
-export function useCustomer() {
-  const { authStatus, getCustomer } = useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+export function useCustomer(customerId: number) {
+  const { getCustomer } = useBackendAccessContext();
   const customer = useQuery({
-    queryKey: ["customer", authStatus],
+    queryKey: ["customer", customerId],
     queryFn: () => getCustomer(customerId),
     enabled: !isNaN(customerId),
     staleTime: Infinity
@@ -62,8 +66,8 @@ export function useGenres() {
   return genres;
 }
 
-export function useShops() {
-  const { authStatus, getShops } = useBackendAccessContext();
+export function useShops(authStatus: GetAuthStatusResult) {
+  const { getShops } = useBackendAccessContext();
 
   const shops = useInfiniteQuery({
     queryKey: ["shops", authStatus],
@@ -108,10 +112,9 @@ export function useShop(shopId: number, shop?: ShopData) {
   });
 }
 
-export function useFavorites() {
-  const { authStatus, getFavorites } = useBackendAccessContext();
-  const queryKey = ["favorites", authStatus];
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+export function useFavorites(customerId: number) {
+  const { getFavorites } = useBackendAccessContext();
+  const queryKey = ["favorites", customerId];
 
   const favorites = useInfiniteQuery({
     queryKey,
@@ -140,33 +143,38 @@ export function useFavorites() {
   return favorites;
 }
 
-export function useFavoriteMutation() {
+export function useFavoriteMutation(customerId?: number) {
   const queryClient = useQueryClient();
-  const { authStatus, addFavorite, removeFavorite } = useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const { addFavorite, removeFavorite } = useBackendAccessContext();
   const onSuccess = () =>
     [["shops"], ["favorites"]].forEach((queryKey) =>
       queryClient.invalidateQueries({ queryKey })
     );
 
   const addition = useMutation({
-    mutationFn: (shopId: number) => addFavorite(customerId, shopId),
+    mutationFn: async (shopId: number) => {
+      if (customerId) {
+        await addFavorite(customerId, shopId);
+      }
+    },
     onSuccess
   });
 
   const removal = useMutation({
-    mutationFn: (shopId: number) => removeFavorite(customerId, shopId),
+    mutationFn: async (shopId: number) => {
+      if (customerId) {
+        await removeFavorite(customerId, shopId);
+      }
+    },
     onSuccess
   });
 
   return { add: addition.mutate, remove: removal.mutate };
 }
 
-export function useReservations() {
+export function useReservations(customerId: number) {
   const queryClient = useQueryClient();
-  const { authStatus, getReservations, deleteReservation } =
-    useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const { getReservations, deleteReservation } = useBackendAccessContext();
 
   const reservations = useQuery({
     queryKey: ["reservations", customerId],
@@ -189,19 +197,19 @@ export function useReservations() {
   return { ...reservations, cancel: cancel.mutate };
 }
 
-export function useShopReservations(shopId: number) {
+export function useShopReservations(customerId: number, shopId: number) {
   const queryClient = useQueryClient();
-  const { authStatus, getReservations, postReservation } =
-    useBackendAccessContext();
-  const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
+  const { getReservations, postReservation } = useBackendAccessContext();
 
-  const enabled = authStatus.status === "customer" && !isNaN(shopId);
+  const enabled = !isNaN(customerId) && !isNaN(shopId);
+
   const empty: EndpointResponse<ReservationData[]> = {
     success: true,
     data: []
   };
+
   const reservations = useQuery({
-    queryKey: ["reservations", authStatus, shopId],
+    queryKey: ["reservations", customerId, shopId],
     queryFn: async () => {
       if (enabled) {
         return await getReservations(customerId, shopId);
@@ -218,16 +226,16 @@ export function useShopReservations(shopId: number) {
     reservedAt: Dayjs;
     numberOfGuests: number;
   }) {
-    if (authStatus.status !== "customer" || isNaN(shopId)) {
+    if (enabled) {
+      return await postReservation(
+        customerId,
+        shopId,
+        args.reservedAt,
+        args.numberOfGuests
+      );
+    } else {
       return null;
     }
-
-    return await postReservation(
-      authStatus.id,
-      shopId,
-      args.reservedAt,
-      args.numberOfGuests
-    );
   }
 
   const mutation = useMutation({
