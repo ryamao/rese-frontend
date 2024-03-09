@@ -6,7 +6,8 @@ import {
   Routes,
   useLocation,
   useParams,
-  Location
+  Location,
+  Outlet
 } from "react-router-dom";
 
 import { ShopListPage } from "./ShopListPage";
@@ -36,13 +37,18 @@ const meta = {
         authStatus: { status: "customer", id: 1 },
         invalidateAuthStatus: () => Promise.resolve()
       });
+      const DummyRoute = () => (
+        <Outlet context={{ authStatus: { status: "customer", id: 1 } }} />
+      );
       return (
         <QueryClientProvider client={queryClient}>
           <BackendAccessContext.Provider value={backendAccess}>
             <MemoryRouter>
               <Routes>
-                <Route path="/" element={<Story />} />
-                <Route path="/detail/:shopId" element={<Detail />} />
+                <Route element={<DummyRoute />}>
+                  <Route path="/" element={<Story />} />
+                  <Route path="/detail/:shopId" element={<Detail />} />
+                </Route>
               </Routes>
             </MemoryRouter>
           </BackendAccessContext.Provider>
