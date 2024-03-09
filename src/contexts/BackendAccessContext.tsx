@@ -20,7 +20,8 @@ import {
 import { ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
-  authStatus: GetAuthStatusResult;
+  authStatus?: GetAuthStatusResult;
+  setAuthStatus: (authStatus?: GetAuthStatusResult) => void;
   register: (body: PostAuthRegisterBody) => Promise<PostAuthRegisterResult>;
   login: (body: PostAuthLoginBody) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
@@ -60,37 +61,16 @@ export const useBackendAccessContext = () => useContext(BackendAccessContext);
 
 export interface CreateBackendAccessContextTypeProps {
   httpClient: HttpClient;
-  authStatus: GetAuthStatusResult;
-  invalidateAuthStatus: () => Promise<void>;
+  authStatus?: GetAuthStatusResult;
+  setAuthStatus: (authStatus?: GetAuthStatusResult) => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function createBackendAccessContextType({
   httpClient,
   authStatus,
-  invalidateAuthStatus
+  setAuthStatus
 }: CreateBackendAccessContextTypeProps): BackendAccessContextType {
-  async function register(body: PostAuthRegisterBody) {
-    const result = await httpClient.postAuthRegister(body);
-    if (!result.error) {
-      await invalidateAuthStatus();
-    }
-    return result;
-  }
-
-  async function login(body: PostAuthLoginBody) {
-    const result = await httpClient.postAuthLogin(body);
-    if (!result.error) {
-      await invalidateAuthStatus();
-    }
-    return result;
-  }
-
-  async function logout() {
-    await httpClient.postAuthLogout();
-    await invalidateAuthStatus();
-  }
-
   async function getReservations(userId: number, shopId?: number) {
     if (shopId) {
       return await httpClient.getCustomerShopReservations(userId, shopId);
@@ -101,9 +81,10 @@ export function createBackendAccessContextType({
 
   return {
     authStatus,
-    register,
-    login,
-    logout,
+    setAuthStatus,
+    register: (body) => httpClient.postAuthRegister(body),
+    login: (body) => httpClient.postAuthLogin(body),
+    logout: () => httpClient.postAuthLogout(),
     getCustomer: (id) => httpClient.getCustomer(id),
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),

@@ -16,7 +16,7 @@ export interface PageBaseProps {
 }
 
 export function PageBase({ children, wrapperStyle }: PageBaseProps) {
-  const { authStatus, logout } = useBackendAccessContext();
+  const { authStatus, setAuthStatus, logout } = useBackendAccessContext();
   const { isOpen, open, close } = useMenuOverlayContext();
   const navigate = useNavigate();
 
@@ -35,6 +35,7 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
         break;
       case "logout":
         await logout();
+        setAuthStatus(undefined);
         navigate("/login");
         break;
       case "mypage":
@@ -57,7 +58,7 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
       </div>
       {isOpen && (
         <MenuOverlay
-          authStatus={authStatus.status}
+          authStatus={authStatus?.status ?? "guest"}
           onClickMenuButton={handleClickMenuButton}
         />
       )}

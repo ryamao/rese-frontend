@@ -6,12 +6,13 @@ import { RegisterForm } from "../components/RegisterForm";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export function RegisterPage() {
-  const { register } = useBackendAccessContext();
+  const { register, setAuthStatus } = useBackendAccessContext();
   const navigate = useNavigate();
 
   async function handleRegister(name: string, email: string, password: string) {
     const result = await register({ name, email, password });
     if (!result.error) {
+      setAuthStatus(undefined);
       navigate("/thanks");
     }
     return result;

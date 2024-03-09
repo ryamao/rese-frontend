@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 
@@ -26,7 +27,7 @@ const meta = {
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
         authStatus: { status: "customer", id: 1 },
-        invalidateAuthStatus: () => Promise.resolve()
+        setAuthStatus: fn()
       });
       const DummyRoute = () => <Outlet context={{ customerId: 1 }} />;
       const StoryRoute = () => (
