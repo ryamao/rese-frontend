@@ -35,7 +35,7 @@ const meta = {
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
         authStatus: { status: "customer", id: 1 },
-        invalidateAuthStatus: () => Promise.resolve()
+        setAuthStatus: fn()
       });
       const shopSearch = useShopSearchState();
       return (

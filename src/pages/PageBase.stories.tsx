@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { MemoryRouter } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
@@ -27,7 +28,7 @@ const meta = {
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
         authStatus: { status: "customer", id: 1 },
-        invalidateAuthStatus: () => Promise.resolve()
+        setAuthStatus: fn()
       });
       return (
         <MemoryRouter>
