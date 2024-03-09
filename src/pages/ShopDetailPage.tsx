@@ -88,17 +88,17 @@ const wrapperStyle = css`
   padding: 2rem;
   margin: 0 auto;
 
-  & > *:nth-child(1) {
+  & > header {
     grid-row: 1 / 2;
     grid-column: 1 / 2;
   }
 
-  & > *:nth-child(2) {
+  & > div {
     grid-row: 2 / 3;
     grid-column: 1 / 1;
   }
 
-  & > *:nth-child(3) {
+  & > form {
     grid-row: 1 / 3;
     grid-column: 2 / 3;
   }
@@ -114,17 +114,17 @@ const wrapperStyle = css`
     padding: 1rem;
     margin-bottom: 2rem;
 
-    & > *:nth-child(1) {
+    & > header {
       grid-row: 1 / 2;
       grid-column: 1 / 2;
     }
 
-    & > *:nth-child(2) {
+    & > div {
       grid-row: 2 / 3;
       grid-column: 1 / 2;
     }
 
-    & > *:nth-child(3) {
+    & > form {
       grid-row: 3 / 4;
       grid-column: 1 / 2;
       margin-top: 2rem;

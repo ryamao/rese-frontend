@@ -101,15 +101,15 @@ const pageBaseStyle = css`
   padding: 2rem;
   margin: 0 auto;
 
-  & > *:nth-child(1) {
+  & > header {
     grid-column: 1 / 2;
   }
 
-  & > *:nth-child(2) {
+  & > form {
     grid-column: 2 / 3;
   }
 
-  & > *:nth-child(3) {
+  & > div {
     grid-column: 1 / 3;
   }
 
@@ -119,17 +119,17 @@ const pageBaseStyle = css`
     row-gap: 1rem;
     padding: 1rem;
 
-    & > *:nth-child(1) {
+    & > header {
       grid-row: 1 / 2;
       grid-column: 1 / 2;
     }
 
-    & > *:nth-child(2) {
+    & > form {
       grid-row: 2 / 3;
       grid-column: 1 / 2;
     }
 
-    & > *:nth-child(3) {
+    & > div {
       grid-row: 3 / 4;
       grid-column: 1 / 2;
     }
