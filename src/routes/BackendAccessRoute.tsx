@@ -1,40 +1,41 @@
+import React from "react";
+
 import { Outlet, useOutletContext } from "react-router-dom";
 
 import {
   BackendAccessContext,
   createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
-import * as queries from "../hooks/queries";
 import { GetAuthStatusResult, HttpClient } from "../HttpClient";
 
 export function BackendAccessRoute() {
   const httpClient = new HttpClient();
-  const authStatus = queries.useAuthStatus(httpClient);
+  const [authStatus, setAuthStatus] = React.useState<GetAuthStatusResult>();
 
-  if (authStatus.isError) {
-    return (
-      <div>
-        Error: {authStatus.error.message}
-        <br />
-        TODO: 認証状態取得時のエラー画面を作成する
-      </div>
-    );
-  }
-  if (authStatus.isPending) {
-    return <div>TODO: 認証状態取得時のローディング画面を作成する</div>;
+  if (authStatus === undefined) {
+    httpClient
+      .getAuthStatus()
+      .then((result) => setAuthStatus(result))
+      .catch((error) => {
+        throw new Error(error);
+      });
   }
 
   const value = createBackendAccessContextType({
     httpClient,
-    authStatus: authStatus.data,
-    invalidateAuthStatus: () => authStatus.invalidate()
+    authStatus,
+    setAuthStatus
   });
 
-  return (
-    <BackendAccessContext.Provider value={value}>
-      <Outlet context={{ authStatus: authStatus.data }} />
-    </BackendAccessContext.Provider>
-  );
+  if (authStatus === undefined) {
+    return <div>TODO: BackendAccessRoute</div>;
+  } else {
+    return (
+      <BackendAccessContext.Provider value={value}>
+        <Outlet context={{ authStatus: authStatus }} />
+      </BackendAccessContext.Provider>
+    );
+  }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

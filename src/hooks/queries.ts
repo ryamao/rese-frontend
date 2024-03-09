@@ -12,25 +12,9 @@ import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import {
   EndpointResponse,
   GetAuthStatusResult,
-  GetShopResult,
-  HttpClient
+  GetShopResult
 } from "../HttpClient";
 import { ReservationData, ShopData } from "../models";
-
-export function useAuthStatus(httpClient: HttpClient) {
-  const queryKey = ["authStatus"];
-  const queryClient = useQueryClient();
-
-  const authStatus = useQuery({
-    queryKey,
-    queryFn: () => httpClient.getAuthStatus(),
-    staleTime: Infinity
-  });
-
-  const invalidate = () => queryClient.invalidateQueries({ queryKey });
-
-  return { ...authStatus, invalidate };
-}
 
 export function useCustomer(customerId: number) {
   const { getCustomer } = useBackendAccessContext();

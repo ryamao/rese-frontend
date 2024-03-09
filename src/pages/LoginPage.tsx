@@ -6,12 +6,13 @@ import { LoginForm } from "../components/LoginForm";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export function LoginPage() {
-  const { login } = useBackendAccessContext();
+  const { login, setAuthStatus } = useBackendAccessContext();
   const navigate = useNavigate();
 
   async function handleLogin(email: string, password: string) {
     const result = await login({ email, password });
     if (!result.error) {
+      setAuthStatus(undefined);
       navigate("/mypage");
     }
     return result;
