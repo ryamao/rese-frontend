@@ -105,6 +105,20 @@ export interface paths {
      */
     post: operations["post-auth-register"];
   };
+  "/auth/email/verification-notification": {
+    /**
+     * 確認メール送信
+     * @description メールアドレス確認通知を登録メールアドレスに送信する
+     */
+    post: operations["post-auth-email-verification-notification"];
+  };
+  "/auth/email/verify/{user}/{hash}": {
+    /**
+     * メールアドレス確認
+     * @description メールでの本人確認を行う
+     */
+    get: operations["get-auth-email-verify"];
+  };
   "/auth/login": {
     /**
      * ログイン
@@ -125,6 +139,20 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    "auth-status":
+      | components["schemas"]["auth-status-guest"]
+      | components["schemas"]["auth-status-customer"];
+    "auth-status-guest": {
+      /** @enum {string} */
+      status: "guest";
+    };
+    "auth-status-customer": {
+      /** @enum {string} */
+      status: "customer";
+      /** Format: int64 */
+      id: number;
+      has_verified_email: boolean;
+    };
     "register-error": {
       message: string;
       errors: {
@@ -325,12 +353,7 @@ export interface components {
     /** @description 認証状態取得成功 */
     "get-auth-status-200": {
       content: {
-        "application/json": {
-          /** @enum {string} */
-          status: "guest" | "customer";
-          /** Format: int64 */
-          id?: number;
-        };
+        "application/json": components["schemas"]["auth-status"];
       };
     };
     /** @description バリデーションエラーまたはメールアドレスが登録済み */
@@ -417,6 +440,10 @@ export interface components {
     };
   };
   parameters: {
+    /** @description ユーザーID */
+    "user-id": number;
+    /** @description ハッシュ値 */
+    hash: string;
     /** @description 顧客ID */
     "customer-id": number;
     /** @description 飲食店ID */
@@ -728,6 +755,34 @@ export interface operations {
       201: components["responses"]["created"];
       204: components["responses"]["no-content"];
       422: components["responses"]["post-auth-register-422"];
+    };
+  };
+  /**
+   * 確認メール送信
+   * @description メールアドレス確認通知を登録メールアドレスに送信する
+   */
+  "post-auth-email-verification-notification": {
+    responses: {
+      204: components["responses"]["no-content"];
+      401: components["responses"]["unauthorized"];
+    };
+  };
+  /**
+   * メールアドレス確認
+   * @description メールでの本人確認を行う
+   */
+  "get-auth-email-verify": {
+    parameters: {
+      path: {
+        user: components["parameters"]["user-id"];
+        hash: components["parameters"]["hash"];
+      };
+    };
+    responses: {
+      204: components["responses"]["no-content"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
     };
   };
   /**
