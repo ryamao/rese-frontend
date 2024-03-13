@@ -6,12 +6,11 @@ import { ReservationCard } from "./ReservationCard";
 import { ReservationDateField } from "./ReservationDateField";
 import { ReservationNumberField } from "./ReservationNumberField";
 import { ReservationTimeField } from "./ReservationTimeField";
-import { GetAuthStatusResult } from "../HttpClient";
-import { ReservationData } from "../models";
+import { AuthStatus, ReservationData } from "../models";
 import { ReservationForm } from "../types";
 
 export interface ShopReservationAreaProps {
-  authStatus: GetAuthStatusResult;
+  authStatus: AuthStatus;
   reservations: ReservationData[];
   onSubmit?: (reservedAt: Dayjs, numberOfGuests: number) => void;
   onClickLogin?: () => void;

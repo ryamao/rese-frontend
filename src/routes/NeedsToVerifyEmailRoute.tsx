@@ -7,10 +7,12 @@ import {
 
 import { useAuthStatus } from "./BackendAccessRoute";
 
-export function CustomersOnlyRoute() {
+export function NeedsToVerifyEmailRoute() {
   const { authStatus } = useAuthStatus();
 
   const location = useLocation();
+
+  console.log("NeedsToVerifyEmailRoute", authStatus);
 
   switch (authStatus.status) {
     case "guest":
@@ -19,9 +21,11 @@ export function CustomersOnlyRoute() {
       );
     case "customer":
       if (authStatus.has_verified_email) {
-        return <Outlet context={{ customerId: authStatus.id }} />;
+        return (
+          <Navigate to="/mypage" state={{ from: location }} replace={false} />
+        );
       } else {
-        return <Navigate to="/verify-email" replace={false} />;
+        return <Outlet context={{ customerId: authStatus.id }} />;
       }
   }
 }

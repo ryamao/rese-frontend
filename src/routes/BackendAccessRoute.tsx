@@ -6,11 +6,12 @@ import {
   BackendAccessContext,
   createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
-import { GetAuthStatusResult, HttpClient } from "../HttpClient";
+import { HttpClient } from "../HttpClient";
+import { AuthStatus } from "../models";
 
 export function BackendAccessRoute() {
   const httpClient = new HttpClient();
-  const [authStatus, setAuthStatus] = React.useState<GetAuthStatusResult>();
+  const [authStatus, setAuthStatus] = React.useState<AuthStatus>();
 
   if (authStatus === undefined) {
     httpClient
@@ -40,5 +41,5 @@ export function BackendAccessRoute() {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuthStatus() {
-  return useOutletContext<{ authStatus: GetAuthStatusResult }>();
+  return useOutletContext<{ authStatus: AuthStatus }>();
 }

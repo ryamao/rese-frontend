@@ -9,12 +9,8 @@ import {
 import { Dayjs } from "dayjs";
 
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import {
-  EndpointResponse,
-  GetAuthStatusResult,
-  GetShopResult
-} from "../HttpClient";
-import { ReservationData, ShopData } from "../models";
+import { EndpointResponse, GetShopResult } from "../HttpClient";
+import { AuthStatus, ReservationData, ShopData } from "../models";
 
 export function useCustomer(customerId: number) {
   const { getCustomer } = useBackendAccessContext();
@@ -50,7 +46,7 @@ export function useGenres() {
   return genres;
 }
 
-export function useShops(authStatus: GetAuthStatusResult) {
+export function useShops(authStatus: AuthStatus) {
   const { getShops } = useBackendAccessContext();
 
   const shops = useInfiniteQuery({

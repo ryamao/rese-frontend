@@ -13,7 +13,7 @@ export function RegisterPage() {
     const result = await register({ name, email, password });
     if (!result.error) {
       setAuthStatus(undefined);
-      navigate("/thanks");
+      navigate("/verify-email");
     }
     return result;
   }

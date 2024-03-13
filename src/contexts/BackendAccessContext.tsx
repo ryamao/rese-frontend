@@ -5,7 +5,6 @@ import { Dayjs } from "dayjs";
 import {
   HttpClient,
   GetAreasResult,
-  GetAuthStatusResult,
   PostAuthRegisterBody,
   PostAuthLoginBody,
   GetCustomerResult,
@@ -17,14 +16,15 @@ import {
   EndpointResponse,
   Paginated
 } from "../HttpClient";
-import { ReservationData, ShopData } from "../models";
+import { AuthStatus, ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
-  authStatus?: GetAuthStatusResult;
-  setAuthStatus: (authStatus?: GetAuthStatusResult) => void;
+  authStatus?: AuthStatus;
+  setAuthStatus: (authStatus?: AuthStatus) => void;
   register: (body: PostAuthRegisterBody) => Promise<PostAuthRegisterResult>;
   login: (body: PostAuthLoginBody) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
+  postResendEmail: () => Promise<EndpointResponse<undefined>>;
   getCustomer: (id: number) => Promise<GetCustomerResult>;
   getAreas: () => Promise<GetAreasResult["areas"]>;
   getGenres: () => Promise<GetGenresResult["genres"]>;
@@ -61,8 +61,8 @@ export const useBackendAccessContext = () => useContext(BackendAccessContext);
 
 export interface CreateBackendAccessContextTypeProps {
   httpClient: HttpClient;
-  authStatus?: GetAuthStatusResult;
-  setAuthStatus: (authStatus?: GetAuthStatusResult) => void;
+  authStatus?: AuthStatus;
+  setAuthStatus: (authStatus?: AuthStatus) => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -85,6 +85,7 @@ export function createBackendAccessContextType({
     register: (body) => httpClient.postAuthRegister(body),
     login: (body) => httpClient.postAuthLogin(body),
     logout: () => httpClient.postAuthLogout(),
+    postResendEmail: () => httpClient.postAuthEmailVerificationNotification(),
     getCustomer: (id) => httpClient.getCustomer(id),
     getAreas: () => httpClient.getAreas().then((result) => result.areas),
     getGenres: () => httpClient.getGenres().then((result) => result.genres),

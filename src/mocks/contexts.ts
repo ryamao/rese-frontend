@@ -1,12 +1,9 @@
 import { BackendAccessContextType } from "../contexts/BackendAccessContext";
-import {
-  GetAreasResult,
-  GetAuthStatusResult,
-  GetGenresResult
-} from "../HttpClient";
+import { GetAreasResult, GetGenresResult } from "../HttpClient";
+import { AuthStatus } from "../models";
 
 export interface CreateMockBackendAccessStateProps {
-  authStatus?: GetAuthStatusResult;
+  authStatus?: AuthStatus;
   getAreas?: () => Promise<GetAreasResult["areas"]>;
   getGenres?: () => Promise<GetGenresResult["genres"]>;
 }
@@ -22,6 +19,7 @@ export function createMockBackendAccessState({
     register: vitest.fn(),
     login: vitest.fn(),
     logout: vitest.fn(),
+    postResendEmail: vitest.fn(),
     getCustomer: vitest.fn(),
     getAreas: getAreas ?? vitest.fn(),
     getGenres: getGenres ?? vitest.fn(),

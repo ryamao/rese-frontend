@@ -17,7 +17,7 @@ const meta = {
   component: ShopReservationArea,
   tags: ["autodocs"],
   args: {
-    authStatus: { status: "customer", id: 1 },
+    authStatus: { status: "customer", id: 1, has_verified_email: true },
     reservations: [],
     onSubmit: fn(),
     onClickLogin: fn()
