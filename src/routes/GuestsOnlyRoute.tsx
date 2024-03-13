@@ -9,9 +9,13 @@ export function GuestsOnlyRoute() {
 
   switch (authStatus.status) {
     case "customer":
-      return (
-        <Navigate to="/mypage" state={{ from: location }} replace={false} />
-      );
+      if (authStatus.has_verified_email) {
+        return (
+          <Navigate to="/mypage" state={{ from: location }} replace={false} />
+        );
+      } else {
+        return <Navigate to="/verify-email" replace={false} />;
+      }
     case "guest":
       return <Outlet />;
   }

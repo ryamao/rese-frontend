@@ -27,7 +27,7 @@ const meta = {
     (Story) => {
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
-        authStatus: { status: "customer", id: 1 },
+        authStatus: { status: "customer", id: 1, has_verified_email: true },
         setAuthStatus: fn()
       });
       return (

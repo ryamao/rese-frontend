@@ -11,6 +11,7 @@ import {
 
 import { MenuOverlayProvider } from "./contexts/MenuOverlayContext";
 import { DashboardPage } from "./pages/DashboardPage";
+import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterPage } from "./pages/RegisterPage";
@@ -21,6 +22,7 @@ import { ThanksPage } from "./pages/ThanksPage";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
+import { NeedsToVerifyEmailRoute } from "./routes/NeedsToVerifyEmailRoute";
 import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
 
 const router = createBrowserRouter(
@@ -33,6 +35,9 @@ const router = createBrowserRouter(
           <Route element={<GuestsOnlyRoute />}>
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
+          </Route>
+          <Route element={<NeedsToVerifyEmailRoute />}>
+            <Route path="/verify-email" element={<EmailVerificationPage />} />
           </Route>
           <Route element={<CustomersOnlyRoute />}>
             <Route path="/thanks" element={<ThanksPage />} />

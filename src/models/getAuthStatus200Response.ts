@@ -5,9 +5,9 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { GetAuthStatus200ResponseStatus } from "./getAuthStatus200ResponseStatus";
+import type { AuthStatus } from "./authStatus";
 
-export type GetAuthStatus200Response = {
-  id?: number;
-  status: GetAuthStatus200ResponseStatus;
-};
+/**
+ * 認証状態取得成功
+ */
+export type GetAuthStatus200Response = AuthStatus;

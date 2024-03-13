@@ -1,7 +1,7 @@
 import createClient, { Middleware } from "openapi-fetch";
 
 import * as api from "./api";
-import { Pagination, ReservationData, ShopData } from "./models";
+import { AuthStatus, Pagination, ReservationData, ShopData } from "./models";
 import { getCookieValue } from "./utils";
 
 export type EndpointResponse<T> =
@@ -27,10 +27,6 @@ export type PostAuthLoginBody =
 export type PostAuthLoginResult = {
   error?: api.components["responses"]["post-auth-login-422"]["content"]["application/json"];
 };
-
-export type GetAuthStatusResult =
-  | { status: "guest" }
-  | { status: "customer"; id: number };
 
 export type GetCustomerResult =
   api.components["responses"]["show-customer-200"]["content"]["application/json"];
@@ -89,6 +85,32 @@ export class HttpClient {
     }
   }
 
+  async postAuthEmailVerificationNotification(): Promise<
+    EndpointResponse<undefined>
+  > {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response } = await this.client.POST(
+        "/auth/email/verification-notification"
+      );
+      if (response.status === 202) {
+        return { success: true, data: undefined };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
   async postAuthLogin(body: PostAuthLoginBody): Promise<PostAuthLoginResult> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
@@ -112,7 +134,7 @@ export class HttpClient {
     }
   }
 
-  async getAuthStatus(): Promise<GetAuthStatusResult> {
+  async getAuthStatus(): Promise<AuthStatus> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
       const { data } = await this.client.GET("/auth/status");
@@ -123,7 +145,11 @@ export class HttpClient {
         case "guest":
           return { status: "guest" };
         case "customer":
-          return { status: "customer", id: data.id! };
+          return {
+            status: "customer",
+            id: data.id,
+            has_verified_email: data.has_verified_email
+          };
       }
     } catch (error) {
       throw new Error(String(error));

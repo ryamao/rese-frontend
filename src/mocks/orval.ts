@@ -244,6 +244,34 @@ export const postAuthRegister = <
 };
 
 /**
+ * メールアドレス確認通知を登録メールアドレスに送信する
+ * @summary 確認メール送信
+ */
+export const postAuthEmailVerificationNotification = <
+  TData = AxiosResponse<NoContentResponse>
+>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/auth/email/verification-notification`,
+    undefined,
+    options
+  );
+};
+
+/**
+ * メールでの本人確認を行う
+ * @summary メールアドレス確認
+ */
+export const getAuthEmailVerify = <TData = AxiosResponse<NoContentResponse>>(
+  user: number,
+  hash: string,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/auth/email/verify/${user}/${hash}`, options);
+};
+
+/**
  * 顧客のログイン処理を行う
  * @summary ログイン
  */
@@ -288,6 +316,9 @@ export type GetSanctumCsrfCookieResult =
 export type PostAuthRegisterResult = AxiosResponse<
   CreatedResponse | NoContentResponse
 >;
+export type PostAuthEmailVerificationNotificationResult =
+  AxiosResponse<NoContentResponse>;
+export type GetAuthEmailVerifyResult = AxiosResponse<NoContentResponse>;
 export type PostAuthLoginResult = AxiosResponse<OkResponse | NoContentResponse>;
 export type PostAuthLogoutResult = AxiosResponse<NoContentResponse>;
 
@@ -307,14 +338,19 @@ export const getGetAreasResponseMock = (
 
 export const getGetAuthStatusResponseMock = (
   overrideResponse: any = {}
-): GetAuthStatus200Response => ({
-  id: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined
-  ]),
-  status: faker.helpers.arrayElement(["guest", "customer"] as const),
-  ...overrideResponse
-});
+): GetAuthStatus200Response =>
+  faker.helpers.arrayElement([
+    {
+      status: faker.helpers.arrayElement(["guest"] as const),
+      ...overrideResponse
+    },
+    {
+      has_verified_email: faker.datatype.boolean(),
+      id: faker.number.int({ min: undefined, max: undefined }),
+      status: faker.helpers.arrayElement(["customer"] as const),
+      ...overrideResponse
+    }
+  ]);
 
 export const getGetCustomerResponseMock = (
   overrideResponse: any = {}
@@ -856,6 +892,30 @@ export const getPostAuthRegisterMockHandler = () => {
   });
 };
 
+export const getPostAuthEmailVerificationNotificationMockHandler = () => {
+  return http.post("*/auth/email/verification-notification", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
+export const getGetAuthEmailVerifyMockHandler = () => {
+  return http.get("*/auth/email/verify/:user/:hash", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getPostAuthLoginMockHandler = () => {
   return http.post("*/auth/login", async () => {
     await delay(1000);
@@ -895,6 +955,8 @@ export const getReseMock = () => [
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
   getPostAuthRegisterMockHandler(),
+  getPostAuthEmailVerificationNotificationMockHandler(),
+  getGetAuthEmailVerifyMockHandler(),
   getPostAuthLoginMockHandler(),
   getPostAuthLogoutMockHandler()
 ];

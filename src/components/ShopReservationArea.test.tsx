@@ -23,7 +23,7 @@ describe("ShopReservationArea", () => {
     ] as ReservationData[];
     const { getByRole, getByLabelText, getByText } = render(
       <ShopReservationArea
-        authStatus={{ status: "customer", id: 1 }}
+        authStatus={{ status: "customer", id: 1, has_verified_email: true }}
         reservations={reservations}
       />
     );
@@ -42,7 +42,7 @@ describe("ShopReservationArea", () => {
     const onSubmit = vi.fn();
     const { getByRole, getByLabelText } = render(
       <ShopReservationArea
-        authStatus={{ status: "customer", id: 1 }}
+        authStatus={{ status: "customer", id: 1, has_verified_email: true }}
         reservations={[]}
         onSubmit={onSubmit}
       />
@@ -64,7 +64,7 @@ describe("ShopReservationArea", () => {
   test("予約エラーが表示される", async () => {
     const { getByRole, findByText } = render(
       <ShopReservationArea
-        authStatus={{ status: "customer", id: 1 }}
+        authStatus={{ status: "customer", id: 1, has_verified_email: true }}
         reservations={[]}
       />
     );

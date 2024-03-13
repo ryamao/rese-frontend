@@ -100,7 +100,7 @@ function renderCard(
   const authStatus: BackendAccessContextType["authStatus"] =
     favoriteStatus === "unknown"
       ? { status: "guest" }
-      : { status: "customer", id: 111 };
+      : { status: "customer", id: 111, has_verified_email: true };
   const customerId =
     authStatus.status === "customer" ? authStatus.id : undefined;
 
