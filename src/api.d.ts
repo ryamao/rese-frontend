@@ -41,6 +41,11 @@ export interface paths {
   };
   "/customers/{customer}/reservations/{reservation}": {
     /**
+     * マイページでの予約変更機能
+     * @description セッション中の顧客が行っている指定の予約を変更する
+     */
+    put: operations["put-customer-reservation"];
+    /**
      * マイページでの予約取り消し機能
      * @description セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
      */
@@ -438,6 +443,12 @@ export interface components {
         "application/json": components["schemas"]["reservation-error"];
       };
     };
+    /** @description マイページの予約変更のバリデーションエラー */
+    "put-customer-reservation-422": {
+      content: {
+        "application/json": components["schemas"]["reservation-error"];
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -503,6 +514,24 @@ export interface components {
     };
     /** @description 予約追加リクエスト */
     "post-customer-shop-reservations": {
+      content: {
+        "application/json": {
+          /**
+           * Format: date-time
+           * @description 予約日時
+           * @example 2021-12-31T23:59:59+09:00
+           */
+          reserved_at: string;
+          /**
+           * @description 予約人数
+           * @example 2
+           */
+          number_of_guests: number;
+        };
+      };
+    };
+    /** @description 予約変更リクエスト */
+    "put-customer-reservation": {
       content: {
         "application/json": {
           /**
@@ -599,6 +628,26 @@ export interface operations {
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
+    };
+  };
+  /**
+   * マイページでの予約変更機能
+   * @description セッション中の顧客が行っている指定の予約を変更する
+   */
+  "put-customer-reservation": {
+    parameters: {
+      path: {
+        customer: components["parameters"]["customer-id"];
+        reservation: components["parameters"]["reservation-id"];
+      };
+    };
+    requestBody: components["requestBodies"]["put-customer-reservation"];
+    responses: {
+      204: components["responses"]["no-content"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["put-customer-reservation-422"];
     };
   };
   /**
