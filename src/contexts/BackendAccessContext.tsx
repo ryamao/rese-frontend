@@ -46,6 +46,10 @@ export interface BackendAccessContextType {
     reservedAt: Dayjs,
     numberOfGuests: number
   ) => Promise<ReservationData>;
+  putReservation: (
+    userId: number,
+    reservation: ReservationData
+  ) => Promise<EndpointResponse<never>>;
   deleteReservation: (
     userId: number,
     reservationId: number
@@ -102,6 +106,11 @@ export function createBackendAccessContextType({
       httpClient.postCustomerShopReservations(userId, shopId, {
         reserved_at: reservedAt.format(),
         number_of_guests: numberOfGuests
+      }),
+    putReservation: (userId, { id, reserved_at, number_of_guests }) =>
+      httpClient.putCustomerReservation(userId, id, {
+        reserved_at,
+        number_of_guests
       }),
     deleteReservation: (userId, reservationId) =>
       httpClient.deleteCustomerReservation(userId, reservationId)

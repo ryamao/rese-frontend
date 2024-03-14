@@ -154,7 +154,8 @@ export function useFavoriteMutation(customerId?: number) {
 
 export function useReservations(customerId: number) {
   const queryClient = useQueryClient();
-  const { getReservations, deleteReservation } = useBackendAccessContext();
+  const { getReservations, putReservation, deleteReservation } =
+    useBackendAccessContext();
 
   const reservations = useQuery({
     queryKey: ["reservations", customerId],
@@ -174,7 +175,18 @@ export function useReservations(customerId: number) {
     }
   });
 
-  return { ...reservations, cancel: cancel.mutate };
+  const update = useMutation({
+    mutationFn: (reservation: ReservationData) => {
+      return putReservation(customerId, reservation);
+    },
+    onSuccess: async (data) => {
+      if (data.success) {
+        await queryClient.invalidateQueries({ queryKey: ["reservations"] });
+      }
+    }
+  });
+
+  return { ...reservations, update: update.mutate, cancel: cancel.mutate };
 }
 
 export function useShopReservations(customerId: number, shopId: number) {

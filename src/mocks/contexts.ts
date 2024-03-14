@@ -30,6 +30,7 @@ export function createMockBackendAccessState({
     removeFavorite: vitest.fn(),
     getReservations: vitest.fn(),
     postReservation: vitest.fn(),
+    putReservation: vitest.fn(),
     deleteReservation: vitest.fn()
   };
 }

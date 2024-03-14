@@ -178,6 +178,9 @@ export const handlers = [
       }
     });
   }),
+  http.put("*/customers/:customerId/reservations/:reservationId", async () => {
+    return HttpResponse.text(null, { status: 204 });
+  }),
   http.delete(
     "*/customers/:customerId/reservations/:reservationId",
     async () => {
