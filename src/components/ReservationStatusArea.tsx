@@ -5,11 +5,13 @@ import { ReservationData } from "../models";
 
 export interface ReservationStatusAreaProps {
   reservations: ReservationData[];
+  onClickCard?: (reservation: ReservationData) => void;
   onRemove?: (reservation: ReservationData) => void;
 }
 
 export function ReservationStatusArea({
   reservations,
+  onClickCard,
   onRemove
 }: ReservationStatusAreaProps) {
   return (
@@ -21,6 +23,7 @@ export function ReservationStatusArea({
             <ReservationStatusCard
               title={`予約${index + 1}`}
               reservation={reservation}
+              onClick={onClickCard}
               onRemove={onRemove}
             />
           </li>

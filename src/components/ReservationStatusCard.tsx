@@ -13,22 +13,28 @@ dayjs.extend(timezone);
 export interface ReservationStatusCardProps {
   title: string;
   reservation: ReservationData;
+  onClick?: (reservation: ReservationData) => void;
   onRemove?: (reservation: ReservationData) => void;
 }
 
 export function ReservationStatusCard({
   title,
   reservation,
+  onClick,
   onRemove
 }: ReservationStatusCardProps) {
   const reservedAt = dayjs(reservation.reserved_at).tz("Asia/Tokyo");
+
+  function handleClick() {
+    onClick?.(reservation);
+  }
 
   function handleRemove() {
     onRemove?.(reservation);
   }
 
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <TitleLayout>
         <TitleWithIcon>
           <IconWrapper>
@@ -70,6 +76,7 @@ export function ReservationStatusCard({
 const Card = styled.div`
   padding: 2rem;
   color: #fff;
+  cursor: pointer;
   background-color: #315dff;
   border-radius: 0.25rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;

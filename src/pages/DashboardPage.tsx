@@ -1,7 +1,11 @@
+import { useState } from "react";
+
 import styled from "@emotion/styled";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
+import { MenuButton } from "../components/MenuButton";
+import { ReservationChangeForm } from "../components/ReservationChangeForm";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
 import { useCustomer, useFavorites, useReservations } from "../hooks/queries";
 import { ReservationData } from "../models";
@@ -12,6 +16,8 @@ export function DashboardPage() {
   const customer = useCustomer(customerId);
   const reservations = useReservations(customerId);
   const favorites = useFavorites(customerId);
+  const [selectedReservation, setSelectedReservation] =
+    useState<ReservationData | null>(null);
 
   if (customer.isError) {
     return <PageBase>Error: {customer.error.message}</PageBase>;
@@ -45,6 +51,10 @@ export function DashboardPage() {
     page.success ? page.data.data : []
   );
 
+  function handleClickCard(reservation: ReservationData) {
+    setSelectedReservation(reservation);
+  }
+
   function handleReservationRemove(reservation: ReservationData) {
     const yes = window.confirm(
       [
@@ -59,17 +69,53 @@ export function DashboardPage() {
     }
   }
 
+  function handleUpdateReservation(data: ReservationData) {
+    const yes = window.confirm(
+      [
+        `以下の内容で予約を更新します`,
+        `予約日時：${data.reserved_at}`,
+        `予約人数：${data.number_of_guests}人`
+      ].join("\n")
+    );
+    if (yes) {
+      reservations.update(data);
+      setSelectedReservation(null);
+    }
+  }
+
   return (
-    <PageBase>
-      <Inner>
-        <Name>{customer.data.name}さん</Name>
-        <ReservationStatusArea
-          reservations={reservations.data.data}
-          onRemove={handleReservationRemove}
-        />
-        <FavoriteShopsArea customerId={customerId} favorites={favoriteShops} />
-      </Inner>
-    </PageBase>
+    <>
+      <PageBase>
+        <Inner>
+          <Name>{customer.data.name}さん</Name>
+          <ReservationStatusArea
+            reservations={reservations.data.data}
+            onClickCard={handleClickCard}
+            onRemove={handleReservationRemove}
+          />
+          <FavoriteShopsArea
+            customerId={customerId}
+            favorites={favoriteShops}
+          />
+        </Inner>
+      </PageBase>
+      {selectedReservation && (
+        <OverlayBody>
+          <OverlayHeader>
+            <MenuButton
+              isMenuOpened
+              onClick={() => setSelectedReservation(null)}
+            />
+          </OverlayHeader>
+          <OverlayContent>
+            <ReservationChangeForm
+              onSubmit={handleUpdateReservation}
+              reservation={selectedReservation}
+            />
+          </OverlayContent>
+        </OverlayBody>
+      )}
+    </>
   );
 }
 
@@ -124,4 +170,27 @@ const Inner = styled.div`
 const Name = styled.h2`
   margin: 0 auto;
   font-size: 1.75rem;
+`;
+
+const OverlayBody = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+`;
+
+const OverlayHeader = styled.div`
+  width: 100%;
+  max-width: 1230px;
+  padding: 2rem;
+  margin: 0 auto;
+`;
+
+const OverlayContent = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 `;
