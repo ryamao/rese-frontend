@@ -18,7 +18,8 @@ import type {
   OkResponse,
   PostAuthLoginBody,
   PostAuthRegisterBody,
-  PostCustomerShopReservationsBody
+  PostCustomerShopReservationsBody,
+  PutCustomerReservationBody
 } from "../models";
 import type {
   GetAreas200Response,
@@ -93,6 +94,25 @@ export const getCustomerReservations = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.get(`/customers/${customer}/reservations`, options);
+};
+
+/**
+ * セッション中の顧客が行っている指定の予約を変更する
+ * @summary マイページでの予約変更機能
+ */
+export const putCustomerReservation = <
+  TData = AxiosResponse<NoContentResponse>
+>(
+  customer: number,
+  reservation: number,
+  putCustomerReservationBody: PutCustomerReservationBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.put(
+    `/customers/${customer}/reservations/${reservation}`,
+    putCustomerReservationBody,
+    options
+  );
 };
 
 /**
@@ -301,6 +321,7 @@ export type GetCustomerFavoritesResult =
   AxiosResponse<GetCustomerFavorites200Response>;
 export type GetCustomerReservationsResult =
   AxiosResponse<GetCustomerReservations200Response>;
+export type PutCustomerReservationResult = AxiosResponse<NoContentResponse>;
 export type DeleteCustomerReservationsResult = AxiosResponse<NoContentResponse>;
 export type PostCustomerShopFavoriteResult = AxiosResponse<CreatedResponse>;
 export type DeleteCustomerShopFavoriteResult = AxiosResponse<NoContentResponse>;
@@ -724,6 +745,21 @@ export const getGetCustomerReservationsMockHandler = (
   });
 };
 
+export const getPutCustomerReservationMockHandler = () => {
+  return http.put(
+    "*/customers/:customer/reservations/:reservation",
+    async () => {
+      await delay(1000);
+      return new HttpResponse(null, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    }
+  );
+};
+
 export const getDeleteCustomerReservationsMockHandler = () => {
   return http.delete(
     "*/customers/:customer/reservations/:reservation",
@@ -945,6 +981,7 @@ export const getReseMock = () => [
   getGetCustomerMockHandler(),
   getGetCustomerFavoritesMockHandler(),
   getGetCustomerReservationsMockHandler(),
+  getPutCustomerReservationMockHandler(),
   getDeleteCustomerReservationsMockHandler(),
   getPostCustomerShopFavoriteMockHandler(),
   getDeleteCustomerShopFavoriteMockHandler(),

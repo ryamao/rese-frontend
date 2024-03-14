@@ -66,3 +66,6 @@ export * from "./shopDataFavoriteStatus";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from "./putCustomerReservation422Response";
+export * from "./putCustomerReservationBody";
+export * from "./putCustomerReservationsBody";

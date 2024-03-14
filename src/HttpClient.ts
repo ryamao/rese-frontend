@@ -45,6 +45,9 @@ export type GetShopResult = { status: 200; data: ShopData } | { status: 404 };
 export type PostCustomerShopReservationsBody =
   api.components["requestBodies"]["post-customer-shop-reservations"]["content"]["application/json"];
 
+export type PutCustomerReservationBody =
+  api.components["requestBodies"]["put-customer-reservation"]["content"]["application/json"];
+
 const middleware: Middleware = {
   async onRequest(req) {
     const headers: HeadersInit = {
@@ -316,6 +319,40 @@ export class HttpClient {
           success: false,
           status: response.status,
           message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async putCustomerReservation(
+    customerId: number,
+    reservationId: number,
+    body: PutCustomerReservationBody
+  ): Promise<EndpointResponse<never>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response, error } = await this.client.PUT(
+        "/customers/{customer}/reservations/{reservation}",
+        {
+          params: {
+            path: { customer: customerId, reservation: reservationId }
+          },
+          body
+        }
+      );
+      if (response.status === 204) {
+        return { success: true, data: undefined as never };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: error?.message
         };
       }
     } catch (error) {

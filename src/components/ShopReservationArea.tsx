@@ -62,9 +62,9 @@ export function ShopReservationArea({
           <li>
             <ReservationTimeField register={register} />
           </li>
-          <div>
+          <li>
             <ReservationNumberField register={register} />
-          </div>
+          </li>
         </InputList>
         <ReservationList>
           {reservations.map((reservation) => (
