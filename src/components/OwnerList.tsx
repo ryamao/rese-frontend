@@ -78,7 +78,11 @@ const DeleteButton = styled.button`
   padding: 0.375rem 1rem;
   color: #fff;
   cursor: pointer;
-  background-color: #e11d48;
+  background-color: #db2777;
   border: none;
   border-radius: 0.25rem;
+
+  &:hover {
+    background-color: #e11d48;
+  }
 `;
