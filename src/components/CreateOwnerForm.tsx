@@ -7,20 +7,22 @@ import { blueButton, whitePanel } from "./styles";
 export function CreateOwnerForm() {
   return (
     <Form className={whitePanel}>
-      <InputFieldWrapper>
-        <MdPerson className={iconStyle} />
-        <InputLayout>
-          <Input type="text" id="name" />
-          <Label htmlFor="name">Owner Name</Label>
-        </InputLayout>
-      </InputFieldWrapper>
-      <InputFieldWrapper>
-        <MdMail className={iconStyle} />
-        <InputLayout>
-          <Input type="email" id="email" />
-          <Label htmlFor="email">Email Address</Label>
-        </InputLayout>
-      </InputFieldWrapper>
+      <InputFields>
+        <InputFieldWrapper>
+          <MdPerson className={iconStyle} />
+          <InputLayout>
+            <Input type="text" id="name" />
+            <Label htmlFor="name">Owner Name</Label>
+          </InputLayout>
+        </InputFieldWrapper>
+        <InputFieldWrapper>
+          <MdMail className={iconStyle} />
+          <InputLayout>
+            <Input type="email" id="email" />
+            <Label htmlFor="email">Email Address</Label>
+          </InputLayout>
+        </InputFieldWrapper>
+      </InputFields>
       <div>
         <button type="submit" className={blueButton}>
           アカウント作成
@@ -31,11 +33,16 @@ export function CreateOwnerForm() {
 }
 
 const Form = styled.form`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 2rem;
-  align-items: center;
-  width: fit-content;
-  padding: 1rem 1.5rem;
+  align-items: flex-end;
+  padding: 1.5rem;
+`;
+
+const InputFields = styled.div`
+  display: grid;
+  gap: 1rem;
 `;
 
 const InputFieldWrapper = styled.div`
