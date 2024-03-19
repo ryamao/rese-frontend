@@ -16,11 +16,12 @@ import {
   EndpointResponse,
   Paginated
 } from "../HttpClient";
-import { AuthStatus, ReservationData, ShopData } from "../models";
+import { AuthStatus, PostOwnersBody, ReservationData, ShopData } from "../models";
 
 export interface BackendAccessContextType {
   authStatus?: AuthStatus;
   setAuthStatus: (authStatus?: AuthStatus) => void;
+  postOwners: (body: PostOwnersBody) => Promise<EndpointResponse<never>>;
   register: (body: PostAuthRegisterBody) => Promise<PostAuthRegisterResult>;
   login: (body: PostAuthLoginBody) => Promise<PostAuthLoginResult>;
   logout: () => Promise<void>;
@@ -86,6 +87,7 @@ export function createBackendAccessContextType({
   return {
     authStatus,
     setAuthStatus,
+    postOwners: (body) => httpClient.postOwners(body),
     register: (body) => httpClient.postAuthRegister(body),
     login: (body) => httpClient.postAuthLogin(body),
     logout: () => httpClient.postAuthLogout(),

@@ -16,6 +16,7 @@ export function createMockBackendAccessState({
   return {
     authStatus,
     setAuthStatus: vitest.fn(),
+    postOwners: vitest.fn(),
     register: vitest.fn(),
     login: vitest.fn(),
     logout: vitest.fn(),
