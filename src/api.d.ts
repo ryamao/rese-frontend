@@ -369,6 +369,12 @@ export interface components {
       };
     };
     /** @description バリデーションエラーまたはメールアドレスが登録済み */
+    "post-owners-422": {
+      content: {
+        "application/json": components["schemas"]["register-error"];
+      };
+    };
+    /** @description バリデーションエラーまたはメールアドレスが登録済み */
     "post-auth-register-422": {
       content: {
         "application/json": components["schemas"]["register-error"];
@@ -793,7 +799,7 @@ export interface operations {
       201: components["responses"]["created"];
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
-      422: components["responses"]["unprocessable-entity"];
+      422: components["responses"]["post-owners-422"];
     };
   };
   /**
