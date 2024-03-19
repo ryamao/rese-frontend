@@ -8,6 +8,12 @@ export function GuestsOnlyRoute() {
   const location = useLocation();
 
   switch (authStatus.status) {
+    case "guest":
+      return <Outlet />;
+    case "admin":
+      return <Navigate to="/admin" replace={false} />;
+    case "owner":
+      return <Navigate to="/owner" replace={false} />;
     case "customer":
       if (authStatus.has_verified_email) {
         return (
@@ -16,7 +22,5 @@ export function GuestsOnlyRoute() {
       } else {
         return <Navigate to="/verify-email" replace={false} />;
       }
-    case "guest":
-      return <Outlet />;
   }
 }

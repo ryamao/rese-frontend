@@ -13,16 +13,20 @@ export function CustomersOnlyRoute() {
   const location = useLocation();
 
   switch (authStatus.status) {
-    case "guest":
-      return (
-        <Navigate to="/login" state={{ from: location }} replace={false} />
-      );
     case "customer":
       if (authStatus.has_verified_email) {
         return <Outlet context={{ customerId: authStatus.id }} />;
       } else {
         return <Navigate to="/verify-email" replace={false} />;
       }
+    case "guest":
+      return (
+        <Navigate to="/login" state={{ from: location }} replace={false} />
+      );
+    case "admin":
+      return <Navigate to="/admin" replace={false} />;
+    case "owner":
+      return <Navigate to="/owner" replace={false} />;
   }
 }
 
