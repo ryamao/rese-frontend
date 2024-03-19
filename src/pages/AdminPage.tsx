@@ -2,13 +2,21 @@ import styled from "@emotion/styled";
 
 import { PageBase } from "./PageBase";
 import { CreateOwnerForm } from "../components/CreateOwnerForm";
+import { PostOwnersBody } from "../models";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 
 export function AdminPage() {
+  const { postOwners } = useBackendAccessContext();
+  
+  function handleCreateOwner(body: PostOwnersBody) {
+    return postOwners(body);
+  }
+
   return (
     <PageBase>
       <Main>
         <OwnerArea>
-          <CreateOwnerForm />
+          <CreateOwnerForm onSubmit={handleCreateOwner} />
         </OwnerArea>
         <div>dummy text</div>
       </Main>

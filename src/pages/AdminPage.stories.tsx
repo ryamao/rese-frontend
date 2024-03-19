@@ -26,11 +26,11 @@ const meta = {
       const queryClient = new QueryClient();
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
-        authStatus: { status: "customer", id: 1, has_verified_email: true },
+        authStatus: { status: "admin", id: 1, has_verified_email: true },
         setAuthStatus: fn()
       });
       const DummyRoute = () => (
-        <Outlet context={{ authStatus: { status: "customer", id: 1 } }} />
+        <Outlet context={{ authStatus: { status: "admin", id: 1 } }} />
       );
       return (
         <QueryClientProvider client={queryClient}>
