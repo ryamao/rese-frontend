@@ -32,7 +32,7 @@ export function CreateOwnerForm({ onSubmit }: CreateOwnerFormProps) {
   }
 
   return (
-    <FormWrapper className={whitePanel}>
+    <div className={whitePanel}>
       <Heading>Owner Registration</Heading>
       <Form onSubmit={handleSubmit(onValid)} noValidate>
         <TextFieldList>
@@ -55,7 +55,7 @@ export function CreateOwnerForm({ onSubmit }: CreateOwnerFormProps) {
           </button>
         </ButtonLayout>
       </Form>
-    </FormWrapper>
+    </div>
   );
 }
 
@@ -75,10 +75,6 @@ const registerFormSchema = z.object({
     .min(8, "パスワードは8文字以上で入力してください")
     .max(100, "パスワードは100文字以内で入力してください")
 });
-
-const FormWrapper = styled.div`
-  width: 24rem;
-`;
 
 const Heading = styled.h2`
   padding: 1rem;

@@ -10,7 +10,7 @@ export function NotificationEmailForm() {
         <label htmlFor="title">Title</label>
         <Input type="text" id="title" name="title" />
         <label htmlFor="message">Message</label>
-        <Textarea id="message" name="message" />
+        <Textarea rows={5} id="message" name="message" />
         <ButtonLayout>
           <button type="submit" className={blueButton}>
             メール送信
