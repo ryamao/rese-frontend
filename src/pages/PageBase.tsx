@@ -58,7 +58,7 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
       </div>
       {isOpen && (
         <MenuOverlay
-          authStatus={authStatus?.status ?? "guest"}
+          authStatus={authStatus ?? { status: "guest" }}
           onClickMenuButton={handleClickMenuButton}
         />
       )}

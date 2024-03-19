@@ -2,10 +2,18 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { MenuOverlay } from "./MenuOverlay";
+import { AuthStatus } from "../models";
+
+const guest: AuthStatus = { status: "guest" };
+const customer: AuthStatus = {
+  status: "customer",
+  id: 1,
+  has_verified_email: true
+};
 
 describe("MenuOverlay", () => {
   test("ゲスト状態での表示", () => {
-    const props = createOverlayProps("guest");
+    const props = createOverlayProps(guest);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -15,7 +23,7 @@ describe("MenuOverlay", () => {
   });
 
   test("ログイン状態での表示", () => {
-    const props = createOverlayProps("customer");
+    const props = createOverlayProps(customer);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -25,7 +33,7 @@ describe("MenuOverlay", () => {
   });
 
   test("ゲスト状態でHomeボタンをクリック", async () => {
-    const props = createOverlayProps("guest");
+    const props = createOverlayProps(guest);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -35,7 +43,7 @@ describe("MenuOverlay", () => {
   });
 
   test("Registrationボタンをクリック", async () => {
-    const props = createOverlayProps("guest");
+    const props = createOverlayProps(guest);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -45,7 +53,7 @@ describe("MenuOverlay", () => {
   });
 
   test("Loginボタンをクリック", async () => {
-    const props = createOverlayProps("guest");
+    const props = createOverlayProps(guest);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -55,7 +63,7 @@ describe("MenuOverlay", () => {
   });
 
   test("ログイン状態でHomeボタンをクリック", async () => {
-    const props = createOverlayProps("customer");
+    const props = createOverlayProps(customer);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -65,7 +73,7 @@ describe("MenuOverlay", () => {
   });
 
   test("Logoutボタンをクリック", async () => {
-    const props = createOverlayProps("customer");
+    const props = createOverlayProps(customer);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -75,7 +83,7 @@ describe("MenuOverlay", () => {
   });
 
   test("Mypageボタンをクリック", async () => {
-    const props = createOverlayProps("customer");
+    const props = createOverlayProps(customer);
 
     const { getByText } = render(<MenuOverlay {...props} />);
 
@@ -85,7 +93,7 @@ describe("MenuOverlay", () => {
   });
 
   test("MenuButtonをクリック", async () => {
-    const props = createOverlayProps("guest");
+    const props = createOverlayProps(guest);
 
     const { getByRole } = render(<MenuOverlay {...props} />);
 
@@ -94,7 +102,7 @@ describe("MenuOverlay", () => {
   });
 });
 
-function createOverlayProps(authStatus: "guest" | "customer") {
+function createOverlayProps(authStatus: AuthStatus) {
   return {
     authStatus,
     onClickMenuButton: vi.fn()

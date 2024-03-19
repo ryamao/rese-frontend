@@ -147,9 +147,11 @@ export class HttpClient {
       switch (data.status) {
         case "guest":
           return { status: "guest" };
+        case "admin":
+        case "owner":
         case "customer":
           return {
-            status: "customer",
+            status: data.status,
             id: data.id,
             has_verified_email: data.has_verified_email
           };
