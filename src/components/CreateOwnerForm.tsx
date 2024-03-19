@@ -1,13 +1,14 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
-import { MdMail, MdPerson } from "react-icons/md";
+import { MdLock, MdMail, MdPerson } from "react-icons/md";
 
 import { blueButton, whitePanel } from "./styles";
 
 export function CreateOwnerForm() {
   return (
-    <Form className={whitePanel}>
-      <InputFields>
+    <FormWrapper className={whitePanel}>
+    <Heading>Owner Registration</Heading>
+      <Form>
         <InputFieldWrapper>
           <MdPerson className={iconStyle} />
           <InputLayout>
@@ -22,32 +23,49 @@ export function CreateOwnerForm() {
             <Label htmlFor="email">Email Address</Label>
           </InputLayout>
         </InputFieldWrapper>
-      </InputFields>
-      <div>
-        <button type="submit" className={blueButton}>
-          アカウント作成
-        </button>
-      </div>
-    </Form>
+        <InputFieldWrapper>
+          <MdLock className={iconStyle} />
+          <InputLayout>
+            <Input type="password" id="password" />
+            <Label htmlFor="password">Password</Label>
+          </InputLayout>
+        </InputFieldWrapper>
+        <ButtonLayout>
+          <button type="submit" className={blueButton}>
+            アカウント作成
+          </button>
+        </ButtonLayout>
+      </Form>
+    </FormWrapper>
   );
 }
 
-const Form = styled.form`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2rem;
-  align-items: flex-end;
-  padding: 1.5rem;
+const FormWrapper = styled.div`
 `;
 
-const InputFields = styled.div`
+const Heading = styled.h2`
+padding: 1rem;
+margin: 0;
+font-size: 1rem;
+font-weight: normal;
+color: #fff;
+background-color: #315dff;
+border-radius: 0.25rem 0.25rem 0 0;
+`;
+
+const Form = styled.form`
   display: grid;
+  grid-template-rows: repeat(4, auth);
   gap: 1rem;
+  align-items: flex-end;
+  padding: 1.5rem;
 `;
 
 const InputFieldWrapper = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
 `;
 
 const iconStyle = css`
@@ -86,4 +104,10 @@ const Label = styled.label`
   color: #6b6b6b;
   pointer-events: none;
   transition: 0.15s;
+`;
+
+const ButtonLayout = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 `;
