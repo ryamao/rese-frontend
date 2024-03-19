@@ -19,6 +19,7 @@ import type {
   PostAuthLoginBody,
   PostAuthRegisterBody,
   PostCustomerShopReservationsBody,
+  PostOwnersBody,
   PutCustomerReservationBody
 } from "../models";
 import type {
@@ -214,6 +215,17 @@ export const getGenres = <TData = AxiosResponse<GetGenres200Response>>(
 };
 
 /**
+ * 店舗代表者アカウントを追加する
+ * @summary 店舗代表者追加
+ */
+export const postOwners = <TData = AxiosResponse<CreatedResponse>>(
+  postOwnersBody: PostOwnersBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(`/owners`, postOwnersBody, options);
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -330,6 +342,7 @@ export type GetCustomerShopReservationsResult =
 export type PostCustomerShopReservationsResult =
   AxiosResponse<PostCustomerShopReservations201Response>;
 export type GetGenresResult = AxiosResponse<GetGenres200Response>;
+export type PostOwnersResult = AxiosResponse<CreatedResponse>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -368,7 +381,11 @@ export const getGetAuthStatusResponseMock = (
     {
       has_verified_email: faker.datatype.boolean(),
       id: faker.number.int({ min: undefined, max: undefined }),
-      status: faker.helpers.arrayElement(["customer"] as const),
+      status: faker.helpers.arrayElement([
+        "admin",
+        "owner",
+        "customer"
+      ] as const),
       ...overrideResponse
     }
   ]);
@@ -866,6 +883,18 @@ export const getGetGenresMockHandler = (
   });
 };
 
+export const getPostOwnersMockHandler = () => {
+  return http.post("*/owners", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -988,6 +1017,7 @@ export const getReseMock = () => [
   getGetCustomerShopReservationsMockHandler(),
   getPostCustomerShopReservationsMockHandler(),
   getGetGenresMockHandler(),
+  getPostOwnersMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),

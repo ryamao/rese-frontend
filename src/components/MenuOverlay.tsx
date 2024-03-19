@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 
 import { MenuButton } from "./MenuButton";
+import { AuthStatus } from "../models";
 
 export type MenuButtonType =
   | "close"
@@ -8,10 +9,12 @@ export type MenuButtonType =
   | "register"
   | "login"
   | "logout"
-  | "mypage";
+  | "mypage"
+  | "admin"
+  | "owner";
 
 export interface OverlayProps {
-  authStatus: "guest" | "customer";
+  authStatus: AuthStatus;
   onClickMenuButton?: (type: MenuButtonType) => void;
 }
 
@@ -30,9 +33,13 @@ export function MenuOverlay(props: OverlayProps) {
 }
 
 function getLinks({ authStatus, onClickMenuButton }: OverlayProps) {
-  switch (authStatus) {
+  switch (authStatus.status) {
     case "guest":
       return linksForGuest(onClickMenuButton);
+    case "admin":
+      return linksForAdmin(onClickMenuButton);
+    case "owner":
+      return linksForOwner(onClickMenuButton);
     case "customer":
       return linksForCustomer(onClickMenuButton);
   }
@@ -49,6 +56,38 @@ function linksForGuest(onClickMenuButton: OverlayProps["onClickMenuButton"]) {
       </Button>
       <Button type="button" onClick={() => onClickMenuButton?.("login")}>
         Login
+      </Button>
+    </>
+  );
+}
+
+function linksForAdmin(onClickMenuButton: OverlayProps["onClickMenuButton"]) {
+  return (
+    <>
+      <Button type="button" onClick={() => onClickMenuButton?.("home")}>
+        Home
+      </Button>
+      <Button type="button" onClick={() => onClickMenuButton?.("logout")}>
+        Logout
+      </Button>
+      <Button type="button" onClick={() => onClickMenuButton?.("admin")}>
+        Mypage
+      </Button>
+    </>
+  );
+}
+
+function linksForOwner(onClickMenuButton: OverlayProps["onClickMenuButton"]) {
+  return (
+    <>
+      <Button type="button" onClick={() => onClickMenuButton?.("home")}>
+        Home
+      </Button>
+      <Button type="button" onClick={() => onClickMenuButton?.("logout")}>
+        Logout
+      </Button>
+      <Button type="button" onClick={() => onClickMenuButton?.("owner")}>
+        Mypage
       </Button>
     </>
   );

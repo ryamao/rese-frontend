@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 
 import { MenuOverlayProvider } from "./contexts/MenuOverlayContext";
+import { AdminPage } from "./pages/AdminPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -19,6 +20,7 @@ import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
 import { ShopDetailPage } from "./pages/ShopDetailPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
+import { AdminOnlyRoute } from "./routes/AdminOnlyRoute";
 import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
@@ -43,6 +45,9 @@ const router = createBrowserRouter(
             <Route path="/thanks" element={<ThanksPage />} />
             <Route path="/mypage" element={<DashboardPage />} />
             <Route path="/done" element={<ReservationCompletedPage />} />
+          </Route>
+          <Route element={<AdminOnlyRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

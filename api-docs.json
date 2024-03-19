@@ -331,6 +331,31 @@
         }
       }
     },
+    "/owners": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "店舗代表者追加",
+        "description": "店舗代表者アカウントを追加する",
+        "operationId": "post-owners",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/post-owners"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/created"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/post-owners-422"
+          }
+        }
+      }
+    },
     "/shops": {
       "get": {
         "tags": ["Shop"],
@@ -504,7 +529,7 @@
             "$ref": "#/components/schemas/auth-status-guest"
           },
           {
-            "$ref": "#/components/schemas/auth-status-customer"
+            "$ref": "#/components/schemas/auth-status-user"
           }
         ]
       },
@@ -518,12 +543,12 @@
         },
         "type": "object"
       },
-      "auth-status-customer": {
+      "auth-status-user": {
         "required": ["status", "id", "has_verified_email"],
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["customer"]
+            "enum": ["admin", "owner", "customer"]
           },
           "id": {
             "type": "integer",
@@ -910,6 +935,16 @@
               "customer-verified": {
                 "$ref": "#/components/examples/get-auth-status-200-customer-verified"
               }
+            }
+          }
+        }
+      },
+      "post-owners-422": {
+        "description": "バリデーションエラーまたはメールアドレスが登録済み",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/register-error"
             }
           }
         }
@@ -1952,6 +1987,40 @@
       }
     },
     "requestBodies": {
+      "post-owners": {
+        "description": "店舗代表者追加リクエスト",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "required": ["name", "email", "password"],
+              "properties": {
+                "name": {
+                  "description": "店舗代表者名",
+                  "type": "string",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "example": "テストオーナー"
+                },
+                "email": {
+                  "description": "メールアドレス",
+                  "type": "string",
+                  "format": "email",
+                  "example": "test@example.com"
+                },
+                "password": {
+                  "description": "パスワード",
+                  "type": "string",
+                  "maxLength": 100,
+                  "minLength": 8,
+                  "example": "password"
+                }
+              },
+              "type": "object"
+            }
+          }
+        }
+      },
       "post-auth-register": {
         "description": "顧客登録リクエスト",
         "required": true,
@@ -2095,6 +2164,10 @@
     {
       "name": "Reservation",
       "description": "予約に関するAPI"
+    },
+    {
+      "name": "Admin",
+      "description": "管理者に関するAPI"
     }
   ]
 }

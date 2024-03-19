@@ -7,30 +7,26 @@ import {
 
 import { useAuthStatus } from "./BackendAccessRoute";
 
-export function CustomersOnlyRoute() {
+export function AdminOnlyRoute() {
   const { authStatus } = useAuthStatus();
 
   const location = useLocation();
 
   switch (authStatus.status) {
-    case "customer":
-      if (authStatus.has_verified_email) {
-        return <Outlet context={{ customerId: authStatus.id }} />;
-      } else {
-        return <Navigate to="/verify-email" replace={false} />;
-      }
+    case "admin":
+      return <Outlet context={{ adminId: authStatus.id }} />;
     case "guest":
       return (
         <Navigate to="/login" state={{ from: location }} replace={false} />
       );
-    case "admin":
-      return <Navigate to="/admin" replace={false} />;
     case "owner":
       return <Navigate to="/owner" replace={false} />;
+    case "customer":
+      return <Navigate to="/mypage" replace={false} />;
   }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useCustomerId() {
-  return useOutletContext<{ customerId: number }>();
+export function useAdminId() {
+  return useOutletContext<{ adminId: number }>();
 }

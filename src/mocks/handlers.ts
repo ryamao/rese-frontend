@@ -120,6 +120,9 @@ export const handlers = [
       headers: { "Set-Cookie": "XSRF-TOKEN=123" }
     });
   }),
+  http.post("*/owners", async () => {
+    return HttpResponse.text(null, { status: 201 });
+  }),
   http.post("*/auth/register", async () => {
     return HttpResponse.text(null, { status: 201 });
   }),

@@ -1,7 +1,13 @@
 import createClient, { Middleware } from "openapi-fetch";
 
 import * as api from "./api";
-import { AuthStatus, Pagination, ReservationData, ShopData } from "./models";
+import {
+  AuthStatus,
+  Pagination,
+  PostOwnersBody,
+  ReservationData,
+  ShopData
+} from "./models";
 import { getCookieValue } from "./utils";
 
 export type EndpointResponse<T> =
@@ -147,9 +153,11 @@ export class HttpClient {
       switch (data.status) {
         case "guest":
           return { status: "guest" };
+        case "admin":
+        case "owner":
         case "customer":
           return {
-            status: "customer",
+            status: data.status,
             id: data.id,
             has_verified_email: data.has_verified_email
           };
@@ -444,6 +452,28 @@ export class HttpClient {
       return data.reservation;
     } catch (error) {
       throw new Error(String(error));
+    }
+  }
+
+  async postOwners(body: PostOwnersBody): Promise<EndpointResponse<never>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response, error } = await this.client.POST("/owners", { body });
+      if (response.status === 201) {
+        return { success: true, data: undefined as never };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: error?.message
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
     }
   }
 }

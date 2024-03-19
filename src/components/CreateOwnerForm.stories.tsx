@@ -1,11 +1,15 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { CreateOwnerForm } from "./CreateOwnerForm";
 
 const meta = {
   title: "Components/Owner/CreateOwnerForm",
   component: CreateOwnerForm,
-  tags: ["autodocs"]
+  tags: ["autodocs"],
+  args: {
+    onSubmit: fn()
+  }
 } satisfies Meta<typeof CreateOwnerForm>;
 
 export default meta;

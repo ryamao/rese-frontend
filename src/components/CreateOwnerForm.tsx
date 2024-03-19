@@ -1,89 +1,123 @@
-import { css } from "@emotion/css";
 import styled from "@emotion/styled";
-import { MdMail, MdPerson } from "react-icons/md";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { AuthTextField } from "./AuthTextField";
 import { blueButton, whitePanel } from "./styles";
+import { EndpointResponse } from "../HttpClient";
+import { PostOwnersBody } from "../models";
 
-export function CreateOwnerForm() {
+export interface CreateOwnerFormProps {
+  onSubmit: (body: PostOwnersBody) => Promise<EndpointResponse<never>>;
+}
+
+export function CreateOwnerForm({ onSubmit }: CreateOwnerFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm<PostOwnersBody>({
+    resolver: zodResolver(registerFormSchema)
+  });
+
+  async function onValid(body: PostOwnersBody) {
+    const response = await onSubmit(body);
+    if (response.success) {
+      alert("アカウントを作成しました");
+    } else if (response.message) {
+      setError("email", { message: response.message });
+    }
+  }
+
   return (
-    <Form className={whitePanel}>
-      <InputFields>
-        <InputFieldWrapper>
-          <MdPerson className={iconStyle} />
-          <InputLayout>
-            <Input type="text" id="name" />
-            <Label htmlFor="name">Owner Name</Label>
-          </InputLayout>
-        </InputFieldWrapper>
-        <InputFieldWrapper>
-          <MdMail className={iconStyle} />
-          <InputLayout>
-            <Input type="email" id="email" />
-            <Label htmlFor="email">Email Address</Label>
-          </InputLayout>
-        </InputFieldWrapper>
-      </InputFields>
-      <div>
-        <button type="submit" className={blueButton}>
-          アカウント作成
-        </button>
-      </div>
-    </Form>
+    <FormWrapper className={whitePanel}>
+      <Heading>Owner Registration</Heading>
+      <Form onSubmit={handleSubmit(onValid)} noValidate>
+        <TextFieldList>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("name")} />
+            <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("email")} />
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
+          </TextFieldListItem>
+          <TextFieldListItem>
+            <AuthTextField registerReturn={register("password")} />
+            <ErrorMessage>{errors.password?.message}</ErrorMessage>
+          </TextFieldListItem>
+        </TextFieldList>
+        <ButtonLayout>
+          <button type="submit" className={blueButton}>
+            アカウント作成
+          </button>
+        </ButtonLayout>
+      </Form>
+    </FormWrapper>
   );
 }
 
+const registerFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "名前を入力してください")
+    .max(100, "名前は100文字以内で入力してください"),
+  email: z
+    .string()
+    .min(1, "メールアドレスを入力してください")
+    .max(100, "メールアドレスは100文字以内で入力してください")
+    .email("メールアドレスの形式が正しくありません"),
+  password: z
+    .string()
+    .min(1, "パスワードを入力してください")
+    .min(8, "パスワードは8文字以上で入力してください")
+    .max(100, "パスワードは100文字以内で入力してください")
+});
+
+const FormWrapper = styled.div`
+  width: 24rem;
+`;
+
+const Heading = styled.h2`
+  padding: 1rem;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: normal;
+  color: #fff;
+  background-color: #315dff;
+  border-radius: 0.25rem 0.25rem 0 0;
+`;
+
 const Form = styled.form`
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2rem;
+  grid-template-rows: repeat(4, auth);
+  gap: 1rem;
   align-items: flex-end;
   padding: 1.5rem;
 `;
 
-const InputFields = styled.div`
-  display: grid;
-  gap: 1rem;
+const TextFieldList = styled.ul`
+  padding: 0;
+
+  & > * + * {
+    margin-top: 0.75rem;
+  }
 `;
 
-const InputFieldWrapper = styled.div`
+const TextFieldListItem = styled.li`
+  list-style: none;
+`;
+
+const ErrorMessage = styled.p`
+  margin: 0;
+  font-size: 0.75rem;
+  color: #f00;
+`;
+
+const ButtonLayout = styled.div`
   display: flex;
-  align-items: center;
-`;
-
-const iconStyle = css`
-  width: 2rem;
-  height: 2rem;
-  color: #4b4b4b;
-`;
-
-const InputLayout = styled.div`
-  position: relative;
-  width: 100%;
-
-  & input:focus + label,
-  & input.filled + label {
-    top: -1rem;
-    font-size: 0.6rem;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 0 0.125rem;
-  font-size: 1rem;
-  border: none;
-  border-bottom: 1px solid #000;
-
-  &:focus-visible {
-    outline: none;
-  }
-`;
-
-const Label = styled.label`
-  position: absolute;
-  top: 0;
-  font-size: 0.9rem;
-  color: #6b6b6b;
-  pointer-events: none;
-  transition: 0.15s;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 `;
