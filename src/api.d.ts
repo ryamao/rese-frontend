@@ -82,6 +82,13 @@ export interface paths {
      */
     get: operations["get-genres"];
   };
+  "/owners": {
+    /**
+     * 店舗代表者追加
+     * @description 店舗代表者アカウントを追加する
+     */
+    post: operations["post-owners"];
+  };
   "/shops": {
     /**
      * 飲食店一覧取得
@@ -146,14 +153,14 @@ export interface components {
   schemas: {
     "auth-status":
       | components["schemas"]["auth-status-guest"]
-      | components["schemas"]["auth-status-customer"];
+      | components["schemas"]["auth-status-user"];
     "auth-status-guest": {
       /** @enum {string} */
       status: "guest";
     };
-    "auth-status-customer": {
+    "auth-status-user": {
       /** @enum {string} */
-      status: "customer";
+      status: "admin" | "owner" | "customer";
       /** Format: int64 */
       id: number;
       has_verified_email: boolean;
@@ -471,6 +478,29 @@ export interface components {
     "page-query"?: number;
   };
   requestBodies: {
+    /** @description 店舗代表者追加リクエスト */
+    "post-owners": {
+      content: {
+        "application/json": {
+          /**
+           * @description 店舗代表者名
+           * @example テストオーナー
+           */
+          name: string;
+          /**
+           * Format: email
+           * @description メールアドレス
+           * @example test@example.com
+           */
+          email: string;
+          /**
+           * @description パスワード
+           * @example password
+           */
+          password: string;
+        };
+      };
+    };
     /** @description 顧客登録リクエスト */
     "post-auth-register": {
       content: {
@@ -751,6 +781,19 @@ export interface operations {
   "get-genres": {
     responses: {
       200: components["responses"]["get-genres-200"];
+    };
+  };
+  /**
+   * 店舗代表者追加
+   * @description 店舗代表者アカウントを追加する
+   */
+  "post-owners": {
+    requestBody: components["requestBodies"]["post-owners"];
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      422: components["responses"]["unprocessable-entity"];
     };
   };
   /**

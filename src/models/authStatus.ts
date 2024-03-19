@@ -5,7 +5,7 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { AuthStatusCustomer } from "./authStatusCustomer";
 import type { AuthStatusGuest } from "./authStatusGuest";
+import type { AuthStatusUser } from "./authStatusUser";
 
-export type AuthStatus = AuthStatusGuest | AuthStatusCustomer;
+export type AuthStatus = AuthStatusGuest | AuthStatusUser;
