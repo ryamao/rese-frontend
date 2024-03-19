@@ -2,12 +2,12 @@ import styled from "@emotion/styled";
 
 import { PageBase } from "./PageBase";
 import { CreateOwnerForm } from "../components/CreateOwnerForm";
-import { PostOwnersBody } from "../models";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { PostOwnersBody } from "../models";
 
 export function AdminPage() {
   const { postOwners } = useBackendAccessContext();
-  
+
   function handleCreateOwner(body: PostOwnersBody) {
     return postOwners(body);
   }

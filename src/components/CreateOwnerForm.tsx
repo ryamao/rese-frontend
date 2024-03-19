@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { AuthTextField } from "./AuthTextField";
 import { blueButton, whitePanel } from "./styles";
-import { PostOwnersBody } from "../models";
 import { EndpointResponse } from "../HttpClient";
+import { PostOwnersBody } from "../models";
 
 export interface CreateOwnerFormProps {
   onSubmit: (body: PostOwnersBody) => Promise<EndpointResponse<never>>;

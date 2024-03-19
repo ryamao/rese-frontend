@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { CreateOwnerForm } from "./CreateOwnerForm";
-import { fn } from "@storybook/test";
 
 const meta = {
   title: "Components/Owner/CreateOwnerForm",

@@ -16,7 +16,12 @@ import {
   EndpointResponse,
   Paginated
 } from "../HttpClient";
-import { AuthStatus, PostOwnersBody, ReservationData, ShopData } from "../models";
+import {
+  AuthStatus,
+  PostOwnersBody,
+  ReservationData,
+  ShopData
+} from "../models";
 
 export interface BackendAccessContextType {
   authStatus?: AuthStatus;
