@@ -24,6 +24,8 @@ import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 import { NeedsToVerifyEmailRoute } from "./routes/NeedsToVerifyEmailRoute";
 import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
+import { AdminOnlyRoute } from "./routes/AdminOnlyRoute";
+import { AdminPage } from "./pages/AdminPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,6 +45,9 @@ const router = createBrowserRouter(
             <Route path="/thanks" element={<ThanksPage />} />
             <Route path="/mypage" element={<DashboardPage />} />
             <Route path="/done" element={<ReservationCompletedPage />} />
+          </Route>
+          <Route element={<AdminOnlyRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

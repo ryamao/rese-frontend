@@ -7,7 +7,7 @@ import { blueButton, whitePanel } from "./styles";
 export function CreateOwnerForm() {
   return (
     <FormWrapper className={whitePanel}>
-    <Heading>Owner Registration</Heading>
+      <Heading>Owner Registration</Heading>
       <Form>
         <InputFieldWrapper>
           <MdPerson className={iconStyle} />
@@ -41,16 +41,17 @@ export function CreateOwnerForm() {
 }
 
 const FormWrapper = styled.div`
+width: 24rem;
 `;
 
 const Heading = styled.h2`
-padding: 1rem;
-margin: 0;
-font-size: 1rem;
-font-weight: normal;
-color: #fff;
-background-color: #315dff;
-border-radius: 0.25rem 0.25rem 0 0;
+  padding: 1rem;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: normal;
+  color: #fff;
+  background-color: #315dff;
+  border-radius: 0.25rem 0.25rem 0 0;
 `;
 
 const Form = styled.form`
