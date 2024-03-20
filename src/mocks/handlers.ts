@@ -123,6 +123,9 @@ export const handlers = [
   http.post("*/owners", async () => {
     return HttpResponse.text(null, { status: 201 });
   }),
+  http.post("*/notification-email", async () => {
+    return HttpResponse.text(null, { status: 201 });
+  }),
   http.post("*/auth/register", async () => {
     return HttpResponse.text(null, { status: 201 });
   }),

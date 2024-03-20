@@ -4,13 +4,17 @@ import { PageBase } from "./PageBase";
 import { CreateOwnerForm } from "../components/CreateOwnerForm";
 import { NotificationEmailForm } from "../components/NotificationEmailForm";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { PostOwnersBody } from "../models";
+import { PostNotificationEmailBody, PostOwnersBody } from "../models";
 
 export function AdminPage() {
-  const { postOwners } = useBackendAccessContext();
+  const { postOwners, postNotificationEmail } = useBackendAccessContext();
 
   function handleCreateOwner(body: PostOwnersBody) {
     return postOwners(body);
+  }
+
+  function handleSendNotificationEmail(body: PostNotificationEmailBody) {
+    return postNotificationEmail(body);
   }
 
   return (
@@ -20,7 +24,7 @@ export function AdminPage() {
           <CreateOwnerForm onSubmit={handleCreateOwner} />
         </OwnerArea>
         <div>
-          <NotificationEmailForm />
+          <NotificationEmailForm onSubmit={handleSendNotificationEmail} />
         </div>
       </Main>
     </PageBase>
