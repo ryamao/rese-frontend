@@ -41,6 +41,12 @@ export function PageBase({ children, wrapperStyle }: PageBaseProps) {
       case "mypage":
         navigate("/mypage");
         break;
+      case "admin":
+        navigate("/admin");
+        break;
+      case "owner":
+        navigate("/owner");
+        break;
     }
 
     close();
