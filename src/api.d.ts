@@ -82,6 +82,13 @@ export interface paths {
      */
     get: operations["get-genres"];
   };
+  "/notification-email": {
+    /**
+     * お知らせメール送信
+     * @description お知らせメールをすべての顧客に対して送信する
+     */
+    post: operations["post-notification-email"];
+  };
   "/owners": {
     /**
      * 店舗代表者追加
@@ -164,6 +171,13 @@ export interface components {
       /** Format: int64 */
       id: number;
       has_verified_email: boolean;
+    };
+    "notification-email-error": {
+      message: string;
+      errors: {
+        title?: string[];
+        body?: string[];
+      };
     };
     "register-error": {
       message: string;
@@ -374,6 +388,12 @@ export interface components {
         "application/json": components["schemas"]["register-error"];
       };
     };
+    /** @description バリデーションエラー */
+    "post-notification-email-422": {
+      content: {
+        "application/json": components["schemas"]["notification-email-error"];
+      };
+    };
     /** @description バリデーションエラーまたはメールアドレスが登録済み */
     "post-auth-register-422": {
       content: {
@@ -504,6 +524,23 @@ export interface components {
            * @example password
            */
           password: string;
+        };
+      };
+    };
+    /** @description お知らせメール送信リクエスト */
+    "post-notification-email": {
+      content: {
+        "application/json": {
+          /**
+           * @description タイトル
+           * @example タイトル
+           */
+          title: string;
+          /**
+           * @description 本文
+           * @example 本文
+           */
+          body: string;
         };
       };
     };
@@ -787,6 +824,19 @@ export interface operations {
   "get-genres": {
     responses: {
       200: components["responses"]["get-genres-200"];
+    };
+  };
+  /**
+   * お知らせメール送信
+   * @description お知らせメールをすべての顧客に対して送信する
+   */
+  "post-notification-email": {
+    requestBody: components["requestBodies"]["post-notification-email"];
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      422: components["responses"]["post-notification-email-422"];
     };
   };
   /**

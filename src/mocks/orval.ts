@@ -19,6 +19,7 @@ import type {
   PostAuthLoginBody,
   PostAuthRegisterBody,
   PostCustomerShopReservationsBody,
+  PostNotificationEmailBody,
   PostOwnersBody,
   PutCustomerReservationBody
 } from "../models";
@@ -215,6 +216,21 @@ export const getGenres = <TData = AxiosResponse<GetGenres200Response>>(
 };
 
 /**
+ * お知らせメールをすべての顧客に対して送信する
+ * @summary お知らせメール送信
+ */
+export const postNotificationEmail = <TData = AxiosResponse<CreatedResponse>>(
+  postNotificationEmailBody: PostNotificationEmailBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/notification-email`,
+    postNotificationEmailBody,
+    options
+  );
+};
+
+/**
  * 店舗代表者アカウントを追加する
  * @summary 店舗代表者追加
  */
@@ -342,6 +358,7 @@ export type GetCustomerShopReservationsResult =
 export type PostCustomerShopReservationsResult =
   AxiosResponse<PostCustomerShopReservations201Response>;
 export type GetGenresResult = AxiosResponse<GetGenres200Response>;
+export type PostNotificationEmailResult = AxiosResponse<CreatedResponse>;
 export type PostOwnersResult = AxiosResponse<CreatedResponse>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
@@ -883,6 +900,18 @@ export const getGetGenresMockHandler = (
   });
 };
 
+export const getPostNotificationEmailMockHandler = () => {
+  return http.post("*/notification-email", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getPostOwnersMockHandler = () => {
   return http.post("*/owners", async () => {
     await delay(1000);
@@ -1017,6 +1046,7 @@ export const getReseMock = () => [
   getGetCustomerShopReservationsMockHandler(),
   getPostCustomerShopReservationsMockHandler(),
   getGetGenresMockHandler(),
+  getPostNotificationEmailMockHandler(),
   getPostOwnersMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
