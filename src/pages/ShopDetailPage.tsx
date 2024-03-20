@@ -55,7 +55,7 @@ export function ShopDetailPage() {
   }
 
   function handleClickBackButton() {
-    navigate("/");
+    navigate(-1);
   }
 
   function handleSubmit(reservedAt: Dayjs, numberOfGuests: number) {

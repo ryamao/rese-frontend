@@ -6,11 +6,13 @@ import { ShopData } from "../models";
 export interface FavoriteShopsAreaProps {
   customerId: number;
   favorites: ShopData[];
+  onClickDetailButton?: (shop: ShopData) => void;
 }
 
 export function FavoriteShopsArea({
   customerId,
-  favorites
+  favorites,
+  onClickDetailButton
 }: FavoriteShopsAreaProps) {
   return (
     <div>
@@ -21,6 +23,7 @@ export function FavoriteShopsArea({
             key={favorite.id}
             customerId={customerId}
             shop={favorite}
+            onClickDetailButton={onClickDetailButton}
           />
         ))}
       </ShopLayout>

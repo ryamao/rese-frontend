@@ -1,23 +1,25 @@
-import { useState } from "react";
+import React from "react";
 
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
 import { MenuButton } from "../components/MenuButton";
 import { ReservationChangeForm } from "../components/ReservationChangeForm";
 import { ReservationStatusArea } from "../components/ReservationStatusArea";
-import { useCustomer, useFavorites, useReservations } from "../hooks/queries";
-import { ReservationData } from "../models";
+import * as queries from "../hooks/queries";
+import { ReservationData, ShopData } from "../models";
 import { useCustomerId } from "../routes/CustomersOnlyRoute";
 
 export function DashboardPage() {
   const { customerId } = useCustomerId();
-  const customer = useCustomer(customerId);
-  const reservations = useReservations(customerId);
-  const favorites = useFavorites(customerId);
+  const customer = queries.useCustomer(customerId);
+  const reservations = queries.useReservations(customerId);
+  const favorites = queries.useFavorites(customerId);
   const [selectedReservation, setSelectedReservation] =
-    useState<ReservationData | null>(null);
+    React.useState<ReservationData | null>(null);
+  const navigate = useNavigate();
 
   if (customer.isError) {
     return <PageBase>Error: {customer.error.message}</PageBase>;
@@ -83,6 +85,10 @@ export function DashboardPage() {
     }
   }
 
+  function handleClickDetailButton(shop: ShopData) {
+    navigate(`/detail/${shop.id}`, { state: shop });
+  }
+
   return (
     <>
       <PageBase>
@@ -96,6 +102,7 @@ export function DashboardPage() {
           <FavoriteShopsArea
             customerId={customerId}
             favorites={favoriteShops}
+            onClickDetailButton={handleClickDetailButton}
           />
         </Inner>
       </PageBase>
