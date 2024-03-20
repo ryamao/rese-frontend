@@ -1,9 +1,13 @@
 import styled from "@emotion/styled";
 
 import { blueButton, whitePanel } from "./styles";
-import { ShopData } from "../models";
+import { OwnerShopData } from "../models";
 
-export function OwnerShopList() {
+export interface OwnerShopListProps {
+  shops: OwnerShopData[];
+}
+
+export function OwnerShopList({ shops }: OwnerShopListProps) {
   return (
     <Panel className={whitePanel}>
       <Table>
@@ -21,12 +25,14 @@ export function OwnerShopList() {
           </tr>
         </thead>
         <tbody>
-          {sampleShops.map((shop) => (
+          {shops.map((shop) => (
             <DataRow key={shop.id}>
               <TableData>{shop.name}</TableData>
               <TableData>{shop.area.name}</TableData>
               <TableData>{shop.genre.name}</TableData>
-              <TableData>{shop.detail}</TableData>
+              <TableData>
+                <Detail>{shop.detail}</Detail>
+              </TableData>
               <TableData>
                 <ButtonLayout>
                   <button type="button" className={blueButton}>
@@ -64,7 +70,17 @@ const DataRow = styled.tr`
 `;
 
 const TableData = styled.td`
+  min-width: 6rem;
   padding: 0.5rem;
+`;
+
+const Detail = styled.p`
+  display: -webkit-box;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 `;
 
 const ButtonLayout = styled.div`
@@ -73,51 +89,3 @@ const ButtonLayout = styled.div`
   gap: 0.5rem;
   align-items: center;
 `;
-
-const sampleShops: ShopData[] = [
-  {
-    id: 1,
-    name: "Shop 1",
-    detail: "Detail 1",
-    image_url: "https://dummyimage.com/300",
-    area: {
-      id: 1,
-      name: "Area 1"
-    },
-    genre: {
-      id: 1,
-      name: "Genre 1"
-    },
-    favorite_status: "unknown"
-  },
-  {
-    id: 2,
-    name: "Shop 2",
-    detail: "Detail 2",
-    image_url: "https://dummyimage.com/300",
-    area: {
-      id: 2,
-      name: "Area 2"
-    },
-    genre: {
-      id: 2,
-      name: "Genre 2"
-    },
-    favorite_status: "unknown"
-  },
-  {
-    id: 3,
-    name: "Shop 3",
-    detail: "Detail 3",
-    image_url: "https://dummyimage.com/300",
-    area: {
-      id: 3,
-      name: "Area 3"
-    },
-    genre: {
-      id: 3,
-      name: "Genre 3"
-    },
-    favorite_status: "unknown"
-  }
-];

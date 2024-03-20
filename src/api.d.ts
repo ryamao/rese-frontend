@@ -96,6 +96,13 @@ export interface paths {
      */
     post: operations["post-owners"];
   };
+  "/owners/{owner}/shops": {
+    /**
+     * 店舗代表者別店舗一覧取得
+     * @description 店舗代表者が作成した飲食店情報の一覧を取得する
+     */
+    get: operations["get-owner-shops"];
+  };
   "/shops": {
     /**
      * 飲食店一覧取得
@@ -214,8 +221,8 @@ export interface components {
       /** @description ジャンル名 */
       name: string;
     };
-    /** @description 飲食店情報 */
-    "shop-data": {
+    /** @description 顧客向け飲食店情報 */
+    "customer-shop-data": {
       /**
        * Format: int64
        * @description 飲食店ID
@@ -238,6 +245,25 @@ export interface components {
        */
       favorite_status: "unknown" | "marked" | "unmarked";
     };
+    /** @description 店舗代表者向け飲食店情報 */
+    "owner-shop-data": {
+      /**
+       * Format: int64
+       * @description 飲食店ID
+       */
+      id: number;
+      /** @description 飲食店名 */
+      name: string;
+      area: components["schemas"]["area-data"];
+      genre: components["schemas"]["genre-data"];
+      /**
+       * Format: uri
+       * @description 画像URL
+       */
+      image_url: string;
+      /** @description 飲食店詳細 */
+      detail: string;
+    };
     /** @description 予約情報 */
     "reservation-data": {
       /**
@@ -245,7 +271,7 @@ export interface components {
        * @description 予約ID
        */
       id: number;
-      shop: components["schemas"]["shop-data"];
+      shop: components["schemas"]["customer-shop-data"];
       /**
        * Format: date-time
        * @description 予約日時
@@ -426,7 +452,7 @@ export interface components {
     "get-shops-200": {
       content: {
         "application/json": components["schemas"]["pagination"] & {
-          data: components["schemas"]["shop-data"][];
+          data: components["schemas"]["customer-shop-data"][];
         };
       };
     };
@@ -434,7 +460,7 @@ export interface components {
     "get-shop-200": {
       content: {
         "application/json": {
-          data: components["schemas"]["shop-data"];
+          data: components["schemas"]["customer-shop-data"];
         };
       };
     };
@@ -442,7 +468,7 @@ export interface components {
     "get-customer-favorites-200": {
       content: {
         "application/json": components["schemas"]["pagination"] & {
-          data: components["schemas"]["shop-data"][];
+          data: components["schemas"]["customer-shop-data"][];
         };
       };
     };
@@ -482,6 +508,14 @@ export interface components {
         "application/json": components["schemas"]["reservation-error"];
       };
     };
+    /** @description 店舗代表者別店舗一覧取得成功 */
+    "get-owner-shops-200": {
+      content: {
+        "application/json": {
+          data: components["schemas"]["owner-shop-data"][];
+        };
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -494,6 +528,8 @@ export interface components {
     "shop-id": number;
     /** @description 予約ID */
     "reservation-id": number;
+    /** @description オーナーID */
+    "owner-id": number;
     /** @description エリアID */
     "area-query"?: number;
     /** @description ジャンルID */
@@ -850,6 +886,23 @@ export interface operations {
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       422: components["responses"]["post-owners-422"];
+    };
+  };
+  /**
+   * 店舗代表者別店舗一覧取得
+   * @description 店舗代表者が作成した飲食店情報の一覧を取得する
+   */
+  "get-owner-shops": {
+    parameters: {
+      path: {
+        owner: components["parameters"]["owner-id"];
+      };
+    };
+    responses: {
+      200: components["responses"]["get-owner-shops-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
     };
   };
   /**

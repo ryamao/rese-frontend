@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import { OwnerPage } from "./OwnerPage";
 import {
@@ -29,11 +29,16 @@ const meta = {
         authStatus: { status: "owner", id: 1, has_verified_email: true },
         setAuthStatus: fn()
       });
+      const DummyRoute = () => <Outlet context={{ ownerId: 1 }} />;
       return (
         <QueryClientProvider client={queryClient}>
           <BackendAccessContext.Provider value={backendAccess}>
             <MemoryRouter>
-              <Story />
+              <Routes>
+                <Route element={<DummyRoute />}>
+                  <Route path="/" element={<Story />} />
+                </Route>
+              </Routes>
             </MemoryRouter>
           </BackendAccessContext.Provider>
         </QueryClientProvider>

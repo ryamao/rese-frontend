@@ -18,6 +18,7 @@ import {
 } from "../HttpClient";
 import {
   AuthStatus,
+  OwnerShopData,
   PostNotificationEmailBody,
   PostOwnersBody,
   ReservationData,
@@ -64,6 +65,9 @@ export interface BackendAccessContextType {
     userId: number,
     reservationId: number
   ) => Promise<EndpointResponse<undefined>>;
+  getOwnerShops: (
+    ownerId: number
+  ) => Promise<EndpointResponse<OwnerShopData[]>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -125,6 +129,7 @@ export function createBackendAccessContextType({
         number_of_guests
       }),
     deleteReservation: (userId, reservationId) =>
-      httpClient.deleteCustomerReservation(userId, reservationId)
+      httpClient.deleteCustomerReservation(userId, reservationId),
+    getOwnerShops: (ownerId) => httpClient.getOwnerShops(ownerId)
   };
 }

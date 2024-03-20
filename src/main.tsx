@@ -15,6 +15,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { OwnerPage } from "./pages/OwnerPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
 import { ShopDetailPage } from "./pages/ShopDetailPage";
@@ -25,6 +26,7 @@ import { BackendAccessRoute } from "./routes/BackendAccessRoute";
 import { CustomersOnlyRoute } from "./routes/CustomersOnlyRoute";
 import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 import { NeedsToVerifyEmailRoute } from "./routes/NeedsToVerifyEmailRoute";
+import { OwnersOnlyRoute } from "./routes/OwnersOnlyRoute";
 import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
 
 const router = createBrowserRouter(
@@ -48,6 +50,9 @@ const router = createBrowserRouter(
           </Route>
           <Route element={<AdminOnlyRoute />}>
             <Route path="/admin" element={<AdminPage />} />
+          </Route>
+          <Route element={<OwnersOnlyRoute />}>
+            <Route path="/owner" element={<OwnerPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

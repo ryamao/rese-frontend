@@ -1,5 +1,7 @@
 import { HttpResponse, http } from "msw";
 
+import { OwnerShopData } from "../models";
+
 const sampleAreas = [
   { id: 1, name: "東京都" },
   { id: 2, name: "大阪府" },
@@ -113,6 +115,33 @@ const sampleReservations = [
   }
 ];
 
+const sampleOwnerShops: OwnerShopData[] = [
+  {
+    id: 1,
+    name: "飲食店1",
+    area: { id: 1, name: "東京都" },
+    genre: { id: 1, name: "寿司" },
+    image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト1"
+  },
+  {
+    id: 2,
+    name: "飲食店2",
+    area: { id: 2, name: "大阪府" },
+    genre: { id: 2, name: "焼肉" },
+    image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト2"
+  },
+  {
+    id: 3,
+    name: "飲食店3",
+    area: { id: 3, name: "福岡県" },
+    genre: { id: 3, name: "居酒屋" },
+    image_url: "https://via.placeholder.com/800x500",
+    detail: "サンプルテキスト3"
+  }
+];
+
 export const handlers = [
   http.get("*/sanctum/csrf-cookie", async () => {
     return HttpResponse.text(null, {
@@ -137,6 +166,9 @@ export const handlers = [
   }),
   http.get("*/auth/status", () => {
     return HttpResponse.json({ status: "customer", id: 1 });
+  }),
+  http.get("*/owners/:ownerId/shops", () => {
+    return HttpResponse.json({ data: sampleOwnerShops });
   }),
   http.get("*/areas", () => {
     return HttpResponse.json({
