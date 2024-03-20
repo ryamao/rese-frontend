@@ -4,6 +4,7 @@ import * as api from "./api";
 import {
   AuthStatus,
   Pagination,
+  PostNotificationEmailBody,
   PostOwnersBody,
   ReservationData,
   ShopData
@@ -459,6 +460,33 @@ export class HttpClient {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
       const { response, error } = await this.client.POST("/owners", { body });
+      if (response.status === 201) {
+        return { success: true, data: undefined as never };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: error?.message
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async postNotificationEmail(
+    body: PostNotificationEmailBody
+  ): Promise<EndpointResponse<never>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response, error } = await this.client.POST(
+        "/notification-email",
+        { body }
+      );
       if (response.status === 201) {
         return { success: true, data: undefined as never };
       } else {
