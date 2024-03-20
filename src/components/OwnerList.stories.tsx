@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { OwnerList } from "./OwnerList";
 
 const meta = {
-  title: "components/Owner/OwnerList",
+  title: "components/Admin/OwnerList",
   component: OwnerList,
   tags: ["autodocs"]
 } satisfies Meta<typeof OwnerList>;

@@ -4,7 +4,7 @@ import { fn } from "@storybook/test";
 import { CreateOwnerForm } from "./CreateOwnerForm";
 
 const meta = {
-  title: "Components/Owner/CreateOwnerForm",
+  title: "Components/Admin/CreateOwnerForm",
   component: CreateOwnerForm,
   tags: ["autodocs"],
   args: {
