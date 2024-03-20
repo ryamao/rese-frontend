@@ -241,3 +241,15 @@ export function useShopReservations(customerId: number, shopId: number) {
 
   return { ...reservations, reserve: mutation.mutate };
 }
+
+export function useOwnerShops(ownerId: number) {
+  const { getOwnerShops } = useBackendAccessContext();
+  const shops = useQuery({
+    queryKey: ["owner shops", ownerId],
+    queryFn: () => getOwnerShops(ownerId),
+    enabled: !isNaN(ownerId),
+    staleTime: Infinity
+  });
+
+  return shops;
+}
