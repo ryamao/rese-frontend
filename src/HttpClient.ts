@@ -3,6 +3,7 @@ import createClient, { Middleware } from "openapi-fetch";
 import * as api from "./api";
 import {
   AuthStatus,
+  OwnerShopData,
   Pagination,
   PostNotificationEmailBody,
   PostOwnersBody,
@@ -494,6 +495,35 @@ export class HttpClient {
           success: false,
           status: response.status,
           message: error?.message
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async getOwnerShops(
+    ownerId: number
+  ): Promise<EndpointResponse<OwnerShopData[]>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.GET(
+        "/owners/{owner}/shops",
+        {
+          params: { path: { owner: ownerId } }
+        }
+      );
+      if (response.status === 200 && data) {
+        return { success: true, data: data.data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
         };
       }
     } catch (error) {
