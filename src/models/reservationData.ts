@@ -5,7 +5,7 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { ShopData } from "./shopData";
+import type { CustomerShopData } from "./customerShopData";
 
 /**
  * 予約情報
@@ -17,5 +17,5 @@ export interface ReservationData {
   number_of_guests: number;
   /** 予約日時 */
   reserved_at: string;
-  shop: ShopData;
+  shop: CustomerShopData;
 }

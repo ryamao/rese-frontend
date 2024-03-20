@@ -5,8 +5,8 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
-import type { CustomerShopData } from "./customerShopData";
+import type { OwnerShopData } from "./ownerShopData";
 
-export type GetShop200Response = {
-  data: CustomerShopData;
+export type GetOwnerShops200Response = {
+  data: OwnerShopData[];
 };

@@ -30,6 +30,7 @@ import type {
   GetCustomerReservations200Response,
   GetCustomerShopReservations200Response,
   GetGenres200Response,
+  GetOwnerShops200Response,
   GetShop200Response,
   GetShops200Response,
   PostCustomerShopReservations201Response,
@@ -242,6 +243,17 @@ export const postOwners = <TData = AxiosResponse<CreatedResponse>>(
 };
 
 /**
+ * 店舗代表者が作成した飲食店情報の一覧を取得する
+ * @summary 店舗代表者別店舗一覧取得
+ */
+export const getOwnerShops = <TData = AxiosResponse<GetOwnerShops200Response>>(
+  owner: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/owners/${owner}/shops`, options);
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -360,6 +372,7 @@ export type PostCustomerShopReservationsResult =
 export type GetGenresResult = AxiosResponse<GetGenres200Response>;
 export type PostNotificationEmailResult = AxiosResponse<CreatedResponse>;
 export type PostOwnersResult = AxiosResponse<CreatedResponse>;
+export type GetOwnerShopsResult = AxiosResponse<GetOwnerShops200Response>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -588,6 +601,32 @@ export const getGetGenresResponseMock = (
     (_, i) => i + 1
   ).map(() => ({
     id: faker.number.int({ min: undefined, max: undefined }),
+    name: faker.word.sample(),
+    ...overrideResponse
+  })),
+  ...overrideResponse
+});
+
+export const getGetOwnerShopsResponseMock = (
+  overrideResponse: any = {}
+): GetOwnerShops200Response => ({
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    area: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    detail: faker.word.sample(),
+    genre: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    id: faker.number.int({ min: undefined, max: undefined }),
+    image_url: faker.internet.url(),
     name: faker.word.sample(),
     ...overrideResponse
   })),
@@ -924,6 +963,25 @@ export const getPostOwnersMockHandler = () => {
   });
 };
 
+export const getGetOwnerShopsMockHandler = (
+  overrideResponse?: GetOwnerShops200Response
+) => {
+  return http.get("*/owners/:owner/shops", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetOwnerShopsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -1048,6 +1106,7 @@ export const getReseMock = () => [
   getGetGenresMockHandler(),
   getPostNotificationEmailMockHandler(),
   getPostOwnersMockHandler(),
+  getGetOwnerShopsMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
