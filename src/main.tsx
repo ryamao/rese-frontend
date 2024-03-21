@@ -16,6 +16,7 @@ import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { OwnerPage } from "./pages/OwnerPage";
+import { OwnerShopPage } from "./pages/OwnerShopPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
 import { ShopDetailPage } from "./pages/ShopDetailPage";
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
           </Route>
           <Route element={<OwnersOnlyRoute />}>
             <Route path="/owner" element={<OwnerPage />} />
+            <Route path="/owner/shop" element={<OwnerShopPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

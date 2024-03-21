@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 import { PageBase } from "./PageBase";
 import { OwnerShopList } from "../components/OwnerShopList";
 import { useOwnerShops } from "../hooks/queries";
 import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function OwnerPage() {
+  const navigate = useNavigate();
   const { ownerId } = useOwnerId();
   const shops = useOwnerShops(ownerId);
 
@@ -21,9 +24,13 @@ export function OwnerPage() {
     );
   }
 
+  function handleCreateShop() {
+    navigate("/owner/shop");
+  }
+
   return (
     <PageBase>
-      <OwnerShopList shops={shops.data.data} />
+      <OwnerShopList shops={shops.data.data} onCreateShop={handleCreateShop} />
     </PageBase>
   );
 }
