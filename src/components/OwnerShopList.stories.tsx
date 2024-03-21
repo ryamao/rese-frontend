@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { OwnerShopList } from "./OwnerShopList";
 import { OwnerShopData } from "../models";
@@ -53,7 +54,8 @@ const meta = {
   component: OwnerShopList,
   tags: ["autodocs"],
   args: {
-    shops: sampleShops
+    shops: sampleShops,
+    onCreateShop: fn()
   }
 } satisfies Meta<typeof OwnerShopList>;
 
