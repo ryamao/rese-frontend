@@ -7,9 +7,9 @@
  */
 
 export type CreateShopErrorErrors = {
-  area_id?: string[];
+  area?: string[];
   detail?: string[];
-  genre_id?: string[];
+  genre?: string[];
   image?: string[];
   name?: string[];
 };

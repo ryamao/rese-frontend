@@ -6,9 +6,14 @@ import { OwnerShopData } from "../models";
 export interface OwnerShopListProps {
   shops: OwnerShopData[];
   onCreateShop: () => void;
+  onUpdateShop: (shop: OwnerShopData) => void;
 }
 
-export function OwnerShopList({ shops, onCreateShop }: OwnerShopListProps) {
+export function OwnerShopList({
+  shops,
+  onCreateShop,
+  onUpdateShop
+}: OwnerShopListProps) {
   return (
     <Panel className={whitePanel}>
       <Table>
@@ -40,7 +45,11 @@ export function OwnerShopList({ shops, onCreateShop }: OwnerShopListProps) {
               </TableData>
               <TableData>
                 <ButtonLayout>
-                  <button type="button" className={blueButton}>
+                  <button
+                    type="button"
+                    className={blueButton}
+                    onClick={() => onUpdateShop(shop)}
+                  >
                     店舗更新
                   </button>
                   <button type="button" className={blueButton}>
