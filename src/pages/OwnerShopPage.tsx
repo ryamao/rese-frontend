@@ -8,14 +8,14 @@ import { z } from "zod";
 import { PageBase } from "./PageBase";
 import { blueButton, whitePanel } from "../components/styles";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { OwnerShopData, PostOwnerShopsBody } from "../models";
+import { OwnerShopData, PostOwnerShopsBody, PutOwnerShopBody } from "../models";
 import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function OwnerShopPage() {
   const { state: shop } = useLocation() as Location<OwnerShopData | undefined>;
   const navigate = useNavigate();
   const { ownerId } = useOwnerId();
-  const { postOwnerShops } = useBackendAccessContext();
+  const { postOwnerShops, putOwnerShop } = useBackendAccessContext();
   const queryClient = useQueryClient();
 
   const schema = z.object({
@@ -83,15 +83,36 @@ export function OwnerShopPage() {
       });
       alert("店舗を作成しました");
       navigate(-1);
-    } else {
+    }
+
+    return response;
+  }
+
+  async function editShop(shop: OwnerShopData, data: PutOwnerShopBody) {
+    const response = await putOwnerShop(ownerId, shop.id, data);
+    if (response.success) {
+      await queryClient.invalidateQueries({
+        queryKey: ["owner shops", ownerId]
+      });
+      alert("店舗を更新しました");
+      navigate(-1);
+    }
+
+    return response;
+  }
+
+  async function onValid(data: PostOwnerShopsBody) {
+    const response = shop ? await editShop(shop, data) : await createShop(data);
+
+    if (!response.success) {
       if (response.errors?.name) {
         setError("name", { message: response.errors?.name.join(", ") });
       }
-      if (response.errors?.area_id) {
-        setError("area", { message: response.errors?.area_id.join(", ") });
+      if (response.errors?.area) {
+        setError("area", { message: response.errors?.area.join(", ") });
       }
-      if (response.errors?.genre_id) {
-        setError("genre", { message: response.errors?.genre_id.join(", ") });
+      if (response.errors?.genre) {
+        setError("genre", { message: response.errors?.genre.join(", ") });
       }
       if (response.errors?.image) {
         setError("image", { message: response.errors?.image.join(", ") });
@@ -102,15 +123,6 @@ export function OwnerShopPage() {
       if (!response.errors) {
         setError("name", { message: response.message });
       }
-    }
-  }
-
-  async function onValid(data: PostOwnerShopsBody) {
-    if (shop) {
-      console.log(data);
-      alert("TODO: update shop");
-    } else {
-      await createShop(data);
     }
   }
 

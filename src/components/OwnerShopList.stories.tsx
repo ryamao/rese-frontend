@@ -55,7 +55,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     shops: sampleShops,
-    onCreateShop: fn()
+    onCreateShop: fn(),
+    onUpdateShop: fn()
   }
 } satisfies Meta<typeof OwnerShopList>;
 
