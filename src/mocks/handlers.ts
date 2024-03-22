@@ -170,6 +170,18 @@ export const handlers = [
   http.get("*/owners/:ownerId/shops", () => {
     return HttpResponse.json({ data: sampleOwnerShops });
   }),
+  http.post("*/owners/:ownerId/shops", () => {
+    return HttpResponse.json({
+      data: {
+        id: 4,
+        name: "飲食店4",
+        area: { id: 1, name: "東京都" },
+        genre: { id: 4, name: "イタリアン" },
+        image_url: "https://via.placeholder.com/800x500",
+        detail: "サンプルテキスト4"
+      }
+    });
+  }),
   http.get("*/areas", () => {
     return HttpResponse.json({
       areas: sampleAreas

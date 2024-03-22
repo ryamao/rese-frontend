@@ -18,8 +18,10 @@ import {
 } from "../HttpClient";
 import {
   AuthStatus,
+  CreateShopError,
   OwnerShopData,
   PostNotificationEmailBody,
+  PostOwnerShopsBody,
   PostOwnersBody,
   ReservationData,
   ShopData
@@ -68,6 +70,10 @@ export interface BackendAccessContextType {
   getOwnerShops: (
     ownerId: number
   ) => Promise<EndpointResponse<OwnerShopData[]>>;
+  postOwnerShops: (
+    ownerId: number,
+    body: PostOwnerShopsBody
+  ) => Promise<EndpointResponse<OwnerShopData, CreateShopError["errors"]>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -130,6 +136,7 @@ export function createBackendAccessContextType({
       }),
     deleteReservation: (userId, reservationId) =>
       httpClient.deleteCustomerReservation(userId, reservationId),
-    getOwnerShops: (ownerId) => httpClient.getOwnerShops(ownerId)
+    getOwnerShops: (ownerId) => httpClient.getOwnerShops(ownerId),
+    postOwnerShops: (ownerId, body) => httpClient.postOwnerShops(ownerId, body)
   };
 }
