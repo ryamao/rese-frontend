@@ -75,6 +75,8 @@ export * from "./postOwnersBody";
 export * from "./putCustomerReservation422Response";
 export * from "./putCustomerReservationBody";
 export * from "./putCustomerReservationsBody";
+export * from "./putOwnerShop422Response";
+export * from "./putOwnerShopBody";
 export * from "./registerError";
 export * from "./registerErrorErrors";
 export * from "./reservationData";

@@ -5,53 +5,138 @@
 
 export interface paths {
   "/areas": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * エリア一覧取得
      * @description エリア一覧を取得する
      */
     get: operations["get-areas"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 認証状態取得
      * @description 認証状態を取得する
      */
     get: operations["get-auth-status"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 顧客情報取得
      * @description セッション中の顧客情報を取得する
      */
     get: operations["get-customer"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}/favorites": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * マイページでのお気に入り一覧取得機能
      * @description セッション中の顧客がお気に入り登録している飲食店の一覧を取得する
      */
     get: operations["get-customer-favorites"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}/reservations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * マイページでの予約一覧取得機能
      * @description セッション中の顧客が行っている予約の一覧を取得する
      */
     get: operations["get-customer-reservations"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}/reservations/{reservation}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
     /**
      * マイページでの予約変更機能
      * @description セッション中の顧客が行っている指定の予約を変更する
      */
     put: operations["put-customer-reservation"];
+    post?: never;
     /**
      * マイページでの予約取り消し機能
      * @description セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
      */
     delete: operations["delete-customer-reservations"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}/shops/{shop}/favorite": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * お気に入り登録
      * @description セッション中の顧客が指定の飲食店をお気に入り登録する
@@ -62,112 +147,301 @@ export interface paths {
      * @description セッション中の顧客が指定の飲食店のお気に入りを解除する
      */
     delete: operations["delete-customer-shop-favorite"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/customers/{customer}/shops/{shop}/reservations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 飲食店詳細ページでの予約一覧取得機能
      * @description セッション中の顧客が指定の飲食店で行っている予約を一覧取得する
      */
     get: operations["get-customer-shop-reservations"];
+    put?: never;
     /**
      * 飲食店詳細ページでの予約追加機能
      * @description セッション中の顧客が指定の飲食店で予約を追加する
      */
     post: operations["post-customer-shop-reservations"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/genres": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * ジャンル一覧取得
      * @description ジャンル一覧を取得する
      */
     get: operations["get-genres"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/notification-email": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * お知らせメール送信
      * @description お知らせメールをすべての顧客に対して送信する
      */
     post: operations["post-notification-email"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/owners": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * 店舗代表者追加
      * @description 店舗代表者アカウントを追加する
      */
     post: operations["post-owners"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/owners/{owner}/shops": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 店舗代表者別店舗一覧取得
      * @description 店舗代表者が作成した飲食店情報の一覧を取得する
      */
     get: operations["get-owner-shops"];
+    put?: never;
     /**
      * 店舗代表者別店舗登録
      * @description 店舗代表者が飲食店情報を登録する
      */
     post: operations["post-owner-shops"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/owners/{owner}/shops/{shop}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * 店舗代表者別店舗更新
+     * @description 店舗代表者が飲食店情報を更新する
+     */
+    put: operations["put-owner-shop"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/shops": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 飲食店一覧取得
      * @description 飲食店一覧を取得する
      */
     get: operations["get-shops"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/shops/{shop}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * 飲食店情報取得
      * @description 飲食店情報を個別に取得する
      */
     get: operations["get-shop"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/sanctum/csrf-cookie": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * CSRFトークン取得
      * @description CSRFトークンを取得する
      */
     get: operations["get-sanctum-csrf-cookie"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * 顧客登録
      * @description 顧客を新規登録する
      */
     post: operations["post-auth-register"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/email/verification-notification": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * 確認メール送信
      * @description メールアドレス確認通知を登録メールアドレスに送信する
      */
     post: operations["post-auth-email-verification-notification"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/email/verify/{user}/{hash}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
      * メールアドレス確認
      * @description メールでの本人確認を行う
      */
     get: operations["get-auth-email-verify"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * ログイン
      * @description 顧客のログイン処理を行う
      */
     post: operations["post-auth-login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
   "/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
      * ログアウト
      * @description 顧客のログアウト処理を行う
      */
     post: operations["post-auth-logout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
   };
 }
-
 export type webhooks = Record<string, never>;
-
 export interface components {
   schemas: {
     "auth-status":
@@ -296,8 +570,8 @@ export interface components {
       message: string;
       errors: {
         name?: string[];
-        area_id?: string[];
-        genre_id?: string[];
+        area?: string[];
+        genre?: string[];
         image?: string[];
         detail?: string[];
       };
@@ -366,6 +640,9 @@ export interface components {
   responses: {
     /** @description OK */
     "show-customer-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           /** @example テストユーザー */
@@ -375,80 +652,126 @@ export interface components {
     };
     /** @description リクエストが成功しリソースが見つかった */
     ok: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description リクエストが成功しリソースが作成された */
     created: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description リクエストが成功しリソースが存在しない */
     "no-content": {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description リクエストが成功しリソースが見つかった */
     found: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description 認証エラー */
     unauthorized: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description 認可エラー */
     forbidden: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description 指定されたリソースが存在しない */
     "not-found": {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description リクエストが競合している */
     conflict: {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description リクエストが正しくない */
     "unprocessable-entity": {
-      content: never;
+      headers: {
+        [name: string]: unknown;
+      };
+      content?: never;
     };
     /** @description CSRFトークン取得成功 */
     "get-sanctum-csrf-cookie-204": {
       headers: {
         /** @description CSRFトークンをCookieにセット */
         "Set-Cookie": string;
+        [name: string]: unknown;
       };
-      content: never;
+      content?: never;
     };
     /** @description 認証状態取得成功 */
     "get-auth-status-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["auth-status"];
       };
     };
     /** @description バリデーションエラーまたはメールアドレスが登録済み */
     "post-owners-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["register-error"];
       };
     };
     /** @description バリデーションエラー */
     "post-notification-email-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["notification-email-error"];
       };
     };
     /** @description バリデーションエラーまたはメールアドレスが登録済み */
     "post-auth-register-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["register-error"];
       };
     };
     /** @description バリデーションエラーまたは未登録 */
     "post-auth-login-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["login-error"];
       };
     };
     /** @description エリア一覧取得成功 */
     "get-areas-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           areas: components["schemas"]["area-data"][];
@@ -457,6 +780,9 @@ export interface components {
     };
     /** @description ジャンル一覧取得成功 */
     "get-genres-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           genres: components["schemas"]["genre-data"][];
@@ -465,6 +791,9 @@ export interface components {
     };
     /** @description 飲食店一覧取得成功 */
     "get-shops-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["pagination"] & {
           data: components["schemas"]["customer-shop-data"][];
@@ -473,6 +802,9 @@ export interface components {
     };
     /** @description 飲食店情報取得成功 */
     "get-shop-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           data: components["schemas"]["customer-shop-data"];
@@ -481,6 +813,9 @@ export interface components {
     };
     /** @description マイページのお気に入り一覧取得成功 */
     "get-customer-favorites-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["pagination"] & {
           data: components["schemas"]["customer-shop-data"][];
@@ -489,6 +824,9 @@ export interface components {
     };
     /** @description マイページの予約一覧取得成功 */
     "get-customer-reservations-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           data: components["schemas"]["reservation-data"][];
@@ -497,6 +835,9 @@ export interface components {
     };
     /** @description 飲食店詳細ページの予約一覧取得成功 */
     "get-customer-shop-reservations-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           reservations: components["schemas"]["reservation-data"][];
@@ -505,6 +846,9 @@ export interface components {
     };
     /** @description 飲食店詳細ページの予約追加成功 */
     "post-customer-shop-reservations-201": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           reservation: components["schemas"]["reservation-data"];
@@ -513,18 +857,27 @@ export interface components {
     };
     /** @description 飲食店詳細ページの予約追加のバリデーションエラー */
     "post-customer-shop-reservations-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["reservation-error"];
       };
     };
     /** @description マイページの予約変更のバリデーションエラー */
     "put-customer-reservation-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["reservation-error"];
       };
     };
     /** @description 店舗代表者別店舗一覧取得成功 */
     "get-owner-shops-200": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           data: components["schemas"]["owner-shop-data"][];
@@ -533,6 +886,9 @@ export interface components {
     };
     /** @description 店舗代表者別店舗登録成功 */
     "post-owner-shops-201": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": {
           data: components["schemas"]["owner-shop-data"];
@@ -541,6 +897,18 @@ export interface components {
     };
     /** @description 店舗代表者別店舗登録のバリデーションエラー */
     "post-owner-shops-422": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["create-shop-error"];
+      };
+    };
+    /** @description 店舗代表者別店舗更新のバリデーションエラー */
+    "put-owner-shop-422": {
+      headers: {
+        [name: string]: unknown;
+      };
       content: {
         "application/json": components["schemas"]["create-shop-error"];
       };
@@ -560,13 +928,13 @@ export interface components {
     /** @description オーナーID */
     "owner-id": number;
     /** @description エリアID */
-    "area-query"?: number;
+    "area-query": number;
     /** @description ジャンルID */
-    "genre-query"?: number;
+    "genre-query": number;
     /** @description 店名検索キーワード */
-    "search-query"?: string;
+    "search-query": string;
     /** @description ページ番号 */
-    "page-query"?: number;
+    "page-query": number;
   };
   requestBodies: {
     /** @description 店舗代表者追加リクエスト */
@@ -718,44 +1086,79 @@ export interface components {
         };
       };
     };
+    /** @description 店舗代表者別店舗更新リクエスト */
+    "put-owner-shop": {
+      content: {
+        "multipart/form-data": {
+          /**
+           * @description 店舗名
+           * @example テスト店舗
+           */
+          name: string;
+          /**
+           * @description エリア
+           * @example テストエリア
+           */
+          area: string;
+          /**
+           * @description ジャンル
+           * @example テストジャンル
+           */
+          genre: string;
+          /**
+           * Format: binary
+           * @description 画像
+           */
+          image?: string;
+          /**
+           * @description 詳細
+           * @example テスト詳細
+           */
+          detail: string;
+        };
+      };
+    };
   };
   headers: never;
   pathItems: never;
 }
-
 export type $defs = Record<string, never>;
-
-export type external = Record<string, never>;
-
 export interface operations {
-  /**
-   * エリア一覧取得
-   * @description エリア一覧を取得する
-   */
   "get-areas": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-areas-200"];
     };
   };
-  /**
-   * 認証状態取得
-   * @description 認証状態を取得する
-   */
   "get-auth-status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-auth-status-200"];
     };
   };
-  /**
-   * 顧客情報取得
-   * @description セッション中の顧客情報を取得する
-   */
   "get-customer": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["show-customer-200"];
       401: components["responses"]["unauthorized"];
@@ -763,19 +1166,20 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * マイページでのお気に入り一覧取得機能
-   * @description セッション中の顧客がお気に入り登録している飲食店の一覧を取得する
-   */
   "get-customer-favorites": {
     parameters: {
       query?: {
+        /** @description ページ番号 */
         page?: components["parameters"]["page-query"];
       };
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-customer-favorites-200"];
       401: components["responses"]["unauthorized"];
@@ -783,16 +1187,17 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * マイページでの予約一覧取得機能
-   * @description セッション中の顧客が行っている予約の一覧を取得する
-   */
   "get-customer-reservations": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-customer-reservations-200"];
       401: components["responses"]["unauthorized"];
@@ -800,16 +1205,17 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * マイページでの予約変更機能
-   * @description セッション中の顧客が行っている指定の予約を変更する
-   */
   "put-customer-reservation": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 予約ID */
         reservation: components["parameters"]["reservation-id"];
       };
+      cookie?: never;
     };
     requestBody: components["requestBodies"]["put-customer-reservation"];
     responses: {
@@ -820,17 +1226,19 @@ export interface operations {
       422: components["responses"]["put-customer-reservation-422"];
     };
   };
-  /**
-   * マイページでの予約取り消し機能
-   * @description セッション中の顧客が指定の飲食店で行っている指定の予約を取り消す
-   */
   "delete-customer-reservations": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 予約ID */
         reservation: components["parameters"]["reservation-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       204: components["responses"]["no-content"];
       401: components["responses"]["unauthorized"];
@@ -838,17 +1246,19 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * お気に入り登録
-   * @description セッション中の顧客が指定の飲食店をお気に入り登録する
-   */
   "post-customer-shop-favorite": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 飲食店ID */
         shop: components["parameters"]["shop-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       201: components["responses"]["created"];
       401: components["responses"]["unauthorized"];
@@ -857,17 +1267,19 @@ export interface operations {
       422: components["responses"]["unprocessable-entity"];
     };
   };
-  /**
-   * お気に入り解除
-   * @description セッション中の顧客が指定の飲食店のお気に入りを解除する
-   */
   "delete-customer-shop-favorite": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 飲食店ID */
         shop: components["parameters"]["shop-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       204: components["responses"]["no-content"];
       401: components["responses"]["unauthorized"];
@@ -876,17 +1288,19 @@ export interface operations {
       422: components["responses"]["unprocessable-entity"];
     };
   };
-  /**
-   * 飲食店詳細ページでの予約一覧取得機能
-   * @description セッション中の顧客が指定の飲食店で行っている予約を一覧取得する
-   */
   "get-customer-shop-reservations": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 飲食店ID */
         shop: components["parameters"]["shop-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-customer-shop-reservations-200"];
       401: components["responses"]["unauthorized"];
@@ -894,16 +1308,17 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * 飲食店詳細ページでの予約追加機能
-   * @description セッション中の顧客が指定の飲食店で予約を追加する
-   */
   "post-customer-shop-reservations": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 顧客ID */
         customer: components["parameters"]["customer-id"];
+        /** @description 飲食店ID */
         shop: components["parameters"]["shop-id"];
       };
+      cookie?: never;
     };
     requestBody: components["requestBodies"]["post-customer-shop-reservations"];
     responses: {
@@ -914,20 +1329,25 @@ export interface operations {
       422: components["responses"]["post-customer-shop-reservations-422"];
     };
   };
-  /**
-   * ジャンル一覧取得
-   * @description ジャンル一覧を取得する
-   */
   "get-genres": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-genres-200"];
     };
   };
-  /**
-   * お知らせメール送信
-   * @description お知らせメールをすべての顧客に対して送信する
-   */
   "post-notification-email": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     requestBody: components["requestBodies"]["post-notification-email"];
     responses: {
       201: components["responses"]["created"];
@@ -936,11 +1356,13 @@ export interface operations {
       422: components["responses"]["post-notification-email-422"];
     };
   };
-  /**
-   * 店舗代表者追加
-   * @description 店舗代表者アカウントを追加する
-   */
   "post-owners": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     requestBody: components["requestBodies"]["post-owners"];
     responses: {
       201: components["responses"]["created"];
@@ -949,16 +1371,17 @@ export interface operations {
       422: components["responses"]["post-owners-422"];
     };
   };
-  /**
-   * 店舗代表者別店舗一覧取得
-   * @description 店舗代表者が作成した飲食店情報の一覧を取得する
-   */
   "get-owner-shops": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description オーナーID */
         owner: components["parameters"]["owner-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-owner-shops-200"];
       401: components["responses"]["unauthorized"];
@@ -966,15 +1389,15 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * 店舗代表者別店舗登録
-   * @description 店舗代表者が飲食店情報を登録する
-   */
   "post-owner-shops": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description オーナーID */
         owner: components["parameters"]["owner-id"];
       };
+      cookie?: never;
     };
     requestBody: components["requestBodies"]["post-owner-shops"];
     responses: {
@@ -985,52 +1408,83 @@ export interface operations {
       422: components["responses"]["post-owner-shops-422"];
     };
   };
-  /**
-   * 飲食店一覧取得
-   * @description 飲食店一覧を取得する
-   */
+  "put-owner-shop": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description オーナーID */
+        owner: components["parameters"]["owner-id"];
+        /** @description 飲食店ID */
+        shop: components["parameters"]["shop-id"];
+      };
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["put-owner-shop"];
+    responses: {
+      204: components["responses"]["no-content"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["put-owner-shop-422"];
+    };
+  };
   "get-shops": {
     parameters: {
       query?: {
+        /** @description エリアID */
         area?: components["parameters"]["area-query"];
+        /** @description ジャンルID */
         genre?: components["parameters"]["genre-query"];
+        /** @description 店名検索キーワード */
         search?: components["parameters"]["search-query"];
+        /** @description ページ番号 */
         page?: components["parameters"]["page-query"];
       };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-shops-200"];
     };
   };
-  /**
-   * 飲食店情報取得
-   * @description 飲食店情報を個別に取得する
-   */
   "get-shop": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description 飲食店ID */
         shop: components["parameters"]["shop-id"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       200: components["responses"]["get-shop-200"];
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * CSRFトークン取得
-   * @description CSRFトークンを取得する
-   */
   "get-sanctum-csrf-cookie": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       204: components["responses"]["get-sanctum-csrf-cookie-204"];
     };
   };
-  /**
-   * 顧客登録
-   * @description 顧客を新規登録する
-   */
   "post-auth-register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     requestBody: components["requestBodies"]["post-auth-register"];
     responses: {
       201: components["responses"]["created"];
@@ -1038,27 +1492,32 @@ export interface operations {
       422: components["responses"]["post-auth-register-422"];
     };
   };
-  /**
-   * 確認メール送信
-   * @description メールアドレス確認通知を登録メールアドレスに送信する
-   */
   "post-auth-email-verification-notification": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       204: components["responses"]["no-content"];
       401: components["responses"]["unauthorized"];
     };
   };
-  /**
-   * メールアドレス確認
-   * @description メールでの本人確認を行う
-   */
   "get-auth-email-verify": {
     parameters: {
+      query?: never;
+      header?: never;
       path: {
+        /** @description ユーザーID */
         user: components["parameters"]["user-id"];
+        /** @description ハッシュ値 */
         hash: components["parameters"]["hash"];
       };
+      cookie?: never;
     };
+    requestBody?: never;
     responses: {
       204: components["responses"]["no-content"];
       401: components["responses"]["unauthorized"];
@@ -1066,11 +1525,13 @@ export interface operations {
       404: components["responses"]["not-found"];
     };
   };
-  /**
-   * ログイン
-   * @description 顧客のログイン処理を行う
-   */
   "post-auth-login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     requestBody: components["requestBodies"]["post-auth-login"];
     responses: {
       200: components["responses"]["ok"];
@@ -1078,11 +1539,14 @@ export interface operations {
       422: components["responses"]["post-auth-login-422"];
     };
   };
-  /**
-   * ログアウト
-   * @description 顧客のログアウト処理を行う
-   */
   "post-auth-logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       204: components["responses"]["no-content"];
     };

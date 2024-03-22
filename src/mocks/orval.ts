@@ -22,7 +22,8 @@ import type {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
-  PutCustomerReservationBody
+  PutCustomerReservationBody,
+  PutOwnerShopBody
 } from "../models";
 import type {
   GetAreas200Response,
@@ -277,6 +278,28 @@ export const postOwnerShops = <
 };
 
 /**
+ * 店舗代表者が飲食店情報を更新する
+ * @summary 店舗代表者別店舗更新
+ */
+export const putOwnerShop = <TData = AxiosResponse<NoContentResponse>>(
+  owner: number,
+  shop: number,
+  putOwnerShopBody: PutOwnerShopBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  const formData = new FormData();
+  formData.append("name", putOwnerShopBody.name);
+  formData.append("area", putOwnerShopBody.area);
+  formData.append("genre", putOwnerShopBody.genre);
+  if (putOwnerShopBody.image !== undefined) {
+    formData.append("image", putOwnerShopBody.image);
+  }
+  formData.append("detail", putOwnerShopBody.detail);
+
+  return axios.default.put(`/owners/${owner}/shops/${shop}`, formData, options);
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -397,6 +420,7 @@ export type PostNotificationEmailResult = AxiosResponse<CreatedResponse>;
 export type PostOwnersResult = AxiosResponse<CreatedResponse>;
 export type GetOwnerShopsResult = AxiosResponse<GetOwnerShops200Response>;
 export type PostOwnerShopsResult = AxiosResponse<PostOwnerShops201Response>;
+export type PutOwnerShopResult = AxiosResponse<NoContentResponse>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -1048,6 +1072,18 @@ export const getPostOwnerShopsMockHandler = (
   });
 };
 
+export const getPutOwnerShopMockHandler = () => {
+  return http.put("*/owners/:owner/shops/:shop", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -1174,6 +1210,7 @@ export const getReseMock = () => [
   getPostOwnersMockHandler(),
   getGetOwnerShopsMockHandler(),
   getPostOwnerShopsMockHandler(),
+  getPutOwnerShopMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
