@@ -1,20 +1,23 @@
+import imageCompression from "browser-image-compression";
 import createClient, { Middleware } from "openapi-fetch";
 
 import * as api from "./api";
 import {
   AuthStatus,
+  CreateShopError,
   OwnerShopData,
   Pagination,
   PostNotificationEmailBody,
+  PostOwnerShopsBody,
   PostOwnersBody,
   ReservationData,
   ShopData
 } from "./models";
 import { getCookieValue } from "./utils";
 
-export type EndpointResponse<T> =
+export type EndpointResponse<T, E = never> =
   | { success: true; data: T }
-  | { success: false; status: number; message?: string };
+  | { success: false; status: number; message?: string; errors?: E };
 
 export type Paginated<T> = Pagination & { data: T[] };
 
@@ -76,9 +79,11 @@ const middleware: Middleware = {
 };
 
 export class HttpClient {
+  private baseUrl: string;
   private client: ReturnType<typeof createClient<api.paths>>;
 
   constructor(baseUrl: string = import.meta.env.VITE_API_URL) {
+    this.baseUrl = baseUrl;
     this.client = createClient<api.paths>({ baseUrl });
     this.client.use(middleware);
   }
@@ -519,6 +524,71 @@ export class HttpClient {
       );
       if (response.status === 200 && data) {
         return { success: true, data: data.data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async postOwnerShops(
+    ownerId: number,
+    body: PostOwnerShopsBody
+  ): Promise<EndpointResponse<OwnerShopData, CreateShopError["errors"]>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+
+      const headers: HeadersInit = {
+        Accept: "application/json"
+      };
+      const token = getCookieValue("XSRF-TOKEN");
+      if (token) {
+        headers["X-XSRF-TOKEN"] = token;
+      }
+
+      const imageFile = body.image as File;
+      const compressedImage = await imageCompression(imageFile, {
+        maxSizeMB: 1
+      });
+
+      const formData = new FormData();
+      formData.append("name", body.name);
+      formData.append("area", body.area);
+      formData.append("genre", body.genre);
+      formData.append("image", compressedImage);
+      formData.append("detail", body.detail);
+
+      const init: RequestInit = {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: formData
+      };
+
+      const response = await fetch(
+        this.baseUrl + `/owners/${ownerId}/shops`,
+        init
+      );
+      if (response.status === 201) {
+        const data = (await response.json()) as OwnerShopData;
+        return { success: true, data };
+      } else if (response.status === 422) {
+        const json = (await response.json()) as CreateShopError;
+        return {
+          success: false,
+          status: response.status,
+          message: json.message,
+          errors: json.errors
+        };
       } else {
         return {
           success: false,

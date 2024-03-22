@@ -102,6 +102,11 @@ export interface paths {
      * @description 店舗代表者が作成した飲食店情報の一覧を取得する
      */
     get: operations["get-owner-shops"];
+    /**
+     * 店舗代表者別店舗登録
+     * @description 店舗代表者が飲食店情報を登録する
+     */
+    post: operations["post-owner-shops"];
   };
   "/shops": {
     /**
@@ -285,6 +290,16 @@ export interface components {
       errors: {
         reserved_at?: string[];
         number_of_guests?: string[];
+      };
+    };
+    "create-shop-error": {
+      message: string;
+      errors: {
+        name?: string[];
+        area_id?: string[];
+        genre_id?: string[];
+        image?: string[];
+        detail?: string[];
       };
     };
     /** @description ページネーション */
@@ -516,6 +531,20 @@ export interface components {
         };
       };
     };
+    /** @description 店舗代表者別店舗登録成功 */
+    "post-owner-shops-201": {
+      content: {
+        "application/json": {
+          data: components["schemas"]["owner-shop-data"];
+        };
+      };
+    };
+    /** @description 店舗代表者別店舗登録のバリデーションエラー */
+    "post-owner-shops-422": {
+      content: {
+        "application/json": components["schemas"]["create-shop-error"];
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -654,6 +683,38 @@ export interface components {
            * @example 2
            */
           number_of_guests: number;
+        };
+      };
+    };
+    /** @description 店舗代表者別店舗登録リクエスト */
+    "post-owner-shops": {
+      content: {
+        "multipart/form-data": {
+          /**
+           * @description 店舗名
+           * @example テスト店舗
+           */
+          name: string;
+          /**
+           * @description エリア
+           * @example テストエリア
+           */
+          area: string;
+          /**
+           * @description ジャンル
+           * @example テストジャンル
+           */
+          genre: string;
+          /**
+           * Format: binary
+           * @description 画像
+           */
+          image: string;
+          /**
+           * @description 詳細
+           * @example テスト詳細
+           */
+          detail: string;
         };
       };
     };
@@ -903,6 +964,25 @@ export interface operations {
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
+    };
+  };
+  /**
+   * 店舗代表者別店舗登録
+   * @description 店舗代表者が飲食店情報を登録する
+   */
+  "post-owner-shops": {
+    parameters: {
+      path: {
+        owner: components["parameters"]["owner-id"];
+      };
+    };
+    requestBody: components["requestBodies"]["post-owner-shops"];
+    responses: {
+      201: components["responses"]["post-owner-shops-201"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["post-owner-shops-422"];
     };
   };
   /**

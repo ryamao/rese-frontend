@@ -20,6 +20,7 @@ import type {
   PostAuthRegisterBody,
   PostCustomerShopReservationsBody,
   PostNotificationEmailBody,
+  PostOwnerShopsBody,
   PostOwnersBody,
   PutCustomerReservationBody
 } from "../models";
@@ -34,6 +35,7 @@ import type {
   GetShop200Response,
   GetShops200Response,
   PostCustomerShopReservations201Response,
+  PostOwnerShops201Response,
   ShowCustomer200Response
 } from "../models";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -254,6 +256,27 @@ export const getOwnerShops = <TData = AxiosResponse<GetOwnerShops200Response>>(
 };
 
 /**
+ * 店舗代表者が飲食店情報を登録する
+ * @summary 店舗代表者別店舗登録
+ */
+export const postOwnerShops = <
+  TData = AxiosResponse<PostOwnerShops201Response>
+>(
+  owner: number,
+  postOwnerShopsBody: PostOwnerShopsBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  const formData = new FormData();
+  formData.append("name", postOwnerShopsBody.name);
+  formData.append("area", postOwnerShopsBody.area);
+  formData.append("genre", postOwnerShopsBody.genre);
+  formData.append("image", postOwnerShopsBody.image);
+  formData.append("detail", postOwnerShopsBody.detail);
+
+  return axios.default.post(`/owners/${owner}/shops`, formData, options);
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -373,6 +396,7 @@ export type GetGenresResult = AxiosResponse<GetGenres200Response>;
 export type PostNotificationEmailResult = AxiosResponse<CreatedResponse>;
 export type PostOwnersResult = AxiosResponse<CreatedResponse>;
 export type GetOwnerShopsResult = AxiosResponse<GetOwnerShops200Response>;
+export type PostOwnerShopsResult = AxiosResponse<PostOwnerShops201Response>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -630,6 +654,29 @@ export const getGetOwnerShopsResponseMock = (
     name: faker.word.sample(),
     ...overrideResponse
   })),
+  ...overrideResponse
+});
+
+export const getPostOwnerShopsResponseMock = (
+  overrideResponse: any = {}
+): PostOwnerShops201Response => ({
+  data: {
+    area: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    detail: faker.word.sample(),
+    genre: {
+      id: faker.number.int({ min: undefined, max: undefined }),
+      name: faker.word.sample(),
+      ...overrideResponse
+    },
+    id: faker.number.int({ min: undefined, max: undefined }),
+    image_url: faker.internet.url(),
+    name: faker.word.sample(),
+    ...overrideResponse
+  },
   ...overrideResponse
 });
 
@@ -982,6 +1029,25 @@ export const getGetOwnerShopsMockHandler = (
   });
 };
 
+export const getPostOwnerShopsMockHandler = (
+  overrideResponse?: PostOwnerShops201Response
+) => {
+  return http.post("*/owners/:owner/shops", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getPostOwnerShopsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -1107,6 +1173,7 @@ export const getReseMock = () => [
   getPostNotificationEmailMockHandler(),
   getPostOwnersMockHandler(),
   getGetOwnerShopsMockHandler(),
+  getPostOwnerShopsMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),

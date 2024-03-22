@@ -1,43 +1,118 @@
 import styled from "@emotion/styled";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 import { PageBase } from "./PageBase";
 import { blueButton, whitePanel } from "../components/styles";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { PostOwnerShopsBody } from "../models";
+import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function OwnerShopPage() {
+  const navigate = useNavigate();
+  const { ownerId } = useOwnerId();
+  const { postOwnerShops } = useBackendAccessContext();
+  const queryClient = useQueryClient();
+
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm<PostOwnerShopsBody>({
+    resolver: zodResolver(schema)
+  });
+
+  const fileList = watch("image") as unknown as FileList;
+  const imageUrl =
+    fileList && fileList.length > 0 ? URL.createObjectURL(fileList[0]) : null;
+
+  async function onValid(data: PostOwnerShopsBody) {
+    const response = await postOwnerShops(ownerId, data);
+    if (response.success) {
+      await queryClient.invalidateQueries({
+        queryKey: ["owner shops", ownerId]
+      });
+      alert("店舗を作成しました");
+      navigate(-1);
+    } else {
+      if (response.errors?.name) {
+        setError("name", { message: response.errors?.name.join(", ") });
+      }
+      if (response.errors?.area_id) {
+        setError("area", { message: response.errors?.area_id.join(", ") });
+      }
+      if (response.errors?.genre_id) {
+        setError("genre", { message: response.errors?.genre_id.join(", ") });
+      }
+      if (response.errors?.image) {
+        setError("image", { message: response.errors?.image.join(", ") });
+      }
+      if (response.errors?.detail) {
+        setError("detail", { message: response.errors?.detail.join(", ") });
+      }
+      if (!response.errors) {
+        setError("name", { message: response.message });
+      }
+    }
+  }
+
   return (
     <PageBase>
       <Main>
         <section>
           <div className={whitePanel}>
             <FormTitle>New Shop</FormTitle>
-            <Form>
+            <Form onSubmit={handleSubmit(onValid)}>
               <FormItem>
                 <label htmlFor="name">店舗名</label>
-                <Input type="text" id="name" />
+                <InputWrapper>
+                  <Input type="text" id="name" {...register("name")} />
+                  <ErrorMessage>{errors.name?.message}</ErrorMessage>
+                </InputWrapper>
               </FormItem>
               <FormItem>
                 <label htmlFor="area">エリア</label>
-                <Select id="area">
-                  <option defaultChecked>All area</option>
-                  <option value="1">東京都</option>
-                  <option value="2">大阪府</option>
-                  <option value="3">福岡県</option>
-                </Select>
+                <InputWrapper>
+                  <Select id="area" {...register("area")}>
+                    <option defaultChecked></option>
+                    {areas.map((area, index) => (
+                      <option key={index} value={area}>
+                        {area}
+                      </option>
+                    ))}
+                  </Select>
+                  <ErrorMessage>{errors.area?.message}</ErrorMessage>
+                </InputWrapper>
               </FormItem>
               <FormItem>
                 <label htmlFor="genre">ジャンル</label>
-                <Select id="genre">
-                  <option defaultChecked>All genre</option>
-                  <option value="1">寿司</option>
-                  <option value="2">焼肉</option>
-                  <option value="3">居酒屋</option>
-                  <option value="4">イタリアン</option>
-                  <option value="5">ラーメン</option>
-                </Select>
+                <InputWrapper>
+                  <Input type="text" id="genre" {...register("genre")} />
+                  <ErrorMessage>{errors.genre?.message}</ErrorMessage>
+                </InputWrapper>
+              </FormItem>
+              <FormItem>
+                <label htmlFor="image">画像</label>
+                <InputWrapper>
+                  <input type="file" id="image" {...register("image")} />
+                  <ErrorMessage>{errors.image?.message}</ErrorMessage>
+                </InputWrapper>
               </FormItem>
               <FormItem>
                 <label htmlFor="detail">詳細</label>
-                <Textarea id="detail" rows={10}></Textarea>
+                <InputWrapper>
+                  <Textarea
+                    id="detail"
+                    rows={10}
+                    {...register("detail")}
+                  ></Textarea>
+                  <ErrorMessage>{errors.detail?.message}</ErrorMessage>
+                </InputWrapper>
               </FormItem>
               <ButtonLayout>
                 <button type="submit" className={blueButton}>
@@ -48,15 +123,20 @@ export function OwnerShopPage() {
           </div>
         </section>
         <section>
-          <ShopName>店舗名</ShopName>
+          <ShopName>{watch("name") || "店舗名"}</ShopName>
           <ShopImage>
-            <img src="https://via.placeholder.com/400x300" alt="店舗名" />
+            <img
+              src={
+                imageUrl ?? "https://via.placeholder.com/400x300?text=no+image"
+              }
+              alt="店舗名"
+            />
           </ShopImage>
           <ShopTags>
-            <span>#東京都</span>
-            <span>#寿司</span>
+            <span>#{watch("area") || "エリア名"}</span>
+            <span>#{watch("genre") || "ジャンル名"}</span>
           </ShopTags>
-          <ShopDetail>サンプルテキスト</ShopDetail>
+          <ShopDetail>{watch("detail")}</ShopDetail>
         </section>
       </Main>
     </PageBase>
@@ -95,6 +175,18 @@ const FormItem = styled.div`
   grid-template-columns: subgrid;
   grid-column: 1 / -1;
   align-items: baseline;
+`;
+
+const InputWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+`;
+
+const ErrorMessage = styled.p`
+  margin: 0;
+  font-size: 0.75rem;
+  color: red;
 `;
 
 const Input = styled.input`
@@ -149,3 +241,76 @@ const ShopTags = styled.div`
 const ShopDetail = styled.p`
   margin: 0 0.25rem;
 `;
+
+const fileTypes = ["image/jpeg", "image/png"];
+
+const schema = z.object({
+  name: z
+    .string()
+    .min(1, "店舗名を入力してください")
+    .max(100, "店舗名は100文字以内で入力してください"),
+  area: z.string().min(1, "エリアを選択してください"),
+  genre: z
+    .string()
+    .min(1, "ジャンルを入力してください")
+    .max(100, "ジャンルは100文字以内で入力してください"),
+  image: z
+    .custom<FileList>()
+    .refine((files) => files.length > 0, "画像を選択してください")
+    .transform((files) => files[0])
+    .refine(
+      (file) => fileTypes.includes(file.type),
+      "JPEGまたはPNG形式の画像を選択してください"
+    ),
+  detail: z.string().min(1, "詳細を入力してください")
+});
+
+const areas = [
+  "北海道",
+  "青森県",
+  "岩手県",
+  "宮城県",
+  "秋田県",
+  "山形県",
+  "福島県",
+  "茨城県",
+  "栃木県",
+  "群馬県",
+  "埼玉県",
+  "千葉県",
+  "東京都",
+  "神奈川県",
+  "新潟県",
+  "富山県",
+  "石川県",
+  "福井県",
+  "山梨県",
+  "長野県",
+  "岐阜県",
+  "静岡県",
+  "愛知県",
+  "三重県",
+  "滋賀県",
+  "京都府",
+  "大阪府",
+  "兵庫県",
+  "奈良県",
+  "和歌山県",
+  "鳥取県",
+  "島根県",
+  "岡山県",
+  "広島県",
+  "山口県",
+  "徳島県",
+  "香川県",
+  "愛媛県",
+  "高知県",
+  "福岡県",
+  "佐賀県",
+  "長崎県",
+  "熊本県",
+  "大分県",
+  "宮崎県",
+  "鹿児島県",
+  "沖縄県"
+];
