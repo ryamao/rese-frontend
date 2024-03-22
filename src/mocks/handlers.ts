@@ -182,6 +182,9 @@ export const handlers = [
       }
     });
   }),
+  http.put("*/owners/:ownerId/shops/:shopId", () => {
+    return HttpResponse.json(null, { status: 204 });
+  }),
   http.get("*/areas", () => {
     return HttpResponse.json({
       areas: sampleAreas

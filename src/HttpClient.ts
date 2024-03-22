@@ -10,6 +10,7 @@ import {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PutOwnerShopBody,
   ReservationData,
   ShopData
 } from "./models";
@@ -352,7 +353,7 @@ export class HttpClient {
   ): Promise<EndpointResponse<never>> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { response, error } = await this.client.PUT(
+      const { response } = await this.client.PUT(
         "/customers/{customer}/reservations/{reservation}",
         {
           params: {
@@ -367,7 +368,7 @@ export class HttpClient {
         return {
           success: false,
           status: response.status,
-          message: error?.message
+          message: response.statusText
         };
       }
     } catch (error) {
@@ -446,17 +447,18 @@ export class HttpClient {
   ): Promise<ReservationData> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { data, error } = await this.client.POST(
+      const { data, response } = await this.client.POST(
         "/customers/{customer}/shops/{shop}/reservations",
         {
           params: { path: { customer: customerId, shop: shopId } },
           body
         }
       );
-      if (error) {
-        throw new Error(error.message);
+      if (data) {
+        return data.reservation;
+      } else {
+        throw new Error(response.statusText);
       }
-      return data.reservation;
     } catch (error) {
       throw new Error(String(error));
     }
@@ -465,14 +467,14 @@ export class HttpClient {
   async postOwners(body: PostOwnersBody): Promise<EndpointResponse<never>> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { response, error } = await this.client.POST("/owners", { body });
+      const { response } = await this.client.POST("/owners", { body });
       if (response.status === 201) {
         return { success: true, data: undefined as never };
       } else {
         return {
           success: false,
           status: response.status,
-          message: error?.message
+          message: response.statusText
         };
       }
     } catch (error) {
@@ -489,17 +491,16 @@ export class HttpClient {
   ): Promise<EndpointResponse<never>> {
     try {
       await this.client.GET("/sanctum/csrf-cookie");
-      const { response, error } = await this.client.POST(
-        "/notification-email",
-        { body }
-      );
+      const { response } = await this.client.POST("/notification-email", {
+        body
+      });
       if (response.status === 201) {
         return { success: true, data: undefined as never };
       } else {
         return {
           success: false,
           status: response.status,
-          message: error?.message
+          message: response.statusText
         };
       }
     } catch (error) {
@@ -581,6 +582,73 @@ export class HttpClient {
       if (response.status === 201) {
         const data = (await response.json()) as OwnerShopData;
         return { success: true, data };
+      } else if (response.status === 422) {
+        const json = (await response.json()) as CreateShopError;
+        return {
+          success: false,
+          status: response.status,
+          message: json.message,
+          errors: json.errors
+        };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async putOwnerShop(
+    ownerId: number,
+    shopId: number,
+    body: PutOwnerShopBody
+  ): Promise<EndpointResponse<never, CreateShopError["errors"]>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+
+      const headers: HeadersInit = {
+        Accept: "application/json"
+      };
+      const token = getCookieValue("XSRF-TOKEN");
+      if (token) {
+        headers["X-XSRF-TOKEN"] = token;
+      }
+
+      const formData = new FormData();
+      formData.append("_method", "PUT");
+      formData.append("name", body.name);
+      formData.append("area", body.area);
+      formData.append("genre", body.genre);
+      formData.append("detail", body.detail);
+
+      if (body.image instanceof File) {
+        const compressedImage = await imageCompression(body.image, {
+          maxSizeMB: 1
+        });
+        formData.append("image", compressedImage);
+      }
+
+      const init: RequestInit = {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: formData
+      };
+
+      const response = await fetch(
+        this.baseUrl + `/owners/${ownerId}/shops/${shopId}`,
+        init
+      );
+      if (response.status === 204) {
+        return { success: true, data: undefined as never };
       } else if (response.status === 422) {
         const json = (await response.json()) as CreateShopError;
         return {

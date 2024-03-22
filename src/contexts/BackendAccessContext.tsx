@@ -23,6 +23,7 @@ import {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PutOwnerShopBody,
   ReservationData,
   ShopData
 } from "../models";
@@ -73,6 +74,11 @@ export interface BackendAccessContextType {
   postOwnerShops: (
     ownerId: number,
     body: PostOwnerShopsBody
+  ) => Promise<EndpointResponse<OwnerShopData, CreateShopError["errors"]>>;
+  putOwnerShop: (
+    ownerId: number,
+    shopId: number,
+    body: PutOwnerShopBody
   ) => Promise<EndpointResponse<OwnerShopData, CreateShopError["errors"]>>;
 }
 
@@ -137,6 +143,8 @@ export function createBackendAccessContextType({
     deleteReservation: (userId, reservationId) =>
       httpClient.deleteCustomerReservation(userId, reservationId),
     getOwnerShops: (ownerId) => httpClient.getOwnerShops(ownerId),
-    postOwnerShops: (ownerId, body) => httpClient.postOwnerShops(ownerId, body)
+    postOwnerShops: (ownerId, body) => httpClient.postOwnerShops(ownerId, body),
+    putOwnerShop: (ownerId, shopId, body) =>
+      httpClient.putOwnerShop(ownerId, shopId, body)
   };
 }
