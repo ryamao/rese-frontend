@@ -2,20 +2,51 @@ import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Location } from "react-router-dom";
 import { z } from "zod";
 
 import { PageBase } from "./PageBase";
 import { blueButton, whitePanel } from "../components/styles";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
-import { PostOwnerShopsBody } from "../models";
+import { OwnerShopData, PostOwnerShopsBody } from "../models";
 import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function OwnerShopPage() {
+  const { state: shop } = useLocation() as Location<OwnerShopData | undefined>;
   const navigate = useNavigate();
   const { ownerId } = useOwnerId();
   const { postOwnerShops } = useBackendAccessContext();
   const queryClient = useQueryClient();
+
+  const schema = z.object({
+    name: z
+      .string()
+      .min(1, "店舗名を入力してください")
+      .max(100, "店舗名は100文字以内で入力してください"),
+    area: z.string().min(1, "エリアを選択してください"),
+    genre: z
+      .string()
+      .min(1, "ジャンルを入力してください")
+      .max(100, "ジャンルは100文字以内で入力してください"),
+    image: shop
+      ? z
+          .custom<FileList>()
+          .transform((files) => (files.length > 0 ? files[0] : null))
+          .refine(
+            (file) =>
+              file ? ["image/jpeg", "image/png"].includes(file.type) : true,
+            "JPEGまたはPNG形式の画像を選択してください"
+          )
+      : z
+          .custom<FileList>()
+          .refine((files) => files.length > 0, "画像を選択してください")
+          .transform((files) => files[0])
+          .refine(
+            (file) => ["image/jpeg", "image/png"].includes(file.type),
+            "JPEGまたはPNG形式の画像を選択してください"
+          ),
+    detail: z.string().min(1, "詳細を入力してください")
+  });
 
   const {
     register,
@@ -24,14 +55,27 @@ export function OwnerShopPage() {
     formState: { errors },
     setError
   } = useForm<PostOwnerShopsBody>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
+    defaultValues: shop
+      ? {
+          name: shop.name,
+          area: shop.area.name,
+          genre: shop.genre.name,
+          image: undefined,
+          detail: shop.detail
+        }
+      : undefined
   });
 
   const fileList = watch("image") as unknown as FileList;
   const imageUrl =
     fileList && fileList.length > 0 ? URL.createObjectURL(fileList[0]) : null;
+  const previewImageUrl =
+    imageUrl ??
+    shop?.image_url ??
+    "https://via.placeholder.com/400x300?text=no+image";
 
-  async function onValid(data: PostOwnerShopsBody) {
+  async function createShop(data: PostOwnerShopsBody) {
     const response = await postOwnerShops(ownerId, data);
     if (response.success) {
       await queryClient.invalidateQueries({
@@ -58,6 +102,15 @@ export function OwnerShopPage() {
       if (!response.errors) {
         setError("name", { message: response.message });
       }
+    }
+  }
+
+  async function onValid(data: PostOwnerShopsBody) {
+    if (shop) {
+      console.log(data);
+      alert("TODO: update shop");
+    } else {
+      await createShop(data);
     }
   }
 
@@ -115,8 +168,11 @@ export function OwnerShopPage() {
                 </InputWrapper>
               </FormItem>
               <ButtonLayout>
+                <CancelButton type="button" onClick={() => navigate(-1)}>
+                  キャンセル
+                </CancelButton>
                 <button type="submit" className={blueButton}>
-                  作成
+                  {shop ? "更新" : "作成"}
                 </button>
               </ButtonLayout>
             </Form>
@@ -125,12 +181,7 @@ export function OwnerShopPage() {
         <section>
           <ShopName>{watch("name") || "店舗名"}</ShopName>
           <ShopImage>
-            <img
-              src={
-                imageUrl ?? "https://via.placeholder.com/400x300?text=no+image"
-              }
-              alt="店舗名"
-            />
+            <img src={previewImageUrl} alt={watch("name")} />
           </ShopImage>
           <ShopTags>
             <span>#{watch("area") || "エリア名"}</span>
@@ -214,7 +265,17 @@ const Textarea = styled.textarea`
 const ButtonLayout = styled.div`
   display: flex;
   grid-column: 1 / -1;
+  gap: 1.5rem;
   justify-content: flex-end;
+`;
+
+const CancelButton = styled.button`
+  font-size: 1rem;
+  color: #315dff;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
 `;
 
 const ShopName = styled.h2`
@@ -241,29 +302,6 @@ const ShopTags = styled.div`
 const ShopDetail = styled.p`
   margin: 0 0.25rem;
 `;
-
-const fileTypes = ["image/jpeg", "image/png"];
-
-const schema = z.object({
-  name: z
-    .string()
-    .min(1, "店舗名を入力してください")
-    .max(100, "店舗名は100文字以内で入力してください"),
-  area: z.string().min(1, "エリアを選択してください"),
-  genre: z
-    .string()
-    .min(1, "ジャンルを入力してください")
-    .max(100, "ジャンルは100文字以内で入力してください"),
-  image: z
-    .custom<FileList>()
-    .refine((files) => files.length > 0, "画像を選択してください")
-    .transform((files) => files[0])
-    .refine(
-      (file) => fileTypes.includes(file.type),
-      "JPEGまたはPNG形式の画像を選択してください"
-    ),
-  detail: z.string().min(1, "詳細を入力してください")
-});
 
 const areas = [
   "北海道",
