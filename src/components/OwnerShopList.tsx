@@ -7,12 +7,14 @@ export interface OwnerShopListProps {
   shops: OwnerShopData[];
   onCreateShop: () => void;
   onUpdateShop: (shop: OwnerShopData) => void;
+  onViewReservations: (shop: OwnerShopData) => void;
 }
 
 export function OwnerShopList({
   shops,
   onCreateShop,
-  onUpdateShop
+  onUpdateShop,
+  onViewReservations
 }: OwnerShopListProps) {
   return (
     <Panel className={whitePanel}>
@@ -52,7 +54,11 @@ export function OwnerShopList({
                   >
                     店舗更新
                   </button>
-                  <button type="button" className={blueButton}>
+                  <button
+                    type="button"
+                    className={blueButton}
+                    onClick={() => onViewReservations(shop)}
+                  >
                     予約確認
                   </button>
                 </ButtonLayout>
