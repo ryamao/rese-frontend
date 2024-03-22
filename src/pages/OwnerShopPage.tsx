@@ -1,18 +1,28 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { PageBase } from "./PageBase";
 import { blueButton, whitePanel } from "../components/styles";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
 import { PostOwnerShopsBody } from "../models";
+import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function OwnerShopPage() {
+  const navigate = useNavigate();
+  const { ownerId } = useOwnerId();
+  const { postOwnerShops } = useBackendAccessContext();
+  const queryClient = useQueryClient();
+
   const {
     register,
     watch,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm<PostOwnerShopsBody>({
     resolver: zodResolver(schema)
   });
@@ -21,8 +31,34 @@ export function OwnerShopPage() {
   const imageUrl =
     fileList && fileList.length > 0 ? URL.createObjectURL(fileList[0]) : null;
 
-  function onValid(data: PostOwnerShopsBody) {
-    console.log(data);
+  async function onValid(data: PostOwnerShopsBody) {
+    const response = await postOwnerShops(ownerId, data);
+    if (response.success) {
+      await queryClient.invalidateQueries({
+        queryKey: ["owner shops", ownerId]
+      });
+      alert("店舗を作成しました");
+      navigate(-1);
+    } else {
+      if (response.errors?.name) {
+        setError("name", { message: response.errors?.name.join(", ") });
+      }
+      if (response.errors?.area_id) {
+        setError("area", { message: response.errors?.area_id.join(", ") });
+      }
+      if (response.errors?.genre_id) {
+        setError("genre", { message: response.errors?.genre_id.join(", ") });
+      }
+      if (response.errors?.image) {
+        setError("image", { message: response.errors?.image.join(", ") });
+      }
+      if (response.errors?.detail) {
+        setError("detail", { message: response.errors?.detail.join(", ") });
+      }
+      if (!response.errors) {
+        setError("name", { message: response.message });
+      }
+    }
   }
 
   return (
@@ -206,6 +242,8 @@ const ShopDetail = styled.p`
   margin: 0 0.25rem;
 `;
 
+const fileTypes = ["image/jpeg", "image/png"];
+
 const schema = z.object({
   name: z
     .string()
@@ -219,7 +257,11 @@ const schema = z.object({
   image: z
     .custom<FileList>()
     .refine((files) => files.length > 0, "画像を選択してください")
-    .transform((files) => files[0]),
+    .transform((files) => files[0])
+    .refine(
+      (file) => fileTypes.includes(file.type),
+      "JPEGまたはPNG形式の画像を選択してください"
+    ),
   detail: z.string().min(1, "詳細を入力してください")
 });
 

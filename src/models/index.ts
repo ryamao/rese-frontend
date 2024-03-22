@@ -70,7 +70,6 @@ export * from "./postNotificationEmailBody";
 export * from "./postOwnerShops201Response";
 export * from "./postOwnerShops422Response";
 export * from "./postOwnerShopsBody";
-export * from "./postOwnerShopsBodyImage";
 export * from "./postOwners422Response";
 export * from "./postOwnersBody";
 export * from "./putCustomerReservation422Response";
