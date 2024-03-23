@@ -253,3 +253,34 @@ export function useOwnerShops(ownerId: number) {
 
   return shops;
 }
+
+export function useReservationsForOwner(ownerId: number, shopId?: number) {
+  const { getReservationsForOwner } = useBackendAccessContext();
+
+  const reservations = useInfiniteQuery({
+    queryKey: ["reservations for owner", ownerId, shopId],
+    queryFn: ({ pageParam }) =>
+      getReservationsForOwner(ownerId, shopId!, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (
+        lastPage.success &&
+        lastPage.data.meta.current_page < lastPage.data.meta.last_page
+      ) {
+        return lastPage.data.meta.current_page + 1;
+      } else {
+        return undefined;
+      }
+    },
+    enabled: shopId !== undefined,
+    staleTime: Infinity
+  });
+
+  useEffect(() => {
+    if (reservations.hasNextPage) {
+      reservations.fetchNextPage();
+    }
+  }, [reservations]);
+
+  return reservations;
+}

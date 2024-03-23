@@ -1,18 +1,58 @@
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
 import { Location, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { BackButton } from "../components/BackButton";
 import { whitePanel } from "../components/styles";
+import { useReservationsForOwner } from "../hooks/queries";
 import { OwnerShopData } from "../models";
+import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function ReservationViewerPage() {
+  const { ownerId } = useOwnerId();
   const { state: shop } = useLocation() as Location<OwnerShopData | null>;
   const navigate = useNavigate();
+
+  const reservations = useReservationsForOwner(ownerId, shop?.id);
 
   if (!shop) {
     return <Navigate to="/owner" />;
   }
+
+  if (reservations.isError) {
+    return <PageBase>Error: {reservations.error.message}</PageBase>;
+  }
+  if (reservations.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+
+  const errors = reservations.data.pages.flatMap((page) => {
+    if (!page.success && page.message) {
+      return { status: page.status, message: page.message };
+    } else {
+      return [];
+    }
+  });
+  if (errors.length > 0) {
+    return (
+      <PageBase>
+        {errors.map(({ status, message }, index) => (
+          <p key={index}>
+            {status}: {message}
+          </p>
+        ))}
+      </PageBase>
+    );
+  }
+
+  const data = reservations.data.pages.flatMap((page) => {
+    if (page.success) {
+      return page.data.data;
+    } else {
+      return [];
+    }
+  });
 
   function handleGoBack() {
     navigate(-1);
@@ -36,18 +76,18 @@ export function ReservationViewerPage() {
               </tr>
             </thead>
             <tbody>
-              <DataRow>
-                <TableData>山田太郎</TableData>
-                <TableData>2021/08/01</TableData>
-                <TableData>12:00</TableData>
-                <TableData>3</TableData>
-              </DataRow>
-              <DataRow>
-                <TableData>山田太郎</TableData>
-                <TableData>2021/08/01</TableData>
-                <TableData>12:00</TableData>
-                <TableData>3</TableData>
-              </DataRow>
+              {data.map((reservation) => (
+                <DataRow key={reservation.id}>
+                  <TableData>{reservation.customer_name}</TableData>
+                  <TableData>
+                    {dayjs(reservation.reserved_at).format("YYYY/MM/DD")}
+                  </TableData>
+                  <TableData>
+                    {dayjs(reservation.reserved_at).format("HH:mm")}
+                  </TableData>
+                  <TableData>{reservation.number_of_guests}</TableData>
+                </DataRow>
+              ))}
             </tbody>
           </Table>
         </ReservationPanel>

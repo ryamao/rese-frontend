@@ -1,7 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import {
+  MemoryRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes
+} from "react-router-dom";
 
 import { ReservationViewerPage } from "./ReservationViewerPage";
 import {
@@ -10,6 +16,16 @@ import {
 } from "../contexts/BackendAccessContext";
 import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
+import { OwnerShopData } from "../models";
+
+const shop: OwnerShopData = {
+  id: 1,
+  name: "サンプルショップ",
+  area: { id: 1, name: "東京都" },
+  genre: { id: 1, name: "寿司" },
+  image_url: "https://via.placeholder.com/800x500",
+  detail: "サンプルテキスト"
+};
 
 const meta = {
   title: "pages/ReservationViewerPage",
@@ -36,7 +52,11 @@ const meta = {
             <MemoryRouter>
               <Routes>
                 <Route element={<DummyRoute />}>
-                  <Route path="/" element={<Story />} />
+                  <Route
+                    path="/"
+                    element={<Navigate to="/reservations" state={shop} />}
+                  />
+                  <Route path="/reservations" element={<Story />} />
                 </Route>
               </Routes>
             </MemoryRouter>
