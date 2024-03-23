@@ -280,6 +280,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/owners/{owner}/shops/{shop}/reservations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 店舗代表者向け飲食店別予約一覧取得
+     * @description 店舗代表者と飲食店を指定して予約一覧を取得する
+     */
+    get: operations["get-owner-shop-reservations"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/shops": {
     parameters: {
       query?: never;
@@ -575,6 +595,23 @@ export interface components {
         image?: string[];
         detail?: string[];
       };
+    };
+    /** @description 店舗代表者向け飲食店別予約情報 */
+    "reservation-for-owner": {
+      /**
+       * Format: int64
+       * @description 予約ID
+       */
+      id: number;
+      /** @description 顧客名 */
+      customer_name: string;
+      /**
+       * Format: date-time
+       * @description 予約日時
+       */
+      reserved_at: string;
+      /** @description 予約人数 */
+      number_of_guests: number;
     };
     /** @description ページネーション */
     pagination: {
@@ -911,6 +948,17 @@ export interface components {
       };
       content: {
         "application/json": components["schemas"]["create-shop-error"];
+      };
+    };
+    /** @description 店舗代表者向け飲食店別予約一覧取得成功 */
+    "get-owner-shop-reservations-200": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["pagination"] & {
+          data: components["schemas"]["reservation-for-owner"][];
+        };
       };
     };
   };
@@ -1427,6 +1475,29 @@ export interface operations {
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
       422: components["responses"]["put-owner-shop-422"];
+    };
+  };
+  "get-owner-shop-reservations": {
+    parameters: {
+      query?: {
+        /** @description ページ番号 */
+        page?: components["parameters"]["page-query"];
+      };
+      header?: never;
+      path: {
+        /** @description オーナーID */
+        owner: components["parameters"]["owner-id"];
+        /** @description 飲食店ID */
+        shop: components["parameters"]["shop-id"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: components["responses"]["get-owner-shop-reservations-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
     };
   };
   "get-shops": {

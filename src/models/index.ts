@@ -88,3 +88,7 @@ export * from "./shopDataFavoriteStatus";
 export * from "./showCustomer200Response";
 export * from "./unauthorizedResponse";
 export * from "./unprocessableEntityResponse";
+export * from "./getOwnerShopReservations200Response";
+export * from "./getOwnerShopReservations200ResponseAllOf";
+export * from "./getOwnerShopReservationsParams";
+export * from "./reservationForOwner";
