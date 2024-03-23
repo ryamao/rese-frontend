@@ -1,6 +1,7 @@
 import { HttpResponse, http } from "msw";
 
-import { OwnerShopData } from "../models";
+import { Paginated } from "../HttpClient";
+import { OwnerShopData, ReservationForOwner, ShopData } from "../models";
 
 const sampleAreas = [
   { id: 1, name: "東京都" },
@@ -16,7 +17,7 @@ const sampleGenres = [
   { id: 5, name: "ラーメン" }
 ];
 
-const sampleShops = [
+const sampleShops: ShopData[] = [
   {
     id: 1,
     name: "飲食店1",
@@ -64,7 +65,7 @@ const sampleShops = [
   }
 ];
 
-const samplePaginatedShops = {
+const samplePaginatedShops: Paginated<ShopData> = {
   meta: {
     current_page: 1,
     from: 1,
@@ -72,26 +73,87 @@ const samplePaginatedShops = {
     path: "http://localhost:8000/shops",
     per_page: 5,
     to: 5,
-    total: 5
+    total: 5,
+    links: [
+      {
+        url: null,
+        label: "&laquo; Previous",
+        active: false
+      },
+      {
+        url: null,
+        label: "1",
+        active: false
+      },
+      {
+        url: null,
+        label: "Next &raquo;",
+        active: false
+      }
+    ]
   },
-  links: [
-    {
-      url: null,
-      label: "&laquo; Previous",
-      active: false
-    },
-    {
-      url: null,
-      label: "1",
-      active: false
-    },
-    {
-      url: null,
-      label: "Next &raquo;",
-      active: false
-    }
-  ],
+  links: {
+    first: "http://localhost:8000/shops?page=1",
+    last: "http://localhost:8000/shops?page=1",
+    prev: null,
+    next: null
+  },
   data: sampleShops
+};
+
+const sampleReservationsForOwner: Paginated<ReservationForOwner> = {
+  meta: {
+    current_page: 1,
+    from: 1,
+    last_page: 1,
+    path: "http://localhost:8000/owners/1/shops/1/reservations",
+    per_page: 5,
+    to: 3,
+    total: 3,
+    links: [
+      {
+        url: null,
+        label: "&laquo; Previous",
+        active: false
+      },
+      {
+        url: null,
+        label: "1",
+        active: false
+      },
+      {
+        url: null,
+        label: "Next &raquo;",
+        active: false
+      }
+    ]
+  },
+  links: {
+    first: "http://localhost:8000/owners/1/shops/1/reservations?page=1",
+    last: "http://localhost:8000/owners/1/shops/1/reservations?page=1",
+    prev: null,
+    next: null
+  },
+  data: [
+    {
+      id: 1,
+      customer_name: "ユーザー1",
+      reserved_at: "2022-01-01T18:00:00+09:00",
+      number_of_guests: 2
+    },
+    {
+      id: 2,
+      customer_name: "ユーザー2",
+      reserved_at: "2022-01-02T19:00:00+09:00",
+      number_of_guests: 4
+    },
+    {
+      id: 3,
+      customer_name: "ユーザー3",
+      reserved_at: "2022-01-03T20:00:00+09:00",
+      number_of_guests: 6
+    }
+  ]
 };
 
 const sampleReservations = [
@@ -184,6 +246,9 @@ export const handlers = [
   }),
   http.put("*/owners/:ownerId/shops/:shopId", () => {
     return HttpResponse.json(null, { status: 204 });
+  }),
+  http.get("*/owners/:ownerId/shops/:shopId/reservations", () => {
+    return HttpResponse.json(sampleReservationsForOwner);
   }),
   http.get("*/areas", () => {
     return HttpResponse.json({

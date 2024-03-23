@@ -33,12 +33,17 @@ export function OwnerPage() {
     navigate(`/owner/shop`, { state: shop });
   }
 
+  function handleViewReservations(shop: OwnerShopData) {
+    navigate(`/owner/reservations`, { state: shop });
+  }
+
   return (
     <PageBase>
       <OwnerShopList
         shops={shops.data.data}
         onCreateShop={handleCreateShop}
         onUpdateShop={handleUpdateShop}
+        onViewReservations={handleViewReservations}
       />
     </PageBase>
   );

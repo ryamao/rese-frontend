@@ -12,6 +12,7 @@ import { HttpResponse, delay, http } from "msw";
 import type {
   CreatedResponse,
   GetCustomerFavoritesParams,
+  GetOwnerShopReservationsParams,
   GetSanctumCsrfCookie204Response,
   GetShopsParams,
   NoContentResponse,
@@ -32,6 +33,7 @@ import type {
   GetCustomerReservations200Response,
   GetCustomerShopReservations200Response,
   GetGenres200Response,
+  GetOwnerShopReservations200Response,
   GetOwnerShops200Response,
   GetShop200Response,
   GetShops200Response,
@@ -300,6 +302,24 @@ export const putOwnerShop = <TData = AxiosResponse<NoContentResponse>>(
 };
 
 /**
+ * 店舗代表者と飲食店を指定して予約一覧を取得する
+ * @summary 店舗代表者向け飲食店別予約一覧取得
+ */
+export const getOwnerShopReservations = <
+  TData = AxiosResponse<GetOwnerShopReservations200Response>
+>(
+  owner: number,
+  shop: number,
+  params?: GetOwnerShopReservationsParams,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/owners/${owner}/shops/${shop}/reservations`, {
+    ...options,
+    params: { ...params, ...options?.params }
+  });
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -421,6 +441,8 @@ export type PostOwnersResult = AxiosResponse<CreatedResponse>;
 export type GetOwnerShopsResult = AxiosResponse<GetOwnerShops200Response>;
 export type PostOwnerShopsResult = AxiosResponse<PostOwnerShops201Response>;
 export type PutOwnerShopResult = AxiosResponse<NoContentResponse>;
+export type GetOwnerShopReservationsResult =
+  AxiosResponse<GetOwnerShopReservations200Response>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -701,6 +723,49 @@ export const getPostOwnerShopsResponseMock = (
     name: faker.word.sample(),
     ...overrideResponse
   },
+  ...overrideResponse
+});
+
+export const getGetOwnerShopReservationsResponseMock = (
+  overrideResponse: any = {}
+): GetOwnerShopReservations200Response => ({
+  links: {
+    first: faker.internet.url(),
+    last: faker.internet.url(),
+    next: faker.internet.url(),
+    prev: faker.internet.url(),
+    ...overrideResponse
+  },
+  meta: {
+    current_page: faker.number.int({ min: 1, max: undefined }),
+    from: {},
+    last_page: faker.number.int({ min: 1, max: undefined }),
+    links: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1
+    ).map(() => ({
+      active: faker.datatype.boolean(),
+      label: faker.word.sample(),
+      url: faker.internet.url(),
+      ...overrideResponse
+    })),
+    path: faker.internet.url(),
+    per_page: faker.number.int({ min: 1, max: undefined }),
+    to: {},
+    total: faker.number.int({ min: 0, max: undefined }),
+    ...overrideResponse
+  },
+  ...overrideResponse,
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    customer_name: faker.word.sample(),
+    id: faker.number.int({ min: undefined, max: undefined }),
+    number_of_guests: faker.number.int({ min: 1, max: undefined }),
+    reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    ...overrideResponse
+  })),
   ...overrideResponse
 });
 
@@ -1084,6 +1149,27 @@ export const getPutOwnerShopMockHandler = () => {
   });
 };
 
+export const getGetOwnerShopReservationsMockHandler = (
+  overrideResponse?: GetOwnerShopReservations200Response
+) => {
+  return http.get("*/owners/:owner/shops/:shop/reservations", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse
+          ? overrideResponse
+          : getGetOwnerShopReservationsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -1211,6 +1297,7 @@ export const getReseMock = () => [
   getGetOwnerShopsMockHandler(),
   getPostOwnerShopsMockHandler(),
   getPutOwnerShopMockHandler(),
+  getGetOwnerShopReservationsMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),

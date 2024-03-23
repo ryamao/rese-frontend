@@ -19,6 +19,7 @@ import { OwnerPage } from "./pages/OwnerPage";
 import { OwnerShopPage } from "./pages/OwnerShopPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
+import { ReservationViewerPage } from "./pages/ReservationViewerPage";
 import { ShopDetailPage } from "./pages/ShopDetailPage";
 import { ShopListPage } from "./pages/ShopListPage";
 import { ThanksPage } from "./pages/ThanksPage";
@@ -55,6 +56,10 @@ const router = createBrowserRouter(
           <Route element={<OwnersOnlyRoute />}>
             <Route path="/owner" element={<OwnerPage />} />
             <Route path="/owner/shop" element={<OwnerShopPage />} />
+            <Route
+              path="/owner/reservations"
+              element={<ReservationViewerPage />}
+            />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

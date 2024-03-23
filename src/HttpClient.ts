@@ -12,6 +12,7 @@ import {
   PostOwnersBody,
   PutOwnerShopBody,
   ReservationData,
+  ReservationForOwner,
   ShopData
 } from "./models";
 import { getCookieValue } from "./utils";
@@ -657,6 +658,37 @@ export class HttpClient {
           message: json.message,
           errors: json.errors
         };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async getOwnerShopReservations(
+    ownerId: number,
+    shopId: number,
+    page?: number
+  ): Promise<EndpointResponse<Paginated<ReservationForOwner>>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.GET(
+        "/owners/{owner}/shops/{shop}/reservations",
+        {
+          params: { path: { owner: ownerId, shop: shopId }, page }
+        }
+      );
+      if (response.status === 200 && data) {
+        return { success: true, data };
       } else {
         return {
           success: false,

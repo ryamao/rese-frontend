@@ -56,7 +56,8 @@ const meta = {
   args: {
     shops: sampleShops,
     onCreateShop: fn(),
-    onUpdateShop: fn()
+    onUpdateShop: fn(),
+    onViewReservations: fn()
   }
 } satisfies Meta<typeof OwnerShopList>;
 
