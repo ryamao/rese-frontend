@@ -25,6 +25,7 @@ import {
   PostOwnersBody,
   PutOwnerShopBody,
   ReservationData,
+  ReservationForOwner,
   ShopData
 } from "../models";
 
@@ -80,6 +81,11 @@ export interface BackendAccessContextType {
     shopId: number,
     body: PutOwnerShopBody
   ) => Promise<EndpointResponse<OwnerShopData, CreateShopError["errors"]>>;
+  getReservationsForOwner: (
+    ownerId: number,
+    shopId: number,
+    page?: number
+  ) => Promise<EndpointResponse<Paginated<ReservationForOwner>>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -145,6 +151,8 @@ export function createBackendAccessContextType({
     getOwnerShops: (ownerId) => httpClient.getOwnerShops(ownerId),
     postOwnerShops: (ownerId, body) => httpClient.postOwnerShops(ownerId, body),
     putOwnerShop: (ownerId, shopId, body) =>
-      httpClient.putOwnerShop(ownerId, shopId, body)
+      httpClient.putOwnerShop(ownerId, shopId, body),
+    getReservationsForOwner: (ownerId, shopId, page) =>
+      httpClient.getOwnerShopReservations(ownerId, shopId, page)
   };
 }
