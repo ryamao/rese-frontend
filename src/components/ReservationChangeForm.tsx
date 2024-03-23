@@ -54,7 +54,7 @@ export function ReservationChangeForm({
   return (
     <Form onSubmit={handleSubmit(onValid)} noValidate>
       <Inner>
-        <Title>{reservation.shop.name}</Title>
+        <Title>予約変更</Title>
         <InputList>
           <InputItem>
             <DateWrapper>
@@ -72,7 +72,7 @@ export function ReservationChangeForm({
           </InputItem>
         </InputList>
       </Inner>
-      <Submit type="submit">予約を更新する</Submit>
+      <Submit type="submit">予約を変更する</Submit>
     </Form>
   );
 }
@@ -82,13 +82,21 @@ const Form = styled.form`
   background-color: #315dff;
   border-radius: 0.25rem;
   box-shadow: 0.125rem 0.125rem 0.25rem #888;
+
+  @media (width <= 480px) {
+    width: 100%;
+  }
 `;
 
 const Inner = styled.div`
   padding: 2rem;
+
+  @media (width <= 480px) {
+    padding: 1rem;
+  }
 `;
 
-const Title = styled.h2`
+const Title = styled.h3`
   margin: 0;
   color: #fff;
 `;
@@ -105,6 +113,10 @@ const InputItem = styled.li`
 
 const DateWrapper = styled.div`
   width: 50%;
+
+  @media (width <= 480px) {
+    width: fit-content;
+  }
 `;
 
 const ErrorMessage = styled.div`
