@@ -300,6 +300,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/reservations/{reservation}/signed-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 入店確認URL取得
+     * @description 入店確認用の署名付きURLを取得する
+     */
+    get: operations["get-reservation-signed-url"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/reservations/{reservation}/checkin": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 入店確認
+     * @description 入店確認を行う
+     */
+    post: operations["post-reservation-checkin"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/shops": {
     parameters: {
       query?: never;
@@ -961,6 +1001,18 @@ export interface components {
         };
       };
     };
+    /** @description 入店確認URL取得成功 */
+    "get-reservation-signed-url-200": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": {
+          /** Format: uri */
+          url: string;
+        };
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -983,6 +1035,10 @@ export interface components {
     "search-query": string;
     /** @description ページ番号 */
     "page-query": number;
+    /** @description 署名 */
+    "signature-query": string;
+    /** @description 有効期限 */
+    "expires-query": number;
   };
   requestBodies: {
     /** @description 店舗代表者追加リクエスト */
@@ -1498,6 +1554,48 @@ export interface operations {
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
+    };
+  };
+  "get-reservation-signed-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 予約ID */
+        reservation: components["parameters"]["reservation-id"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: components["responses"]["get-reservation-signed-url-200"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  "post-reservation-checkin": {
+    parameters: {
+      query: {
+        /** @description 署名 */
+        signature: components["parameters"]["signature-query"];
+        /** @description 有効期限 */
+        expires?: components["parameters"]["expires-query"];
+      };
+      header?: never;
+      path: {
+        /** @description 予約ID */
+        reservation: components["parameters"]["reservation-id"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      409: components["responses"]["conflict"];
     };
   };
   "get-shops": {
