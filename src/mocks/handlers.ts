@@ -304,5 +304,14 @@ export const handlers = [
     async () => {
       return HttpResponse.text(null, { status: 204 });
     }
-  )
+  ),
+  http.get("*/reservations/:reservationId/signed-url", async () => {
+    const randomSignature = Math.random().toString(36).substring(7);
+    return HttpResponse.json({
+      url:
+        import.meta.env.VITE_API_URL +
+        "/reservations/1/check-in?signature=" +
+        randomSignature
+    });
+  })
 ];

@@ -10,21 +10,33 @@ import { BackButton } from "../components/BackButton";
 import { ReservationChangeForm } from "../components/ReservationChangeForm";
 import { blueButton, whitePanel } from "../components/styles";
 import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { useCheckInUrl } from "../hooks/queries";
 import { ReservationData } from "../models";
 import { useCustomerId } from "../routes/CustomersOnlyRoute";
 
 export function CustomerReservationPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { customerId } = useCustomerId();
   const { state: reservation } = useLocation() as Location<
     ReservationData | undefined
   >;
   const { putReservation } = useBackendAccessContext();
-  const queryClient = useQueryClient();
+  const checkInUrl = useCheckInUrl(reservation?.id);
   const [isEnlarged, setIsEnlarged] = useState(false);
 
   if (!reservation) {
     return <Navigate to="/mypage" replace={true} />;
+  }
+
+  if (checkInUrl.isError) {
+    return <PageBase>{checkInUrl.error.message}</PageBase>;
+  }
+  if (checkInUrl.isPending) {
+    return <PageBase>loading...</PageBase>;
+  }
+  if (!checkInUrl.data.success) {
+    return <PageBase>{checkInUrl.data.message}</PageBase>;
   }
 
   async function handleUpdateReservation(data: ReservationData) {
@@ -58,7 +70,7 @@ export function CustomerReservationPage() {
         <QRCodeSection>
           <QRCodePanel className={whitePanel}>
             <QRCodeTitle>本人確認用QRコード</QRCodeTitle>
-            <QRCodeSVG value="dummy text" />
+            <QRCodeSVG value={checkInUrl.data.data} />
             <ButtonLayout>
               <button
                 className={blueButton}
@@ -66,7 +78,12 @@ export function CustomerReservationPage() {
               >
                 拡大表示
               </button>
-              <button className={blueButton}>QR更新</button>
+              <button
+                className={blueButton}
+                onClick={() => checkInUrl.invalidate()}
+              >
+                QR更新
+              </button>
             </ButtonLayout>
           </QRCodePanel>
         </QRCodeSection>
@@ -80,7 +97,11 @@ export function CustomerReservationPage() {
       {isEnlarged && (
         <Overlay onClick={() => setIsEnlarged(false)}>
           <OverlayPanel className={whitePanel}>
-            <QRCodeSVG value="dummy text" width="100%" height="100%" />
+            <QRCodeSVG
+              value={checkInUrl.data.data}
+              width="100%"
+              height="100%"
+            />
           </OverlayPanel>
         </Overlay>
       )}
