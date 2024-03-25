@@ -139,19 +139,22 @@ const sampleReservationsForOwner: Paginated<ReservationForOwner> = {
       id: 1,
       customer_name: "ユーザー1",
       reserved_at: "2022-01-01T18:00:00+09:00",
-      number_of_guests: 2
+      number_of_guests: 2,
+      is_checked_in: true
     },
     {
       id: 2,
       customer_name: "ユーザー2",
       reserved_at: "2022-01-02T19:00:00+09:00",
-      number_of_guests: 4
+      number_of_guests: 4,
+      is_checked_in: false
     },
     {
       id: 3,
       customer_name: "ユーザー3",
       reserved_at: "2022-01-03T20:00:00+09:00",
-      number_of_guests: 6
+      number_of_guests: 6,
+      is_checked_in: false
     }
   ]
 };
@@ -161,19 +164,22 @@ const sampleReservations = [
     id: 1,
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-01T18:00:00+09:00",
-    number_of_guests: 2
+    number_of_guests: 2,
+    is_checked_in: true
   },
   {
     id: 2,
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-02T19:00:00+09:00",
-    number_of_guests: 4
+    number_of_guests: 4,
+    is_checked_in: false
   },
   {
     id: 3,
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-03T20:00:00+09:00",
-    number_of_guests: 6
+    number_of_guests: 6,
+    is_checked_in: false
   }
 ];
 
@@ -313,5 +319,8 @@ export const handlers = [
         "/reservations/1/check-in?signature=" +
         randomSignature
     });
+  }),
+  http.post("*/reservations/:reservationId/checkin", async () => {
+    return HttpResponse.text(null, { status: 201 });
   })
 ];

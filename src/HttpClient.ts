@@ -733,4 +733,42 @@ export class HttpClient {
       };
     }
   }
+
+  async postCheckIn(url: string): Promise<EndpointResponse<never>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+
+      const headers: HeadersInit = {
+        Accept: "application/json"
+      };
+      const token = getCookieValue("XSRF-TOKEN");
+      if (token) {
+        headers["X-XSRF-TOKEN"] = token;
+      }
+
+      const init: RequestInit = {
+        method: "POST",
+        headers,
+        credentials: "include"
+      };
+
+      const response = await fetch(url, init);
+
+      if (response.status === 201) {
+        return { success: true, data: undefined as never };
+      }
+
+      return {
+        success: false,
+        status: response.status,
+        message: response.statusText
+      };
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
 }
