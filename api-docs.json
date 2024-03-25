@@ -968,7 +968,13 @@
       },
       "reservation-data": {
         "description": "予約情報",
-        "required": ["id", "shop", "reserved_at", "number_of_guests"],
+        "required": [
+          "id",
+          "shop",
+          "reserved_at",
+          "number_of_guests",
+          "is_checked_in"
+        ],
         "properties": {
           "id": {
             "description": "予約ID",
@@ -987,6 +993,10 @@
             "description": "予約人数",
             "type": "integer",
             "minimum": 1
+          },
+          "is_checked_in": {
+            "description": "チェックイン済みかどうか",
+            "type": "boolean"
           }
         },
         "type": "object"
@@ -1063,7 +1073,13 @@
       },
       "reservation-for-owner": {
         "description": "店舗代表者向け飲食店別予約情報",
-        "required": ["id", "customer_name", "reserved_at", "number_of_guests"],
+        "required": [
+          "id",
+          "customer_name",
+          "reserved_at",
+          "number_of_guests",
+          "is_checked_in"
+        ],
         "properties": {
           "id": {
             "description": "予約ID",
@@ -1083,6 +1099,10 @@
             "description": "予約人数",
             "type": "integer",
             "minimum": 1
+          },
+          "is_checked_in": {
+            "description": "チェックイン済みかどうか",
+            "type": "boolean"
           }
         },
         "type": "object"

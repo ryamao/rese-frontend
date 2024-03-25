@@ -1,17 +1,23 @@
+import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
+import { IoQrCodeOutline } from "react-icons/io5";
+import {
+  MdOutlineCheckBox,
+  MdOutlineCheckBoxOutlineBlank
+} from "react-icons/md";
 import { Location, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { BackButton } from "../components/BackButton";
-import { whitePanel } from "../components/styles";
+import { blueButton, whitePanel } from "../components/styles";
 import { useReservationsForOwner } from "../hooks/queries";
 import { OwnerShopData } from "../models";
 import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function ReservationViewerPage() {
   const { ownerId } = useOwnerId();
-  const { state: shop } = useLocation() as Location<OwnerShopData | null>;
+  const { state: shop } = useLocation() as Location<OwnerShopData | undefined>;
   const navigate = useNavigate();
 
   const reservations = useReservationsForOwner(ownerId, shop?.id);
@@ -58,6 +64,10 @@ export function ReservationViewerPage() {
     navigate(-1);
   }
 
+  function handleCheckIn() {
+    navigate(`/owner/check-in`, { state: shop });
+  }
+
   return (
     <PageBase>
       <main>
@@ -69,15 +79,37 @@ export function ReservationViewerPage() {
           <Table>
             <thead>
               <tr>
+                <TableHeader>入店</TableHeader>
                 <TableHeader>顧客名</TableHeader>
                 <TableHeader>日付</TableHeader>
                 <TableHeader>時刻</TableHeader>
                 <TableHeader>人数</TableHeader>
+                <TableData>
+                  <ButtonLayout>
+                    <Button
+                      type="button"
+                      className={blueButton}
+                      onClick={handleCheckIn}
+                    >
+                      <IoQrCodeOutline className={qrCodeIconStyle} />
+                      <ButtonText>QR照合</ButtonText>
+                    </Button>
+                  </ButtonLayout>
+                </TableData>
               </tr>
             </thead>
             <tbody>
               {data.map((reservation) => (
                 <DataRow key={reservation.id}>
+                  <TableData>
+                    <CheckBox>
+                      {reservation.is_checked_in ? (
+                        <MdOutlineCheckBox />
+                      ) : (
+                        <MdOutlineCheckBoxOutlineBlank />
+                      )}
+                    </CheckBox>
+                  </TableData>
                   <TableData>{reservation.customer_name}</TableData>
                   <TableData>
                     {dayjs(reservation.reserved_at).format("YYYY/MM/DD")}
@@ -86,6 +118,7 @@ export function ReservationViewerPage() {
                     {dayjs(reservation.reserved_at).format("HH:mm")}
                   </TableData>
                   <TableData>{reservation.number_of_guests}</TableData>
+                  <TableData></TableData>
                 </DataRow>
               ))}
             </tbody>
@@ -130,4 +163,34 @@ const DataRow = styled.tr`
 const TableData = styled.td`
   min-width: 6rem;
   padding: 0.5rem;
+`;
+
+const ButtonLayout = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+`;
+
+const Button = styled.button`
+  display: grid;
+  grid-template-columns: 1.25rem 1fr;
+  align-items: center;
+  width: 6rem;
+  padding: 0.25rem 0.5rem;
+`;
+
+const qrCodeIconStyle = css`
+  font-size: 1rem;
+`;
+
+const ButtonText = styled.div`
+  width: 100%;
+`;
+
+const CheckBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #000;
 `;

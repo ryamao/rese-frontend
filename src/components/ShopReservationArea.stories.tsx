@@ -38,7 +38,8 @@ export const WithReservations: Story = {
           name: "仙人"
         } as ShopData,
         reserved_at: "2021-12-31T12:00:00+09:00",
-        number_of_guests: 2
+        number_of_guests: 2,
+        is_checked_in: true
       },
       {
         id: 2,
@@ -46,7 +47,8 @@ export const WithReservations: Story = {
           name: "仙人"
         } as ShopData,
         reserved_at: "2021-12-31T12:00:00+09:00",
-        number_of_guests: 2
+        number_of_guests: 2,
+        is_checked_in: false
       },
       {
         id: 3,
@@ -54,7 +56,8 @@ export const WithReservations: Story = {
           name: "仙人"
         } as ShopData,
         reserved_at: "2021-12-31T12:00:00+09:00",
-        number_of_guests: 2
+        number_of_guests: 2,
+        is_checked_in: false
       }
     ]
   }

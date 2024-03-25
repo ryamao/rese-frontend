@@ -18,6 +18,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { OwnerPage } from "./pages/OwnerPage";
 import { OwnerShopPage } from "./pages/OwnerShopPage";
+import { QRCodeReaderPage } from "./pages/QRCodeReaderPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
 import { ReservationViewerPage } from "./pages/ReservationViewerPage";
@@ -65,6 +66,7 @@ const router = createBrowserRouter(
               path="/owner/reservations"
               element={<ReservationViewerPage />}
             />
+            <Route path="/owner/check-in" element={<QRCodeReaderPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

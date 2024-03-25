@@ -38,6 +38,7 @@ export function createMockBackendAccessState({
     postOwnerShops: vitest.fn(),
     putOwnerShop: vitest.fn(),
     getReservationsForOwner: vitest.fn(),
-    getCheckInUrl: vitest.fn()
+    getCheckInUrl: vitest.fn(),
+    postCheckIn: vitest.fn()
   };
 }

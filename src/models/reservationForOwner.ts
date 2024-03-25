@@ -14,6 +14,8 @@ export interface ReservationForOwner {
   customer_name: string;
   /** 予約ID */
   id: number;
+  /** チェックイン済みかどうか */
+  is_checked_in: boolean;
   /** 予約人数 */
   number_of_guests: number;
   /** 予約日時 */
