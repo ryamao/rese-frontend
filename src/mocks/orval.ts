@@ -596,6 +596,7 @@ export const getGetCustomerReservationsResponseMock = (
     (_, i) => i + 1
   ).map(() => ({
     id: faker.number.int({ min: undefined, max: undefined }),
+    is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
     reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     shop: {
@@ -633,6 +634,7 @@ export const getGetCustomerShopReservationsResponseMock = (
     (_, i) => i + 1
   ).map(() => ({
     id: faker.number.int({ min: undefined, max: undefined }),
+    is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
     reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     shop: {
@@ -667,6 +669,7 @@ export const getPostCustomerShopReservationsResponseMock = (
 ): PostCustomerShopReservations201Response => ({
   reservation: {
     id: faker.number.int({ min: undefined, max: undefined }),
+    is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
     reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     shop: {
@@ -795,6 +798,7 @@ export const getGetOwnerShopReservationsResponseMock = (
   ).map(() => ({
     customer_name: faker.word.sample(),
     id: faker.number.int({ min: undefined, max: undefined }),
+    is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
     reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     ...overrideResponse

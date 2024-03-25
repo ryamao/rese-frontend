@@ -618,6 +618,8 @@ export interface components {
       reserved_at: string;
       /** @description 予約人数 */
       number_of_guests: number;
+      /** @description チェックイン済みかどうか */
+      is_checked_in: boolean;
     };
     "reservation-error": {
       message: string;
@@ -652,6 +654,8 @@ export interface components {
       reserved_at: string;
       /** @description 予約人数 */
       number_of_guests: number;
+      /** @description チェックイン済みかどうか */
+      is_checked_in: boolean;
     };
     /** @description ページネーション */
     pagination: {
