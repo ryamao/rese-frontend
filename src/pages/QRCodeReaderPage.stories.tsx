@@ -9,34 +9,27 @@ import {
   Routes
 } from "react-router-dom";
 
-import { CustomerReservationPage } from "./CustomerReservationPage";
+import { QRCodeReaderPage } from "./QRCodeReaderPage";
 import {
   BackendAccessContext,
   createBackendAccessContextType
 } from "../contexts/BackendAccessContext";
 import { HttpClient } from "../HttpClient";
 import { handlers } from "../mocks/handlers";
-import { ReservationData } from "../models";
+import { OwnerShopData } from "../models";
 
-const reservation: ReservationData = {
+const shop: OwnerShopData = {
   id: 1,
-  shop: {
-    id: 1,
-    name: "dummy shop",
-    area: { id: 1, name: "dummy area" },
-    genre: { id: 1, name: "dummy genre" },
-    image_url: "https://via.placeholder.com/400x300",
-    detail: "dummy detail",
-    favorite_status: "marked"
-  },
-  reserved_at: "2022-01-01T12:00:00+09:00",
-  number_of_guests: 2,
-  is_checked_in: false
+  name: "サンプルショップ",
+  area: { id: 1, name: "東京都" },
+  genre: { id: 1, name: "寿司" },
+  image_url: "https://via.placeholder.com/800x500",
+  detail: "サンプルテキスト"
 };
 
 const meta = {
-  title: "pages/CustomerReservationPage",
-  component: CustomerReservationPage,
+  title: "Pages/QRCodeReaderPage",
+  component: QRCodeReaderPage,
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
@@ -49,10 +42,10 @@ const meta = {
       const queryClient = new QueryClient();
       const backendAccess = createBackendAccessContextType({
         httpClient: new HttpClient(),
-        authStatus: { status: "customer", id: 1, has_verified_email: true },
+        authStatus: { status: "owner", id: 1, has_verified_email: true },
         setAuthStatus: fn()
       });
-      const DummyRoute = () => <Outlet context={{ customerId: 1 }} />;
+      const DummyRoute = () => <Outlet context={{ ownerId: 1 }} />;
       return (
         <QueryClientProvider client={queryClient}>
           <BackendAccessContext.Provider value={backendAccess}>
@@ -61,9 +54,9 @@ const meta = {
                 <Route element={<DummyRoute />}>
                   <Route
                     path="/"
-                    element={<Navigate to="/reservation" state={reservation} />}
+                    element={<Navigate to="/reservations" state={shop} />}
                   />
-                  <Route path="/reservation" element={<Story />} />
+                  <Route path="/reservations" element={<Story />} />
                 </Route>
               </Routes>
             </MemoryRouter>
@@ -72,7 +65,7 @@ const meta = {
       );
     }
   ]
-} satisfies Meta<typeof CustomerReservationPage>;
+} satisfies Meta<typeof QRCodeReaderPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

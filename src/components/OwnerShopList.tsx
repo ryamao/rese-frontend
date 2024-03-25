@@ -1,4 +1,7 @@
+import { css } from "@emotion/css";
 import styled from "@emotion/styled";
+import { CgList } from "react-icons/cg";
+import { MdOutlineEditNote, MdOutlinePlaylistAdd } from "react-icons/md";
 
 import { blueButton, whitePanel } from "./styles";
 import { OwnerShopData } from "../models";
@@ -26,13 +29,14 @@ export function OwnerShopList({
             <TableHeader>ジャンル</TableHeader>
             <TableHeader>詳細</TableHeader>
             <TableHeader>
-              <button
+              <Button
                 type="button"
                 className={blueButton}
                 onClick={onCreateShop}
               >
-                店舗作成
-              </button>
+                <MdOutlinePlaylistAdd className={addShopIconStyle} />
+                <ButtonText>店舗作成</ButtonText>
+              </Button>
             </TableHeader>
           </tr>
         </thead>
@@ -47,20 +51,22 @@ export function OwnerShopList({
               </TableData>
               <TableData>
                 <ButtonLayout>
-                  <button
+                  <Button
                     type="button"
                     className={blueButton}
                     onClick={() => onUpdateShop(shop)}
                   >
-                    店舗更新
-                  </button>
-                  <button
+                    <MdOutlineEditNote className={editShopIconStyle} />
+                    <ButtonText>店舗更新</ButtonText>
+                  </Button>
+                  <Button
                     type="button"
                     className={blueButton}
                     onClick={() => onViewReservations(shop)}
                   >
-                    予約確認
-                  </button>
+                    <CgList className={viewReservationsIconStyle} />
+                    <ButtonText>予約確認</ButtonText>
+                  </Button>
                 </ButtonLayout>
               </TableData>
             </DataRow>
@@ -108,4 +114,28 @@ const ButtonLayout = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   align-items: center;
+`;
+
+const Button = styled.button`
+  display: grid;
+  grid-template-columns: 1.25rem 1fr;
+  align-items: center;
+  width: 6rem;
+  padding: 0.25rem 0.5rem;
+`;
+
+const addShopIconStyle = css`
+  font-size: 1.25rem;
+`;
+
+const editShopIconStyle = css`
+  font-size: 1.25rem;
+`;
+
+const viewReservationsIconStyle = css`
+  font-size: 1rem;
+`;
+
+const ButtonText = styled.div`
+  width: 100%;
 `;
