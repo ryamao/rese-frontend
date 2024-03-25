@@ -284,3 +284,21 @@ export function useReservationsForOwner(ownerId: number, shopId?: number) {
 
   return reservations;
 }
+
+export function useCheckInUrl(reservationId?: number) {
+  const queryClient = useQueryClient();
+  const { getCheckInUrl } = useBackendAccessContext();
+
+  const url = useQuery({
+    queryKey: ["check-in url", reservationId],
+    queryFn: () => getCheckInUrl(reservationId!),
+    enabled: reservationId !== undefined,
+    staleTime: Infinity
+  });
+
+  function invalidate() {
+    queryClient.invalidateQueries({ queryKey: ["check-in url"] });
+  }
+
+  return { ...url, invalidate };
+}

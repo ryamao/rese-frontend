@@ -86,6 +86,7 @@ export interface BackendAccessContextType {
     shopId: number,
     page?: number
   ) => Promise<EndpointResponse<Paginated<ReservationForOwner>>>;
+  getCheckInUrl: (reservationId: number) => Promise<EndpointResponse<string>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -153,6 +154,7 @@ export function createBackendAccessContextType({
     putOwnerShop: (ownerId, shopId, body) =>
       httpClient.putOwnerShop(ownerId, shopId, body),
     getReservationsForOwner: (ownerId, shopId, page) =>
-      httpClient.getOwnerShopReservations(ownerId, shopId, page)
+      httpClient.getOwnerShopReservations(ownerId, shopId, page),
+    getCheckInUrl: (reservationId) => httpClient.getCheckInUrl(reservationId)
   };
 }

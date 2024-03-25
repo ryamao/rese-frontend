@@ -23,6 +23,7 @@ import type {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PostReservationCheckinParams,
   PutCustomerReservationBody,
   PutOwnerShopBody
 } from "../models";
@@ -35,6 +36,7 @@ import type {
   GetGenres200Response,
   GetOwnerShopReservations200Response,
   GetOwnerShops200Response,
+  GetReservationSignedUrl200Response,
   GetShop200Response,
   GetShops200Response,
   PostCustomerShopReservations201Response,
@@ -320,6 +322,34 @@ export const getOwnerShopReservations = <
 };
 
 /**
+ * 入店確認用の署名付きURLを取得する
+ * @summary 入店確認URL取得
+ */
+export const getReservationSignedUrl = <
+  TData = AxiosResponse<GetReservationSignedUrl200Response>
+>(
+  reservation: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/reservations/${reservation}/signed-url`, options);
+};
+
+/**
+ * 入店確認を行う
+ * @summary 入店確認
+ */
+export const postReservationCheckin = <TData = AxiosResponse<CreatedResponse>>(
+  reservation: number,
+  params: PostReservationCheckinParams,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(`/reservations/${reservation}/checkin`, undefined, {
+    ...options,
+    params: { ...params, ...options?.params }
+  });
+};
+
+/**
  * 飲食店一覧を取得する
  * @summary 飲食店一覧取得
  */
@@ -443,6 +473,9 @@ export type PostOwnerShopsResult = AxiosResponse<PostOwnerShops201Response>;
 export type PutOwnerShopResult = AxiosResponse<NoContentResponse>;
 export type GetOwnerShopReservationsResult =
   AxiosResponse<GetOwnerShopReservations200Response>;
+export type GetReservationSignedUrlResult =
+  AxiosResponse<GetReservationSignedUrl200Response>;
+export type PostReservationCheckinResult = AxiosResponse<CreatedResponse>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
 export type GetSanctumCsrfCookieResult =
@@ -766,6 +799,13 @@ export const getGetOwnerShopReservationsResponseMock = (
     reserved_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     ...overrideResponse
   })),
+  ...overrideResponse
+});
+
+export const getGetReservationSignedUrlResponseMock = (
+  overrideResponse: any = {}
+): GetReservationSignedUrl200Response => ({
+  url: faker.internet.url(),
   ...overrideResponse
 });
 
@@ -1170,6 +1210,39 @@ export const getGetOwnerShopReservationsMockHandler = (
   });
 };
 
+export const getGetReservationSignedUrlMockHandler = (
+  overrideResponse?: GetReservationSignedUrl200Response
+) => {
+  return http.get("*/reservations/:reservation/signed-url", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse
+          ? overrideResponse
+          : getGetReservationSignedUrlResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
+export const getPostReservationCheckinMockHandler = () => {
+  return http.post("*/reservations/:reservation/checkin", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getGetShopsMockHandler = (
   overrideResponse?: GetShops200Response
 ) => {
@@ -1298,6 +1371,8 @@ export const getReseMock = () => [
   getPostOwnerShopsMockHandler(),
   getPutOwnerShopMockHandler(),
   getGetOwnerShopReservationsMockHandler(),
+  getGetReservationSignedUrlMockHandler(),
+  getPostReservationCheckinMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),

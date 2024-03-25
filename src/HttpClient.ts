@@ -704,4 +704,33 @@ export class HttpClient {
       };
     }
   }
+
+  async getCheckInUrl(
+    reservationId: number
+  ): Promise<EndpointResponse<string>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.GET(
+        "/reservations/{reservation}/signed-url",
+        {
+          params: { path: { reservation: reservationId } }
+        }
+      );
+      if (response.status === 200) {
+        return { success: true, data: data!.url };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
 }

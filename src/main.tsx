@@ -11,6 +11,7 @@ import {
 
 import { MenuOverlayProvider } from "./contexts/MenuOverlayContext";
 import { AdminPage } from "./pages/AdminPage";
+import { CustomerReservationPage } from "./pages/CustomerReservationPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -48,6 +49,10 @@ const router = createBrowserRouter(
           <Route element={<CustomersOnlyRoute />}>
             <Route path="/thanks" element={<ThanksPage />} />
             <Route path="/mypage" element={<DashboardPage />} />
+            <Route
+              path="/mypage/reservation"
+              element={<CustomerReservationPage />}
+            />
             <Route path="/done" element={<ReservationCompletedPage />} />
           </Route>
           <Route element={<AdminOnlyRoute />}>

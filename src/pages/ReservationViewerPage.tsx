@@ -17,7 +17,7 @@ export function ReservationViewerPage() {
   const reservations = useReservationsForOwner(ownerId, shop?.id);
 
   if (!shop) {
-    return <Navigate to="/owner" />;
+    return <Navigate to="/owner" replace={true} />;
   }
 
   if (reservations.isError) {
