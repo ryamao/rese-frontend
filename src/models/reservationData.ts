@@ -6,11 +6,14 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { CustomerShopData } from "./customerShopData";
+import type { ReservationDataBilling } from "./reservationDataBilling";
 
 /**
  * 予約情報
  */
 export interface ReservationData {
+  /** 請求情報 */
+  billing?: ReservationDataBilling;
   /** 予約ID */
   id: number;
   /** チェックイン済みかどうか */

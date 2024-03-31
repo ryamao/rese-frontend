@@ -44,6 +44,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/reservations/{reservation}/billing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 請求金額登録
+     * @description 予約に対して請求金額を登録する
+     */
+    post: operations["post-reservation-billing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/customers/{customer}": {
     parameters: {
       query?: never;
@@ -294,6 +314,26 @@ export interface paths {
     get: operations["get-owner-shop-reservations"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/reservations/{reservation}/payment": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 決済
+     * @description 予約に対して決済を行う
+     */
+    post: operations["post-reservation-payment"];
     delete?: never;
     options?: never;
     head?: never;
@@ -620,6 +660,15 @@ export interface components {
       number_of_guests: number;
       /** @description チェックイン済みかどうか */
       is_checked_in: boolean;
+      /** @description 請求情報 */
+      billing?: {
+        /** @description 請求金額 */
+        amount?: number;
+        /** @description 請求内容 */
+        description?: string;
+        /** @description 支払い済みかどうか */
+        is_paid?: boolean;
+      };
     };
     "reservation-error": {
       message: string;
@@ -656,6 +705,15 @@ export interface components {
       number_of_guests: number;
       /** @description チェックイン済みかどうか */
       is_checked_in: boolean;
+      /** @description 請求情報 */
+      billing?: {
+        /** @description 請求金額 */
+        amount?: number;
+        /** @description 請求内容 */
+        description?: string;
+        /** @description 支払い済みかどうか */
+        is_paid?: boolean;
+      };
     };
     /** @description ページネーション */
     pagination: {
@@ -1017,6 +1075,17 @@ export interface components {
         };
       };
     };
+    /** @description 決済インテント取得成功 */
+    "get-create-intent-200": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": {
+          client_secret: string;
+        };
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -1254,6 +1323,42 @@ export interface operations {
     requestBody?: never;
     responses: {
       200: components["responses"]["get-auth-status-200"];
+    };
+  };
+  "post-reservation-billing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 予約ID */
+        reservation: components["parameters"]["reservation-id"];
+      };
+      cookie?: never;
+    };
+    /** @description 請求金額 */
+    requestBody: {
+      content: {
+        "application/json": {
+          /**
+           * @description 請求金額
+           * @example 3000
+           */
+          amount: number;
+          /**
+           * @description 請求内容
+           * @example サンプルテキスト
+           */
+          description: string;
+        };
+      };
+    };
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      409: components["responses"]["conflict"];
+      422: components["responses"]["unprocessable-entity"];
     };
   };
   "get-customer": {
@@ -1558,6 +1663,44 @@ export interface operations {
       401: components["responses"]["unauthorized"];
       403: components["responses"]["forbidden"];
       404: components["responses"]["not-found"];
+    };
+  };
+  "post-reservation-payment": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 予約ID */
+        reservation: components["parameters"]["reservation-id"];
+      };
+      cookie?: never;
+    };
+    /** @description 決済情報 */
+    requestBody: {
+      content: {
+        "application/json": {
+          /**
+           * @description 確認トークンID
+           * @example pi_1J3J1v2eZvKYlo2C5J9z1J3J
+           */
+          confirmation_token_id: string;
+        };
+      };
+    };
+    responses: {
+      /** @description 決済成功 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": string;
+        };
+      };
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["unprocessable-entity"];
     };
   };
   "get-reservation-signed-url": {
