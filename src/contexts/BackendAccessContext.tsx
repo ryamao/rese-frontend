@@ -23,6 +23,8 @@ import {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PostReservationBillingBody,
+  PostReservationPaymentBody,
   PutOwnerShopBody,
   ReservationData,
   ReservationForOwner,
@@ -88,6 +90,15 @@ export interface BackendAccessContextType {
   ) => Promise<EndpointResponse<Paginated<ReservationForOwner>>>;
   getCheckInUrl: (reservationId: number) => Promise<EndpointResponse<string>>;
   postCheckIn: (url: string) => Promise<EndpointResponse<never>>;
+  postBilling: (
+    reservationId: number,
+    body: PostReservationBillingBody
+  ) => Promise<EndpointResponse<never>>;
+  postPayment: (
+    reservationId: number,
+    body: PostReservationPaymentBody
+  ) => Promise<EndpointResponse<string>>;
+  createIntent: (reservationId: number) => Promise<EndpointResponse<string>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -157,6 +168,11 @@ export function createBackendAccessContextType({
     getReservationsForOwner: (ownerId, shopId, page) =>
       httpClient.getOwnerShopReservations(ownerId, shopId, page),
     getCheckInUrl: (reservationId) => httpClient.getCheckInUrl(reservationId),
-    postCheckIn: (url) => httpClient.postCheckIn(url)
+    postCheckIn: (url) => httpClient.postCheckIn(url),
+    postBilling: (reservationId, body) =>
+      httpClient.postBilling(reservationId, body),
+    postPayment: (reservationId, body) =>
+      httpClient.postPayment(reservationId, body),
+    createIntent: (reservationId) => httpClient.getCreateIntent(reservationId)
   };
 }
