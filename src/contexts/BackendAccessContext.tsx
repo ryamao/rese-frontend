@@ -98,7 +98,6 @@ export interface BackendAccessContextType {
     reservationId: number,
     body: PostReservationPaymentBody
   ) => Promise<EndpointResponse<string>>;
-  createIntent: (reservationId: number) => Promise<EndpointResponse<string>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -172,7 +171,6 @@ export function createBackendAccessContextType({
     postBilling: (reservationId, body) =>
       httpClient.postBilling(reservationId, body),
     postPayment: (reservationId, body) =>
-      httpClient.postPayment(reservationId, body),
-    createIntent: (reservationId) => httpClient.getCreateIntent(reservationId)
+      httpClient.postPayment(reservationId, body)
   };
 }

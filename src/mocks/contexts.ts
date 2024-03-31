@@ -41,7 +41,6 @@ export function createMockBackendAccessState({
     getCheckInUrl: vitest.fn(),
     postCheckIn: vitest.fn(),
     postBilling: vitest.fn(),
-    postPayment: vitest.fn(),
-    createIntent: vitest.fn()
+    postPayment: vitest.fn()
   };
 }

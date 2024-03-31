@@ -835,33 +835,4 @@ export class HttpClient {
       };
     }
   }
-
-  async getCreateIntent(
-    reservationId: number
-  ): Promise<EndpointResponse<string>> {
-    try {
-      await this.client.GET("/sanctum/csrf-cookie");
-      const { data, response } = await this.client.GET(
-        "/reservations/{reservation}/create-intent",
-        {
-          params: { path: { reservation: reservationId } }
-        }
-      );
-      if (response.status === 200 && data) {
-        return { success: true, data: data.client_secret };
-      } else {
-        return {
-          success: false,
-          status: response.status,
-          message: response.statusText
-        };
-      }
-    } catch (error) {
-      return {
-        success: false,
-        status: 500,
-        message: String(error)
-      };
-    }
-  }
 }
