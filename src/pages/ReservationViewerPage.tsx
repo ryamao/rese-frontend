@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
+import { HiOutlineCurrencyYen } from "react-icons/hi";
 import { IoQrCodeOutline } from "react-icons/io5";
 import {
   MdOutlineCheckBox,
@@ -12,7 +13,7 @@ import { PageBase } from "./PageBase";
 import { BackButton } from "../components/BackButton";
 import { blueButton, whitePanel } from "../components/styles";
 import { useReservationsForOwner } from "../hooks/queries";
-import { OwnerShopData } from "../models";
+import { OwnerShopData, ReservationForOwner } from "../models";
 import { useOwnerId } from "../routes/OwnersOnlyRoute";
 
 export function ReservationViewerPage() {
@@ -68,6 +69,10 @@ export function ReservationViewerPage() {
     navigate(`/owner/check-in`, { state: shop });
   }
 
+  function handleBilling(reservation: ReservationForOwner) {
+    navigate(`/owner/billing`, { state: reservation });
+  }
+
   return (
     <PageBase>
       <main>
@@ -80,10 +85,12 @@ export function ReservationViewerPage() {
             <thead>
               <tr>
                 <TableHeader>入店</TableHeader>
+                <TableHeader>決済</TableHeader>
                 <TableHeader>顧客名</TableHeader>
                 <TableHeader>日付</TableHeader>
                 <TableHeader>時刻</TableHeader>
                 <TableHeader>人数</TableHeader>
+                <TableHeader>金額</TableHeader>
                 <TableData>
                   <ButtonLayout>
                     <Button
@@ -110,6 +117,15 @@ export function ReservationViewerPage() {
                       )}
                     </CheckBox>
                   </TableData>
+                  <TableData>
+                    <CheckBox>
+                      {reservation.billing?.is_paid ? (
+                        <MdOutlineCheckBox />
+                      ) : (
+                        <MdOutlineCheckBoxOutlineBlank />
+                      )}
+                    </CheckBox>
+                  </TableData>
                   <TableData>{reservation.customer_name}</TableData>
                   <TableData>
                     {dayjs(reservation.reserved_at).format("YYYY/MM/DD")}
@@ -118,7 +134,23 @@ export function ReservationViewerPage() {
                     {dayjs(reservation.reserved_at).format("HH:mm")}
                   </TableData>
                   <TableData>{reservation.number_of_guests}</TableData>
-                  <TableData></TableData>
+                  <TableData>{reservation.billing?.amount}</TableData>
+                  <TableData>
+                    <ButtonLayout>
+                      {reservation.is_checked_in && !reservation.billing ? (
+                        <Button
+                          type="button"
+                          className={blueButton}
+                          onClick={() => handleBilling(reservation)}
+                        >
+                          <HiOutlineCurrencyYen
+                            className={currencyYenIconStyle}
+                          />
+                          <ButtonText>金額登録</ButtonText>
+                        </Button>
+                      ) : null}
+                    </ButtonLayout>
+                  </TableData>
                 </DataRow>
               ))}
             </tbody>
@@ -181,6 +213,10 @@ const Button = styled.button`
 
 const qrCodeIconStyle = css`
   font-size: 1rem;
+`;
+
+const currencyYenIconStyle = css`
+  font-size: 1.125rem;
 `;
 
 const ButtonText = styled.div`

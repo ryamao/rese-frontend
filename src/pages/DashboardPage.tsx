@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import { PageBase } from "./PageBase";
 import { FavoriteShopsArea } from "../components/FavoriteShopsArea";
@@ -34,6 +34,11 @@ export function DashboardPage() {
         {reservations.data.status}: {reservations.data.message}
       </PageBase>
     );
+  }
+  for (const reservation of reservations.data.data) {
+    if (reservation.billing && !reservation.billing.is_paid) {
+      return <Navigate to="/payment" replace={true} state={reservation} />;
+    }
   }
 
   if (favorites.isError) {

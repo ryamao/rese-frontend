@@ -23,7 +23,11 @@ const reservation: ReservationForOwner = {
   customer_name: "ユーザー1",
   reserved_at: "2022-01-01T12:00:00+09:00",
   number_of_guests: 2,
-  is_checked_in: false
+  is_checked_in: false,
+  billing: {
+    amount: 1000,
+    description: "サンプル請求"
+  }
 };
 
 const meta = {

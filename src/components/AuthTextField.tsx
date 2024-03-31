@@ -105,14 +105,15 @@ const Layout = styled.div`
   & input:focus + label,
   & input.filled + label {
     top: -1rem;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
   }
 `;
 
 const Label = styled.label`
   position: absolute;
   top: 0;
-  font-size: 0.9rem;
+  left: 0;
+  font-size: 1rem;
   color: #6b6b6b;
   pointer-events: none;
   transition: 0.15s;
@@ -121,6 +122,7 @@ const Label = styled.label`
 const Input = styled.input`
   width: 100%;
   padding: 0 0.125rem;
+  font-size: 1rem;
   border: none;
   border-bottom: 1px solid #000;
 

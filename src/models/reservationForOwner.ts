@@ -5,11 +5,14 @@
  * Rese API
  * OpenAPI spec version: 0.0.1
  */
+import type { ReservationForOwnerBilling } from "./reservationForOwnerBilling";
 
 /**
  * 店舗代表者向け飲食店別予約情報
  */
 export interface ReservationForOwner {
+  /** 請求情報 */
+  billing?: ReservationForOwnerBilling;
   /** 顧客名 */
   customer_name: string;
   /** 予約ID */

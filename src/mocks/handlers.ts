@@ -322,5 +322,11 @@ export const handlers = [
   }),
   http.post("*/reservations/:reservationId/checkin", async () => {
     return HttpResponse.text(null, { status: 201 });
+  }),
+  http.post("*/reservations/:reservationId/billing", async () => {
+    return HttpResponse.text(null, { status: 201 });
+  }),
+  http.post("*/reservations/:reservationId/payment", async () => {
+    return HttpResponse.text(null, { status: 201 });
   })
 ];

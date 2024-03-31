@@ -10,6 +10,8 @@ import {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PostReservationBillingBody,
+  PostReservationPaymentBody,
   PutOwnerShopBody,
   ReservationData,
   ReservationForOwner,
@@ -763,6 +765,68 @@ export class HttpClient {
         status: response.status,
         message: response.statusText
       };
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async postBilling(
+    reservationId: number,
+    body: PostReservationBillingBody
+  ): Promise<EndpointResponse<never>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response } = await this.client.POST(
+        "/reservations/{reservation}/billing",
+        {
+          params: { path: { reservation: reservationId } },
+          body
+        }
+      );
+      if (response.status === 201) {
+        return { success: true, data: undefined as never };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async postPayment(
+    reservationId: number,
+    body: PostReservationPaymentBody
+  ): Promise<EndpointResponse<string>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { data, response } = await this.client.POST(
+        "/reservations/{reservation}/payment",
+        {
+          params: { path: { reservation: reservationId } },
+          body
+        }
+      );
+      if (response.status === 201 && data) {
+        return { success: true, data: data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
     } catch (error) {
       return {
         success: false,

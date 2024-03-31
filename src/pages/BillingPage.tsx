@@ -1,19 +1,58 @@
 import styled from "@emotion/styled";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import { Location, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 import { PageBase } from "./PageBase";
 import { BackButton } from "../components/BackButton";
 import { blueButton, whitePanel } from "../components/styles";
-import { ReservationForOwner } from "../models";
+import { useBackendAccessContext } from "../contexts/BackendAccessContext";
+import { PostReservationBillingBody, ReservationForOwner } from "../models";
 
 export function BillingPage() {
   const navigate = useNavigate();
   const { state: reservation } = useLocation() as Location<
     ReservationForOwner | undefined
   >;
+  const { postBilling } = useBackendAccessContext();
+  const queryClient = useQueryClient();
+
+  const schema = z.object({
+    description: z
+      .string()
+      .min(1, "請求内容を入力してください")
+      .max(255, "請求内容は255文字以内で入力してください"),
+    amount: z.number().positive().int()
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<PostReservationBillingBody>({
+    defaultValues: {
+      amount: reservation?.billing?.amount,
+      description: reservation?.billing?.description
+    },
+    resolver: zodResolver(schema)
+  });
 
   function handleGoBack() {
     navigate(-1);
+  }
+
+  async function onValid(data: PostReservationBillingBody) {
+    const response = await postBilling(reservation!.id, data);
+    if (response.success) {
+      queryClient.invalidateQueries({ queryKey: ["reservations for owner"] });
+      navigate(-1);
+      alert("請求を登録しました");
+    } else {
+      alert(
+        `請求の登録に失敗しました\n${response.status}: ${response.message}`
+      );
+    }
   }
 
   if (!reservation) {
@@ -29,12 +68,27 @@ export function BillingPage() {
       <main>
         <Panel className={whitePanel}>
           <FormTitle>Billing</FormTitle>
-          <Form>
+          <Form onSubmit={handleSubmit(onValid)}>
             <FormItem>
-              <label htmlFor="bill">請求金額</label>
+              <label htmlFor="description">請求内容</label>
               <InputWrapper>
-                <Input type="number" id="bill" />
-                <ErrorMessage></ErrorMessage>
+                <Input
+                  type="text"
+                  id="description"
+                  {...register("description")}
+                />
+                <ErrorMessage>{errors.description?.message}</ErrorMessage>
+              </InputWrapper>
+            </FormItem>
+            <FormItem>
+              <label htmlFor="amount">請求金額</label>
+              <InputWrapper>
+                <Input
+                  type="number"
+                  id="amount"
+                  {...register("amount", { valueAsNumber: true })}
+                />
+                <ErrorMessage>{errors.amount?.message}</ErrorMessage>
               </InputWrapper>
             </FormItem>
             <ButtonLayout>

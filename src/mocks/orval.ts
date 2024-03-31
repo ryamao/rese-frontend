@@ -23,7 +23,9 @@ import type {
   PostNotificationEmailBody,
   PostOwnerShopsBody,
   PostOwnersBody,
+  PostReservationBillingBody,
   PostReservationCheckinParams,
+  PostReservationPaymentBody,
   PutCustomerReservationBody,
   PutOwnerShopBody
 } from "../models";
@@ -63,6 +65,22 @@ export const getAuthStatus = <TData = AxiosResponse<GetAuthStatus200Response>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.default.get(`/auth/status`, options);
+};
+
+/**
+ * 予約に対して請求金額を登録する
+ * @summary 請求金額登録
+ */
+export const postReservationBilling = <TData = AxiosResponse<CreatedResponse>>(
+  reservation: number,
+  postReservationBillingBody: PostReservationBillingBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/reservations/${reservation}/billing`,
+    postReservationBillingBody,
+    options
+  );
 };
 
 /**
@@ -322,6 +340,22 @@ export const getOwnerShopReservations = <
 };
 
 /**
+ * 予約に対して決済を行う
+ * @summary 決済
+ */
+export const postReservationPayment = <TData = AxiosResponse<string>>(
+  reservation: number,
+  postReservationPaymentBody: PostReservationPaymentBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/reservations/${reservation}/payment`,
+    postReservationPaymentBody,
+    options
+  );
+};
+
+/**
  * 入店確認用の署名付きURLを取得する
  * @summary 入店確認URL取得
  */
@@ -452,6 +486,7 @@ export const postAuthLogout = <TData = AxiosResponse<NoContentResponse>>(
 
 export type GetAreasResult = AxiosResponse<GetAreas200Response>;
 export type GetAuthStatusResult = AxiosResponse<GetAuthStatus200Response>;
+export type PostReservationBillingResult = AxiosResponse<CreatedResponse>;
 export type GetCustomerResult = AxiosResponse<ShowCustomer200Response>;
 export type GetCustomerFavoritesResult =
   AxiosResponse<GetCustomerFavorites200Response>;
@@ -473,6 +508,7 @@ export type PostOwnerShopsResult = AxiosResponse<PostOwnerShops201Response>;
 export type PutOwnerShopResult = AxiosResponse<NoContentResponse>;
 export type GetOwnerShopReservationsResult =
   AxiosResponse<GetOwnerShopReservations200Response>;
+export type PostReservationPaymentResult = AxiosResponse<string>;
 export type GetReservationSignedUrlResult =
   AxiosResponse<GetReservationSignedUrl200Response>;
 export type PostReservationCheckinResult = AxiosResponse<CreatedResponse>;
@@ -595,6 +631,24 @@ export const getGetCustomerReservationsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1
   ).map(() => ({
+    billing: faker.helpers.arrayElement([
+      {
+        amount: faker.helpers.arrayElement([
+          faker.number.int({ min: 1, max: undefined }),
+          undefined
+        ]),
+        description: faker.helpers.arrayElement([
+          faker.word.sample(),
+          undefined
+        ]),
+        is_paid: faker.helpers.arrayElement([
+          faker.datatype.boolean(),
+          undefined
+        ]),
+        ...overrideResponse
+      },
+      undefined
+    ]),
     id: faker.number.int({ min: undefined, max: undefined }),
     is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
@@ -633,6 +687,24 @@ export const getGetCustomerShopReservationsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1
   ).map(() => ({
+    billing: faker.helpers.arrayElement([
+      {
+        amount: faker.helpers.arrayElement([
+          faker.number.int({ min: 1, max: undefined }),
+          undefined
+        ]),
+        description: faker.helpers.arrayElement([
+          faker.word.sample(),
+          undefined
+        ]),
+        is_paid: faker.helpers.arrayElement([
+          faker.datatype.boolean(),
+          undefined
+        ]),
+        ...overrideResponse
+      },
+      undefined
+    ]),
     id: faker.number.int({ min: undefined, max: undefined }),
     is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
@@ -668,6 +740,24 @@ export const getPostCustomerShopReservationsResponseMock = (
   overrideResponse: any = {}
 ): PostCustomerShopReservations201Response => ({
   reservation: {
+    billing: faker.helpers.arrayElement([
+      {
+        amount: faker.helpers.arrayElement([
+          faker.number.int({ min: 1, max: undefined }),
+          undefined
+        ]),
+        description: faker.helpers.arrayElement([
+          faker.word.sample(),
+          undefined
+        ]),
+        is_paid: faker.helpers.arrayElement([
+          faker.datatype.boolean(),
+          undefined
+        ]),
+        ...overrideResponse
+      },
+      undefined
+    ]),
     id: faker.number.int({ min: undefined, max: undefined }),
     is_checked_in: faker.datatype.boolean(),
     number_of_guests: faker.number.int({ min: 1, max: undefined }),
@@ -796,6 +886,24 @@ export const getGetOwnerShopReservationsResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1
   ).map(() => ({
+    billing: faker.helpers.arrayElement([
+      {
+        amount: faker.helpers.arrayElement([
+          faker.number.int({ min: 1, max: undefined }),
+          undefined
+        ]),
+        description: faker.helpers.arrayElement([
+          faker.word.sample(),
+          undefined
+        ]),
+        is_paid: faker.helpers.arrayElement([
+          faker.datatype.boolean(),
+          undefined
+        ]),
+        ...overrideResponse
+      },
+      undefined
+    ]),
     customer_name: faker.word.sample(),
     id: faker.number.int({ min: undefined, max: undefined }),
     is_checked_in: faker.datatype.boolean(),
@@ -805,6 +913,9 @@ export const getGetOwnerShopReservationsResponseMock = (
   })),
   ...overrideResponse
 });
+
+export const getPostReservationPaymentResponseMock = (): string =>
+  faker.word.sample();
 
 export const getGetReservationSignedUrlResponseMock = (
   overrideResponse: any = {}
@@ -934,6 +1045,18 @@ export const getGetAuthStatusMockHandler = (
         }
       }
     );
+  });
+};
+
+export const getPostReservationBillingMockHandler = () => {
+  return http.post("*/reservations/:reservation/billing", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
   });
 };
 
@@ -1214,6 +1337,27 @@ export const getGetOwnerShopReservationsMockHandler = (
   });
 };
 
+export const getPostReservationPaymentMockHandler = (
+  overrideResponse?: string
+) => {
+  return http.post("*/reservations/:reservation/payment", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse
+          ? overrideResponse
+          : getPostReservationPaymentResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
 export const getGetReservationSignedUrlMockHandler = (
   overrideResponse?: GetReservationSignedUrl200Response
 ) => {
@@ -1359,6 +1503,7 @@ export const getPostAuthLogoutMockHandler = () => {
 export const getReseMock = () => [
   getGetAreasMockHandler(),
   getGetAuthStatusMockHandler(),
+  getPostReservationBillingMockHandler(),
   getGetCustomerMockHandler(),
   getGetCustomerFavoritesMockHandler(),
   getGetCustomerReservationsMockHandler(),
@@ -1375,6 +1520,7 @@ export const getReseMock = () => [
   getPostOwnerShopsMockHandler(),
   getPutOwnerShopMockHandler(),
   getGetOwnerShopReservationsMockHandler(),
+  getPostReservationPaymentMockHandler(),
   getGetReservationSignedUrlMockHandler(),
   getPostReservationCheckinMockHandler(),
   getGetShopsMockHandler(),
