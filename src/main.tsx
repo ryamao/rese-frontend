@@ -11,6 +11,7 @@ import {
 
 import { MenuOverlayProvider } from "./contexts/MenuOverlayContext";
 import { AdminPage } from "./pages/AdminPage";
+import { BillingPage } from "./pages/BillingPage";
 import { CustomerReservationPage } from "./pages/CustomerReservationPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
@@ -18,6 +19,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { OwnerPage } from "./pages/OwnerPage";
 import { OwnerShopPage } from "./pages/OwnerShopPage";
+import { PaymentPage } from "./pages/PaymentPage";
 import { QRCodeReaderPage } from "./pages/QRCodeReaderPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ReservationCompletedPage } from "./pages/ReservationCompletedPage";
@@ -32,6 +34,7 @@ import { GuestsOnlyRoute } from "./routes/GuestsOnlyRoute";
 import { NeedsToVerifyEmailRoute } from "./routes/NeedsToVerifyEmailRoute";
 import { OwnersOnlyRoute } from "./routes/OwnersOnlyRoute";
 import { ScrollRestorationRoute } from "./routes/ScrollRestorationRoute";
+import { StripeElementsRoute } from "./routes/StripeElementsRoute";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +58,9 @@ const router = createBrowserRouter(
               element={<CustomerReservationPage />}
             />
             <Route path="/done" element={<ReservationCompletedPage />} />
+            <Route element={<StripeElementsRoute />}>
+              <Route path="/payment" element={<PaymentPage />} />
+            </Route>
           </Route>
           <Route element={<AdminOnlyRoute />}>
             <Route path="/admin" element={<AdminPage />} />
@@ -67,6 +73,7 @@ const router = createBrowserRouter(
               element={<ReservationViewerPage />}
             />
             <Route path="/owner/check-in" element={<QRCodeReaderPage />} />
+            <Route path="/owner/billing" element={<BillingPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
