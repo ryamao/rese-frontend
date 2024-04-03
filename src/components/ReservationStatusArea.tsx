@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 
 import { ReservationStatusCard } from "./ReservationStatusCard";
+import { ShopReviewCard } from "./ShopReviewCard";
 import { ReservationData } from "../models";
 
 export interface ReservationStatusAreaProps {
@@ -14,11 +15,18 @@ export function ReservationStatusArea({
   onClickCard,
   onRemove
 }: ReservationStatusAreaProps) {
+  const paidReservations = reservations.filter(
+    (r) => r.billing && r.billing.is_paid
+  );
+  const unpaidReservations = reservations.filter(
+    (r) => !r.billing || !r.billing.is_paid
+  );
+
   return (
     <div>
       <Heading>予約状況</Heading>
       <List>
-        {reservations.map((reservation, index) => (
+        {unpaidReservations.map((reservation, index) => (
           <li key={reservation.id}>
             <ReservationStatusCard
               title={`予約${index + 1}`}
@@ -26,6 +34,14 @@ export function ReservationStatusArea({
               onClick={onClickCard}
               onRemove={onRemove}
             />
+          </li>
+        ))}
+      </List>
+      <Heading>レビュー</Heading>
+      <List>
+        {paidReservations.map((reservation) => (
+          <li key={reservation.id}>
+            <ShopReviewCard reservation={reservation} />
           </li>
         ))}
       </List>

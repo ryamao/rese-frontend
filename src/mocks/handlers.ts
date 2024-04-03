@@ -165,14 +165,20 @@ const sampleReservations = [
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-01T18:00:00+09:00",
     number_of_guests: 2,
-    is_checked_in: true
+    is_checked_in: true,
+    billing: {
+      amount: 10000,
+      description: "サンプル請求",
+      is_paid: true
+    }
   },
   {
     id: 2,
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-02T19:00:00+09:00",
     number_of_guests: 4,
-    is_checked_in: false
+    is_checked_in: false,
+    billing: undefined
   },
   {
     id: 3,
