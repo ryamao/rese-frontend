@@ -302,3 +302,42 @@ export function useCheckInUrl(reservationId?: number) {
 
   return { ...url, invalidate };
 }
+
+export function useReviews(shopId: number) {
+  const queryClient = useQueryClient();
+  const { getReviews, postReviews } = useBackendAccessContext();
+
+  const reviews = useInfiniteQuery({
+    queryKey: ["reviews", shopId],
+    queryFn: ({ pageParam }) => getReviews(shopId, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (
+        lastPage.success &&
+        lastPage.data.meta.current_page < lastPage.data.meta.last_page
+      ) {
+        return lastPage.data.meta.current_page + 1;
+      } else {
+        return undefined;
+      }
+    },
+    staleTime: Infinity
+  });
+
+  useEffect(() => {
+    if (reviews.hasNextPage) {
+      reviews.fetchNextPage();
+    }
+  }, [reviews]);
+
+  const post = useMutation({
+    mutationFn: (body: { rating: number; comment: string }) => {
+      return postReviews(shopId, body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviews", shopId] });
+    }
+  });
+
+  return { ...reviews, post: post.mutate };
+}

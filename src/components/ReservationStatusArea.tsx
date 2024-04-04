@@ -14,11 +14,15 @@ export function ReservationStatusArea({
   onClickCard,
   onRemove
 }: ReservationStatusAreaProps) {
+  const unpaidReservations = reservations.filter(
+    (r) => !r.billing || !r.billing.is_paid
+  );
+
   return (
     <div>
       <Heading>予約状況</Heading>
       <List>
-        {reservations.map((reservation, index) => (
+        {unpaidReservations.map((reservation, index) => (
           <li key={reservation.id}>
             <ReservationStatusCard
               title={`予約${index + 1}`}

@@ -1,7 +1,12 @@
 import { HttpResponse, http } from "msw";
 
 import { Paginated } from "../HttpClient";
-import { OwnerShopData, ReservationForOwner, ShopData } from "../models";
+import {
+  OwnerShopData,
+  ReservationForOwner,
+  ShopData,
+  ShopReviewData
+} from "../models";
 
 const sampleAreas = [
   { id: 1, name: "東京都" },
@@ -165,14 +170,20 @@ const sampleReservations = [
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-01T18:00:00+09:00",
     number_of_guests: 2,
-    is_checked_in: true
+    is_checked_in: true,
+    billing: {
+      amount: 10000,
+      description: "サンプル請求",
+      is_paid: true
+    }
   },
   {
     id: 2,
     shop: { id: 1, name: "飲食店1" },
     reserved_at: "2022-01-02T19:00:00+09:00",
     number_of_guests: 4,
-    is_checked_in: false
+    is_checked_in: false,
+    billing: undefined
   },
   {
     id: 3,
@@ -209,6 +220,61 @@ const sampleOwnerShops: OwnerShopData[] = [
     detail: "サンプルテキスト3"
   }
 ];
+
+const sampleReviews: Paginated<ShopReviewData> = {
+  meta: {
+    current_page: 1,
+    from: 1,
+    last_page: 1,
+    path: "http://localhost:8000/shops/1/reviews",
+    per_page: 5,
+    to: 3,
+    total: 3,
+    links: [
+      {
+        url: null,
+        label: "&laquo; Previous",
+        active: false
+      },
+      {
+        url: null,
+        label: "1",
+        active: false
+      },
+      {
+        url: null,
+        label: "Next &raquo;",
+        active: false
+      }
+    ]
+  },
+  links: {
+    first: "http://localhost:8000/shops/1/reviews?page=1",
+    last: "http://localhost:8000/shops/1/reviews?page=1",
+    prev: null,
+    next: null
+  },
+  data: [
+    {
+      id: 1,
+      customer_name: "ユーザー1",
+      rating: 5,
+      comment: "サンプルコメント1"
+    },
+    {
+      id: 2,
+      customer_name: "ユーザー2",
+      rating: 4,
+      comment: "サンプルコメント2"
+    },
+    {
+      id: 3,
+      customer_name: "ユーザー3",
+      rating: 3,
+      comment: "サンプルコメント3"
+    }
+  ]
+};
 
 export const handlers = [
   http.get("*/sanctum/csrf-cookie", async () => {
@@ -327,6 +393,12 @@ export const handlers = [
     return HttpResponse.text(null, { status: 201 });
   }),
   http.post("*/reservations/:reservationId/payment", async () => {
+    return HttpResponse.text(null, { status: 201 });
+  }),
+  http.get("*/shops/:shopId/reviews", async () => {
+    return HttpResponse.json(sampleReviews);
+  }),
+  http.post("*/shops/:shopId/reviews", async () => {
     return HttpResponse.text(null, { status: 201 });
   })
 ];

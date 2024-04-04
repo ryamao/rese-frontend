@@ -14,6 +14,7 @@ import type {
   GetCustomerFavoritesParams,
   GetOwnerShopReservationsParams,
   GetSanctumCsrfCookie204Response,
+  GetShopReviewsParams,
   GetShopsParams,
   NoContentResponse,
   OkResponse,
@@ -26,6 +27,8 @@ import type {
   PostReservationBillingBody,
   PostReservationCheckinParams,
   PostReservationPaymentBody,
+  PostShopRatingBody,
+  PostShopReviewsBody,
   PutCustomerReservationBody,
   PutOwnerShopBody
 } from "../models";
@@ -40,6 +43,7 @@ import type {
   GetOwnerShops200Response,
   GetReservationSignedUrl200Response,
   GetShop200Response,
+  GetShopReviews200Response,
   GetShops200Response,
   PostCustomerShopReservations201Response,
   PostOwnerShops201Response,
@@ -409,6 +413,55 @@ export const getShop = <TData = AxiosResponse<GetShop200Response>>(
 };
 
 /**
+ * 店舗に対して5段階評価を登録する
+ * @summary 5段階評価登録
+ */
+export const postShopRating = <TData = AxiosResponse<CreatedResponse>>(
+  shop: number,
+  postShopRatingBody: PostShopRatingBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/shops/${shop}/rating`,
+    postShopRatingBody,
+    options
+  );
+};
+
+/**
+ * 指定した店舗のレビュー一覧を取得する
+ * @summary レビュー一覧取得
+ */
+export const getShopReviews = <
+  TData = AxiosResponse<GetShopReviews200Response>
+>(
+  shop: number,
+  params?: GetShopReviewsParams,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.get(`/shops/${shop}/reviews`, {
+    ...options,
+    params: { ...params, ...options?.params }
+  });
+};
+
+/**
+ * 指定した店舗にレビューを投稿する
+ * @summary レビュー投稿
+ */
+export const postShopReviews = <TData = AxiosResponse<CreatedResponse>>(
+  shop: number,
+  postShopReviewsBody: PostShopReviewsBody,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.default.post(
+    `/shops/${shop}/reviews`,
+    postShopReviewsBody,
+    options
+  );
+};
+
+/**
  * CSRFトークンを取得する
  * @summary CSRFトークン取得
  */
@@ -514,6 +567,9 @@ export type GetReservationSignedUrlResult =
 export type PostReservationCheckinResult = AxiosResponse<CreatedResponse>;
 export type GetShopsResult = AxiosResponse<GetShops200Response>;
 export type GetShopResult = AxiosResponse<GetShop200Response>;
+export type PostShopRatingResult = AxiosResponse<CreatedResponse>;
+export type GetShopReviewsResult = AxiosResponse<GetShopReviews200Response>;
+export type PostShopReviewsResult = AxiosResponse<CreatedResponse>;
 export type GetSanctumCsrfCookieResult =
   AxiosResponse<GetSanctumCsrfCookie204Response>;
 export type PostAuthRegisterResult = AxiosResponse<
@@ -619,6 +675,7 @@ export const getGetCustomerFavoritesResponseMock = (
     id: faker.number.int({ min: undefined, max: undefined }),
     image_url: faker.internet.url(),
     name: faker.word.sample(),
+    rating: faker.helpers.arrayElement([{}, undefined]),
     ...overrideResponse
   })),
   ...overrideResponse
@@ -673,6 +730,7 @@ export const getGetCustomerReservationsResponseMock = (
       id: faker.number.int({ min: undefined, max: undefined }),
       image_url: faker.internet.url(),
       name: faker.word.sample(),
+      rating: faker.helpers.arrayElement([{}, undefined]),
       ...overrideResponse
     },
     ...overrideResponse
@@ -729,6 +787,7 @@ export const getGetCustomerShopReservationsResponseMock = (
       id: faker.number.int({ min: undefined, max: undefined }),
       image_url: faker.internet.url(),
       name: faker.word.sample(),
+      rating: faker.helpers.arrayElement([{}, undefined]),
       ...overrideResponse
     },
     ...overrideResponse
@@ -782,6 +841,7 @@ export const getPostCustomerShopReservationsResponseMock = (
       id: faker.number.int({ min: undefined, max: undefined }),
       image_url: faker.internet.url(),
       name: faker.word.sample(),
+      rating: faker.helpers.arrayElement([{}, undefined]),
       ...overrideResponse
     },
     ...overrideResponse
@@ -977,6 +1037,7 @@ export const getGetShopsResponseMock = (
     id: faker.number.int({ min: undefined, max: undefined }),
     image_url: faker.internet.url(),
     name: faker.word.sample(),
+    rating: faker.helpers.arrayElement([{}, undefined]),
     ...overrideResponse
   })),
   ...overrideResponse
@@ -1005,8 +1066,52 @@ export const getGetShopResponseMock = (
     id: faker.number.int({ min: undefined, max: undefined }),
     image_url: faker.internet.url(),
     name: faker.word.sample(),
+    rating: faker.helpers.arrayElement([{}, undefined]),
     ...overrideResponse
   },
+  ...overrideResponse
+});
+
+export const getGetShopReviewsResponseMock = (
+  overrideResponse: any = {}
+): GetShopReviews200Response => ({
+  links: {
+    first: faker.internet.url(),
+    last: faker.internet.url(),
+    next: faker.internet.url(),
+    prev: faker.internet.url(),
+    ...overrideResponse
+  },
+  meta: {
+    current_page: faker.number.int({ min: 1, max: undefined }),
+    from: {},
+    last_page: faker.number.int({ min: 1, max: undefined }),
+    links: Array.from(
+      { length: faker.number.int({ min: 1, max: 10 }) },
+      (_, i) => i + 1
+    ).map(() => ({
+      active: faker.datatype.boolean(),
+      label: faker.word.sample(),
+      url: faker.internet.url(),
+      ...overrideResponse
+    })),
+    path: faker.internet.url(),
+    per_page: faker.number.int({ min: 1, max: undefined }),
+    to: {},
+    total: faker.number.int({ min: 0, max: undefined }),
+    ...overrideResponse
+  },
+  ...overrideResponse,
+  data: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1
+  ).map(() => ({
+    comment: faker.word.sample(),
+    customer_name: faker.word.sample(),
+    id: faker.number.int({ min: undefined, max: undefined }),
+    rating: faker.number.int({ min: 1, max: 5 }),
+    ...overrideResponse
+  })),
   ...overrideResponse
 });
 
@@ -1429,6 +1534,49 @@ export const getGetShopMockHandler = (
   });
 };
 
+export const getPostShopRatingMockHandler = () => {
+  return http.post("*/shops/:shop/rating", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
+export const getGetShopReviewsMockHandler = (
+  overrideResponse?: GetShopReviews200Response
+) => {
+  return http.get("*/shops/:shop/reviews", async () => {
+    await delay(1000);
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse ? overrideResponse : getGetShopReviewsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  });
+};
+
+export const getPostShopReviewsMockHandler = () => {
+  return http.post("*/shops/:shop/reviews", async () => {
+    await delay(1000);
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  });
+};
+
 export const getGetSanctumCsrfCookieMockHandler = () => {
   return http.get("*/sanctum/csrf-cookie", async () => {
     await delay(1000);
@@ -1525,6 +1673,9 @@ export const getReseMock = () => [
   getPostReservationCheckinMockHandler(),
   getGetShopsMockHandler(),
   getGetShopMockHandler(),
+  getPostShopRatingMockHandler(),
+  getGetShopReviewsMockHandler(),
+  getPostShopReviewsMockHandler(),
   getGetSanctumCsrfCookieMockHandler(),
   getPostAuthRegisterMockHandler(),
   getPostAuthEmailVerificationNotificationMockHandler(),
