@@ -1,7 +1,12 @@
 import { HttpResponse, http } from "msw";
 
 import { Paginated } from "../HttpClient";
-import { OwnerShopData, ReservationForOwner, ShopData } from "../models";
+import {
+  OwnerShopData,
+  ReservationForOwner,
+  ShopData,
+  ShopReviewData
+} from "../models";
 
 const sampleAreas = [
   { id: 1, name: "東京都" },
@@ -216,6 +221,61 @@ const sampleOwnerShops: OwnerShopData[] = [
   }
 ];
 
+const sampleReviews: Paginated<ShopReviewData> = {
+  meta: {
+    current_page: 1,
+    from: 1,
+    last_page: 1,
+    path: "http://localhost:8000/shops/1/reviews",
+    per_page: 5,
+    to: 3,
+    total: 3,
+    links: [
+      {
+        url: null,
+        label: "&laquo; Previous",
+        active: false
+      },
+      {
+        url: null,
+        label: "1",
+        active: false
+      },
+      {
+        url: null,
+        label: "Next &raquo;",
+        active: false
+      }
+    ]
+  },
+  links: {
+    first: "http://localhost:8000/shops/1/reviews?page=1",
+    last: "http://localhost:8000/shops/1/reviews?page=1",
+    prev: null,
+    next: null
+  },
+  data: [
+    {
+      id: 1,
+      customer_name: "ユーザー1",
+      rating: 5,
+      comment: "サンプルコメント1"
+    },
+    {
+      id: 2,
+      customer_name: "ユーザー2",
+      rating: 4,
+      comment: "サンプルコメント2"
+    },
+    {
+      id: 3,
+      customer_name: "ユーザー3",
+      rating: 3,
+      comment: "サンプルコメント3"
+    }
+  ]
+};
+
 export const handlers = [
   http.get("*/sanctum/csrf-cookie", async () => {
     return HttpResponse.text(null, {
@@ -334,5 +394,8 @@ export const handlers = [
   }),
   http.post("*/reservations/:reservationId/payment", async () => {
     return HttpResponse.text(null, { status: 201 });
+  }),
+  http.post("*/shops/:shopId/reviews", async () => {
+    return HttpResponse.json(sampleReviews);
   })
 ];

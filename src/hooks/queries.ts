@@ -302,3 +302,32 @@ export function useCheckInUrl(reservationId?: number) {
 
   return { ...url, invalidate };
 }
+
+export function useReviews(shopId: number) {
+  const { getReviews } = useBackendAccessContext();
+
+  const reviews = useInfiniteQuery({
+    queryKey: ["reviews", shopId],
+    queryFn: ({ pageParam }) => getReviews(shopId, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (
+        lastPage.success &&
+        lastPage.data.meta.current_page < lastPage.data.meta.last_page
+      ) {
+        return lastPage.data.meta.current_page + 1;
+      } else {
+        return undefined;
+      }
+    },
+    staleTime: Infinity
+  });
+
+  useEffect(() => {
+    if (reviews.hasNextPage) {
+      reviews.fetchNextPage();
+    }
+  }, [reviews]);
+
+  return reviews;
+}
