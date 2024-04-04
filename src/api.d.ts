@@ -420,6 +420,50 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/shops/{shop}/rating": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 5段階評価登録
+     * @description 店舗に対して5段階評価を登録する
+     */
+    post: operations["post-shop-rating"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/shops/{shop}/reviews": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * レビュー一覧取得
+     * @description 指定した店舗のレビュー一覧を取得する
+     */
+    get: operations["get-shop-reviews"];
+    put?: never;
+    /**
+     * レビュー投稿
+     * @description 指定した店舗にレビューを投稿する
+     */
+    post: operations["post-shop-reviews"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/sanctum/csrf-cookie": {
     parameters: {
       query?: never;
@@ -623,6 +667,8 @@ export interface components {
        * @enum {string}
        */
       favorite_status: "unknown" | "marked" | "unmarked";
+      /** @description 評価情報 */
+      rating?: number | null;
     };
     /** @description 店舗代表者向け飲食店情報 */
     "owner-shop-data": {
@@ -668,7 +714,7 @@ export interface components {
         description?: string;
         /** @description 支払い済みかどうか */
         is_paid?: boolean;
-      };
+      } | null;
     };
     "reservation-error": {
       message: string;
@@ -713,7 +759,21 @@ export interface components {
         description?: string;
         /** @description 支払い済みかどうか */
         is_paid?: boolean;
-      };
+      } | null;
+    };
+    /** @description レビュー情報 */
+    "shop-review-data": {
+      /**
+       * Format: int64
+       * @description レビューID
+       */
+      id: number;
+      /** @description 顧客名 */
+      customer_name: string;
+      /** @description 評価 */
+      rating: number;
+      /** @description コメント */
+      comment: string;
     };
     /** @description ページネーション */
     pagination: {
@@ -1086,6 +1146,32 @@ export interface components {
         };
       };
     };
+    /** @description レビュー一覧取得成功 */
+    "get-shop-reviews-200": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["pagination"] & {
+          data: components["schemas"]["shop-review-data"][];
+        };
+      };
+    };
+    /** @description レビュー投稿のバリデーションエラー */
+    "post-shop-reviews-422": {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": {
+          message: string;
+          errors: {
+            rating?: string[];
+            comment?: string[];
+          };
+        };
+      };
+    };
   };
   parameters: {
     /** @description ユーザーID */
@@ -1292,6 +1378,23 @@ export interface components {
            * @example テスト詳細
            */
           detail: string;
+        };
+      };
+    };
+    /** @description レビュー投稿リクエスト */
+    "post-shop-reviews": {
+      content: {
+        "application/json": {
+          /**
+           * @description 評価
+           * @example 5
+           */
+          rating: number;
+          /**
+           * @description コメント
+           * @example テストコメント
+           */
+          comment?: string | null;
         };
       };
     };
@@ -1780,6 +1883,74 @@ export interface operations {
     responses: {
       200: components["responses"]["get-shop-200"];
       404: components["responses"]["not-found"];
+    };
+  };
+  "post-shop-rating": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 飲食店ID */
+        shop: components["parameters"]["shop-id"];
+      };
+      cookie?: never;
+    };
+    /** @description 評価情報 */
+    requestBody: {
+      content: {
+        "application/json": {
+          /**
+           * @description 評価
+           * @example 3
+           */
+          rating: number;
+        };
+      };
+    };
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["unprocessable-entity"];
+    };
+  };
+  "get-shop-reviews": {
+    parameters: {
+      query?: {
+        /** @description ページ番号 */
+        page?: components["parameters"]["page-query"];
+      };
+      header?: never;
+      path: {
+        /** @description 飲食店ID */
+        shop: components["parameters"]["shop-id"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: components["responses"]["get-shop-reviews-200"];
+      404: components["responses"]["not-found"];
+    };
+  };
+  "post-shop-reviews": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description 飲食店ID */
+        shop: components["parameters"]["shop-id"];
+      };
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["post-shop-reviews"];
+    responses: {
+      201: components["responses"]["created"];
+      401: components["responses"]["unauthorized"];
+      403: components["responses"]["forbidden"];
+      404: components["responses"]["not-found"];
+      422: components["responses"]["post-shop-reviews-422"];
     };
   };
   "get-sanctum-csrf-cookie": {

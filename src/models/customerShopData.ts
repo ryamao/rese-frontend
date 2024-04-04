@@ -7,6 +7,7 @@
  */
 import type { AreaData } from "./areaData";
 import type { CustomerShopDataFavoriteStatus } from "./customerShopDataFavoriteStatus";
+import type { CustomerShopDataRating } from "./customerShopDataRating";
 import type { GenreData } from "./genreData";
 
 /**
@@ -25,4 +26,6 @@ export interface CustomerShopData {
   image_url: string;
   /** 飲食店名 */
   name: string;
+  /** 評価情報 */
+  rating?: CustomerShopDataRating;
 }
