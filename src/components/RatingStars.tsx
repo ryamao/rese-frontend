@@ -11,16 +11,27 @@ export interface RatingStarsProps {
 
 export function RatingStars({ rating, onClick }: RatingStarsProps) {
   const defaultValue = Math.min(Math.max(Math.floor(rating ?? 0), 0), 5);
-  const [value, setValue] = useState(defaultValue);
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [hoverValue, setHoverValue] = useState<number | null>(null);
 
   return (
-    <div onMouseLeave={() => setValue(defaultValue)}>
+    <div onMouseLeave={() => setHoverValue(null)}>
       {Array.from({ length: 5 }).map((_, index) => (
         <Star
           key={index}
-          className={index < value ? starStyle : grayStarStyle}
-          onMouseMove={() => setValue(index + 1)}
-          onClick={() => onClick?.(index + 1)}
+          className={
+            (selectedValue && index < selectedValue) ||
+            (hoverValue && index < hoverValue)
+              ? starStyle
+              : grayStarStyle
+          }
+          onMouseMove={() => rating === undefined && setHoverValue(index + 1)}
+          onClick={() => {
+            if (rating === undefined) {
+              setSelectedValue(index + 1);
+              onClick?.(index + 1);
+            }
+          }}
         />
       ))}
     </div>
@@ -28,7 +39,7 @@ export function RatingStars({ rating, onClick }: RatingStarsProps) {
 }
 
 const Star = styled(MdStar)`
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
 `;
 

@@ -12,8 +12,9 @@ import { NotFoundPage } from "./NotFoundPage";
 import { PageBase } from "./PageBase";
 import { ShopDetailArea } from "../components/ShopDetailArea";
 import { ShopReservationArea } from "../components/ShopReservationArea";
+import { ShopReviewArea } from "../components/ShopReviewArea";
 import { useMenuOverlayContext } from "../contexts/MenuOverlayContext";
-import { useShop, useShopReservations } from "../hooks/queries";
+import { useReviews, useShop, useShopReservations } from "../hooks/queries";
 import { ShopData } from "../models";
 import { useAuthStatus } from "../routes/BackendAccessRoute";
 
@@ -25,10 +26,12 @@ export function ShopDetailPage() {
   const customerId = authStatus.status === "customer" ? authStatus.id : NaN;
 
   const { state } = useLocation() as Location<ShopData | undefined>;
-  const shop = useShop(shopId, state);
-  const reservations = useShopReservations(customerId, shopId);
   const { open } = useMenuOverlayContext();
   const navigate = useNavigate();
+
+  const shop = useShop(shopId, state);
+  const reservations = useShopReservations(customerId, shopId);
+  const reviews = useReviews(shopId);
 
   if (shop.isError) {
     return <ErrorPage message={`500: ${shop.error.message}`} />;
@@ -54,6 +57,16 @@ export function ShopDetailPage() {
     );
   }
 
+  if (reviews.isError) {
+    return <ErrorPage message={`500: ${reviews.error.message}`} />;
+  }
+  if (reviews.isPending) {
+    return <PageBase>Loading...</PageBase>;
+  }
+  const reviewsData = reviews.data.pages.flatMap((page) =>
+    page.success ? page.data.data : []
+  );
+
   function handleClickBackButton() {
     navigate(-1);
   }
@@ -75,13 +88,14 @@ export function ShopDetailPage() {
         onSubmit={handleSubmit}
         onClickLogin={open}
       />
+      <ShopReviewArea reviews={reviewsData} />
     </PageBase>
   );
 }
 
 const wrapperStyle = css`
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: repeat(3, auto);
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem 5rem;
   max-width: 1230px;
@@ -93,7 +107,7 @@ const wrapperStyle = css`
     grid-column: 1 / 2;
   }
 
-  & > div {
+  & > div:nth-of-type(1) {
     grid-row: 2 / 3;
     grid-column: 1 / 1;
   }
@@ -103,12 +117,17 @@ const wrapperStyle = css`
     grid-column: 2 / 3;
   }
 
+  & > div:nth-of-type(2) {
+    grid-row: 3 / 4;
+    grid-column: 1 / 3;
+  }
+
   @media (width <= 1024px) {
     gap: 2rem;
   }
 
   @media (width <= 768px) {
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: repeat(4, auto);
     grid-template-columns: 1fr;
     gap: 0 0;
     padding: 1rem;
@@ -119,7 +138,7 @@ const wrapperStyle = css`
       grid-column: 1 / 2;
     }
 
-    & > div {
+    & > div:nth-of-type(1) {
       grid-row: 2 / 3;
       grid-column: 1 / 2;
     }
@@ -128,6 +147,12 @@ const wrapperStyle = css`
       grid-row: 3 / 4;
       grid-column: 1 / 2;
       margin-top: 2rem;
+    }
+
+    & > div:nth-of-type(2) {
+      grid-row: 4 / 5;
+      grid-column: 1 / 2;
+      margin-top: 4rem;
     }
   }
 `;

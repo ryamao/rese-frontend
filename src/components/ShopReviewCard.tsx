@@ -1,22 +1,19 @@
 import styled from "@emotion/styled";
-import dayjs from "dayjs";
 
 import { RatingStars } from "./RatingStars";
 import { blueButton, whitePanel } from "./styles";
-import { ReservationData } from "../models";
+import { ShopData } from "../models";
 
 export interface ShopReviewCardProps {
-  reservation: ReservationData;
+  shop: ShopData;
+  onSelectRating?: (shop: ShopData, rating: number) => void;
 }
 
-export function ShopReviewCard({ reservation }: ShopReviewCardProps) {
+export function ShopReviewCard({ shop, onSelectRating }: ShopReviewCardProps) {
   return (
     <Card className={whitePanel}>
-      <h3>
-        {reservation.shop.name} (
-        {dayjs(reservation.reserved_at).format("YYYY/MM/DD HH:mm")})
-      </h3>
-      <RatingStars />
+      <h3>{shop.name}</h3>
+      <RatingStars onClick={(rating) => onSelectRating?.(shop, rating)} />
       <Form>
         <Textarea rows={5}></Textarea>
         <ButtonLayout>

@@ -1,21 +1,22 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ShopReviewCard } from "./ShopReviewCard";
-import { ReservationData } from "../models";
+import { ShopData } from "../models";
 
 const meta = {
   title: "Components/Shop/ShopReviewCard",
   component: ShopReviewCard,
   tags: ["autodocs"],
   args: {
-    reservation: {
+    shop: {
       id: 1,
-      shop: {
-        name: "仙人"
-      },
-      reserved_at: "2021-04-01T17:00:00+09:00",
-      number_of_guests: 1
-    } as ReservationData
+      name: "飲食店1",
+      area: { id: 1, name: "東京都" },
+      genre: { id: 1, name: "寿司" },
+      image_url: "https://via.placeholder.com/800x500",
+      detail: "サンプルテキスト1",
+      favorite_status: "marked"
+    } as ShopData
   }
 } satisfies Meta<typeof ShopReviewCard>;
 
