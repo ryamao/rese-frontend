@@ -12,6 +12,8 @@ import {
   PostOwnersBody,
   PostReservationBillingBody,
   PostReservationPaymentBody,
+  PostShopReviews422Response,
+  PostShopReviewsBody,
   PutOwnerShopBody,
   ReservationData,
   ReservationForOwner,
@@ -851,6 +853,42 @@ export class HttpClient {
       );
       if (response.status === 200 && data) {
         return { success: true, data };
+      } else {
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        status: 500,
+        message: String(error)
+      };
+    }
+  }
+
+  async postReviews(
+    shopId: number,
+    body: PostShopReviewsBody
+  ): Promise<EndpointResponse<never, PostShopReviews422Response>> {
+    try {
+      await this.client.GET("/sanctum/csrf-cookie");
+      const { response } = await this.client.POST("/shops/{shop}/reviews", {
+        params: { path: { shop: shopId } },
+        body
+      });
+      if (response.status === 201) {
+        return { success: true, data: undefined as never };
+      } else if (response.status === 422) {
+        const json = (await response.json()) as PostShopReviews422Response;
+        return {
+          success: false,
+          status: response.status,
+          message: response.statusText,
+          errors: json
+        };
       } else {
         return {
           success: false,

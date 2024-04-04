@@ -42,6 +42,7 @@ export function createMockBackendAccessState({
     postCheckIn: vitest.fn(),
     postBilling: vitest.fn(),
     postPayment: vitest.fn(),
-    getReviews: vitest.fn()
+    getReviews: vitest.fn(),
+    postReviews: vitest.fn()
   };
 }

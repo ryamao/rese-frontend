@@ -304,7 +304,8 @@ export function useCheckInUrl(reservationId?: number) {
 }
 
 export function useReviews(shopId: number) {
-  const { getReviews } = useBackendAccessContext();
+  const queryClient = useQueryClient();
+  const { getReviews, postReviews } = useBackendAccessContext();
 
   const reviews = useInfiniteQuery({
     queryKey: ["reviews", shopId],
@@ -329,5 +330,14 @@ export function useReviews(shopId: number) {
     }
   }, [reviews]);
 
-  return reviews;
+  const post = useMutation({
+    mutationFn: (body: { rating: number; comment: string }) => {
+      return postReviews(shopId, body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviews", shopId] });
+    }
+  });
+
+  return { ...reviews, post: post.mutate };
 }

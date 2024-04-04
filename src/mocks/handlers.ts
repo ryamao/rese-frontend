@@ -395,7 +395,10 @@ export const handlers = [
   http.post("*/reservations/:reservationId/payment", async () => {
     return HttpResponse.text(null, { status: 201 });
   }),
-  http.post("*/shops/:shopId/reviews", async () => {
+  http.get("*/shops/:shopId/reviews", async () => {
     return HttpResponse.json(sampleReviews);
+  }),
+  http.post("*/shops/:shopId/reviews", async () => {
+    return HttpResponse.text(null, { status: 201 });
   })
 ];

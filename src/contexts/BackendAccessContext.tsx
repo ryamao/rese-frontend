@@ -25,6 +25,8 @@ import {
   PostOwnersBody,
   PostReservationBillingBody,
   PostReservationPaymentBody,
+  PostShopReviews422Response,
+  PostShopReviewsBody,
   PutOwnerShopBody,
   ReservationData,
   ReservationForOwner,
@@ -103,6 +105,10 @@ export interface BackendAccessContextType {
     shopId: number,
     page?: number
   ) => Promise<EndpointResponse<Paginated<ShopReviewData>>>;
+  postReviews: (
+    shopId: number,
+    body: PostShopReviewsBody
+  ) => Promise<EndpointResponse<never, PostShopReviews422Response>>;
 }
 
 export const BackendAccessContext = createContext<BackendAccessContextType>(
@@ -177,6 +183,7 @@ export function createBackendAccessContextType({
       httpClient.postBilling(reservationId, body),
     postPayment: (reservationId, body) =>
       httpClient.postPayment(reservationId, body),
-    getReviews: (shopId, page) => httpClient.getReviews(shopId, page)
+    getReviews: (shopId, page) => httpClient.getReviews(shopId, page),
+    postReviews: (shopId, body) => httpClient.postReviews(shopId, body)
   };
 }
