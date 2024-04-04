@@ -76,6 +76,11 @@ export function ShopDetailPage() {
     navigate("/done");
   }
 
+  function handleReviewSubmit(rating: number, comment: string) {
+    reviews.post({ rating, comment });
+    alert("レビューを投稿しました");
+  }
+
   return (
     <PageBase wrapperStyle={wrapperStyle}>
       <ShopDetailArea
@@ -88,7 +93,11 @@ export function ShopDetailPage() {
         onSubmit={handleSubmit}
         onClickLogin={open}
       />
-      <ShopReviewArea reviews={reviewsData} />
+      <ShopReviewArea
+        postable={authStatus.status === "customer"}
+        reviews={reviewsData}
+        onReviewSubmit={handleReviewSubmit}
+      />
     </PageBase>
   );
 }

@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 import { ShopReviewArea } from "./ShopReviewArea";
 
@@ -7,6 +8,7 @@ const meta = {
   component: ShopReviewArea,
   tags: ["autodocs"],
   args: {
+    postable: true,
     reviews: [
       {
         id: 1,
@@ -26,7 +28,8 @@ const meta = {
         rating: 3,
         comment: "サンプルコメント3"
       }
-    ]
+    ],
+    onReviewSubmit: fn()
   }
 } satisfies Meta<typeof ShopReviewArea>;
 
