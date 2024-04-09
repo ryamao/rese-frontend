@@ -53,6 +53,10 @@ const Main = styled.main`
   display: flex;
   justify-content: center;
   padding-top: 5rem;
+
+  @media (width <= 768px) {
+    padding-top: 2rem;
+  }
 `;
 
 const Panel = styled.div`

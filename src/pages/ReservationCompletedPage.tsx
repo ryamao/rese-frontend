@@ -23,5 +23,5 @@ export function ReservationCompletedPage() {
 const Main = styled.main`
   display: flex;
   justify-content: center;
-  padding: 4rem;
+  padding-top: 4rem;
 `;

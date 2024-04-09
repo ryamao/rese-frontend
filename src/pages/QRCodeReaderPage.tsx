@@ -55,7 +55,7 @@ const Heading = styled.div`
   padding: 1rem;
 
   @media (width <= 768px) {
-    padding: 0;
+    padding: 0 1rem;
   }
 `;
 

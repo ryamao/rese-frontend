@@ -108,6 +108,10 @@ const Heading = styled.div`
   gap: 1rem;
   align-items: center;
   padding: 1rem;
+
+  @media (width <= 480px) {
+    padding: 0 1rem;
+  }
 `;
 
 const Title = styled.h2`
@@ -115,7 +119,7 @@ const Title = styled.h2`
 `;
 
 const Panel = styled.div`
-  width: 24rem;
+  max-width: 24rem;
   margin: 0 auto;
 `;
 

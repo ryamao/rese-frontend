@@ -23,5 +23,9 @@ export function ThanksPage() {
 const Main = styled.main`
   display: flex;
   justify-content: center;
-  padding: 10rem;
+  padding-top: 10rem;
+
+  @media (width <= 768px) {
+    padding-top: 5rem;
+  }
 `;

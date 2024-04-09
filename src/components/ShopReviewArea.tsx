@@ -123,4 +123,13 @@ const Review = styled.li`
   column-gap: 1.5rem;
   align-items: center;
   padding-left: 1rem;
+
+  @media (width <= 480px) {
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+
+    & > h4 {
+      margin: 1rem 0;
+    }
+  }
 `;

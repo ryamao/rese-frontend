@@ -50,7 +50,7 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
   };
 
   return (
-    <FormLayout className={styles.whitePanel}>
+    <div className={styles.whitePanel}>
       <Heading>Registration</Heading>
       <FormBody onSubmit={handleSubmit(onValid)} noValidate>
         <TextFieldList>
@@ -73,13 +73,9 @@ export function RegisterForm({ onRegister }: RegisterFormProps): JSX.Element {
           </button>
         </ButtonLayout>
       </FormBody>
-    </FormLayout>
+    </div>
   );
 }
-
-const FormLayout = styled.div`
-  width: 24rem;
-`;
 
 const Heading = styled.h2`
   padding: 1rem;

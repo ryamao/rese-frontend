@@ -25,6 +25,7 @@ export function ReservationDateField({ register }: ReservationDateFieldProps) {
 const Input = styled.input`
   width: 100%;
   padding: 0.375rem 0.625rem;
+  font-size: 0.9rem;
   border: none;
   border-radius: 0.25rem;
 `;
