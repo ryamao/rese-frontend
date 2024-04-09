@@ -87,7 +87,9 @@ const Field = styled.div`
 `;
 
 const ComboBox = styled.select`
-  padding: 0.375rem 0.25rem;
+  padding: 0.375rem 1.25rem 0.375rem 0.25rem;
+  appearance: none;
+  background-color: transparent;
   border: none;
 `;
 

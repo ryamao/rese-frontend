@@ -8,9 +8,10 @@ export const whitePanel = css`
 
 export const blueButton = css`
   padding: 0.35rem 0.9rem;
+  font-size: 0.875rem;
   color: #fff;
+  cursor: pointer;
   background-color: #315dff;
   border: none;
   border-radius: 0.25rem;
-  cursor: pointer;
 `;

@@ -21,14 +21,23 @@ export function RegisterPage() {
   return (
     <PageBase>
       <Main>
-        <RegisterForm onRegister={handleRegister} />
+        <Panel>
+          <RegisterForm onRegister={handleRegister} />
+        </Panel>
       </Main>
     </PageBase>
   );
 }
 
 const Main = styled.main`
-  display: flex;
-  justify-content: center;
-  padding: 10rem;
+  margin-top: 10rem;
+
+  @media (width <= 768px) {
+    margin-top: 5rem;
+  }
+`;
+
+const Panel = styled.div`
+  max-width: 24rem;
+  margin: 0 auto;
 `;

@@ -214,6 +214,10 @@ const Main = styled.main`
   @media (width <= 1024px) {
     grid-template-columns: 1fr;
   }
+
+  @media (width <= 480px) {
+    gap: 1.5rem;
+  }
 `;
 
 const FormTitle = styled.h2`
@@ -262,6 +266,8 @@ const Input = styled.input`
 const Select = styled.select`
   padding: 0.25rem;
   font-size: 1rem;
+  appearance: none;
+  background: transparent;
   border: 1px solid #ccc;
   border-radius: 0.25rem;
 `;

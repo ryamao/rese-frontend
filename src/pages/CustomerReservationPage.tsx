@@ -125,11 +125,11 @@ const Heading = styled.div`
   grid-column: 1 / 3;
   gap: 1rem;
   align-items: center;
-  margin: 1rem;
+  margin: 0 1rem 1rem;
 
   @media (width <= 768px) {
     grid-column: 1 / 2;
-    margin-top: 0;
+    margin: 0 1rem;
   }
 `;
 

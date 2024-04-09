@@ -42,10 +42,14 @@ const Main = styled.main`
     grid-template-columns: 1fr;
     margin: 0;
   }
+
+  @media (width <= 480px) {
+    gap: 1rem;
+  }
 `;
 
 const OwnerArea = styled.div`
-  width: 24rem;
+  max-width: 24rem;
   margin: 0 auto;
 
   @media (width <= 1024px) {

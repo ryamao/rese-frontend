@@ -76,6 +76,7 @@ const global = emotion.css`
   body {
     margin: 0;
     background-color: #eee;
+    font-family: Arial, sans-serif;
   }
 `;
 
@@ -87,10 +88,16 @@ const normalStyle = css`
   max-width: 1230px;
   padding: 2rem;
   margin: 0 auto;
+
+  @media (width <= 480px) {
+    row-gap: 1rem;
+    padding: 1rem;
+  }
 `;
 
 const Header = styled.header`
   display: flex;
+  align-items: center;
   width: 100%;
 `;
 

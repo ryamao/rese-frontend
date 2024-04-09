@@ -29,6 +29,8 @@ export function ReservationNumberField({
 const Select = styled.select`
   width: 100%;
   padding: 0.375rem 0.625rem;
+  font-size: 1rem;
+  appearance: none;
   border: none;
   border-radius: 0.25rem;
 `;
