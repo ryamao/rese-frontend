@@ -33,7 +33,7 @@ export function AdminPage() {
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 24rem auto;
   gap: 2rem;
   max-width: 1230px;
   margin: 2rem 0;
@@ -50,9 +50,4 @@ const Main = styled.main`
 
 const OwnerArea = styled.div`
   max-width: 24rem;
-  margin: 0 auto;
-
-  @media (width <= 1024px) {
-    margin: 0;
-  }
 `;
