@@ -81,6 +81,10 @@ export function ShopDetailPage() {
     alert("レビューを投稿しました");
   }
 
+  const isVisited = reservations.data.data.some(function (reservation) {
+    return reservation.is_checked_in;
+  });
+
   return (
     <PageBase wrapperStyle={wrapperStyle}>
       <ShopDetailArea
@@ -94,7 +98,7 @@ export function ShopDetailPage() {
         onClickLogin={open}
       />
       <ShopReviewArea
-        postable={authStatus.status === "customer"}
+        postable={authStatus.status === "customer" && isVisited}
         reviews={reviewsData}
         onReviewSubmit={handleReviewSubmit}
       />

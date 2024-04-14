@@ -125,6 +125,7 @@ const Input = styled.input`
   font-size: 1rem;
   border: none;
   border-bottom: 1px solid #000;
+  border-radius: 0;
 
   &:focus-visible {
     outline: none;

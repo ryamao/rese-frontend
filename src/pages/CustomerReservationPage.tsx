@@ -186,6 +186,7 @@ const OverlayPanel = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 90%;
   padding: 1rem;
   transform: translate(-50%, -50%);
 `;
