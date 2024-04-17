@@ -68,6 +68,7 @@ export function ShopReviewArea({
             </Review>
           ))}
         </ReviewList>
+        {reviews.length === 0 && <p>評価が存在しません</p>}
       </Contents>
     </div>
   );
