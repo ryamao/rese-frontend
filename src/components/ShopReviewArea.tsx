@@ -95,6 +95,12 @@ const Form = styled.form`
   align-items: center;
   padding: 1rem;
   border-bottom: 2px solid #ccc;
+
+  @media (width <= 600px) {
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+    gap: 1rem 0;
+  }
 `;
 
 const Textarea = styled.textarea`
