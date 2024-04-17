@@ -210,8 +210,7 @@ export function useShopReservations(customerId: number, shopId: number) {
       }
     },
     enabled,
-    initialData: empty,
-    staleTime: Infinity
+    initialData: empty
   });
 
   async function mutationFn(args: {
