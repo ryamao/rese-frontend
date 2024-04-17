@@ -11,7 +11,11 @@ export function BackButton({ onClick }: BackButtonProps) {
 const Button = styled.button`
   width: 1.75rem;
   height: 1.75rem;
+  padding: 0;
   font-size: 1.125rem;
+  color: #000;
+  text-align: center;
+  cursor: pointer;
   background-color: #fff;
   border: none;
   border-radius: 0.25rem;
