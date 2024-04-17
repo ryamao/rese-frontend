@@ -96,6 +96,7 @@ const ComboBox = styled.select`
 const SearchBox = styled.input`
   width: 100%;
   padding: 0.375rem 0.5rem;
+  background-color: transparent;
   border: none;
 `;
 
