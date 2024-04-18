@@ -29,7 +29,7 @@ export function BackendAccessRoute() {
   });
 
   if (authStatus === undefined) {
-    return <div>TODO: BackendAccessRoute</div>;
+    return <div>Loading...</div>;
   } else {
     return (
       <BackendAccessContext.Provider value={value}>
