@@ -582,7 +582,7 @@ export class HttpClient {
       };
 
       const response = await fetch(
-        this.baseUrl + `/owners/${ownerId}/shops`,
+        new URL(`/owners/${ownerId}/shops`, this.baseUrl),
         init
       );
       if (response.status === 201) {
@@ -650,7 +650,7 @@ export class HttpClient {
       };
 
       const response = await fetch(
-        this.baseUrl + `/owners/${ownerId}/shops/${shopId}`,
+        new URL(`/owners/${ownerId}/shops/${shopId}`, this.baseUrl),
         init
       );
       if (response.status === 204) {
