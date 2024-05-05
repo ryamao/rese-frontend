@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 export interface ReservationRemovalButtonProps {
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function ReservationRemovalButton({
