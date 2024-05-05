@@ -29,7 +29,8 @@ export function ReservationStatusCard({
     onClick?.(reservation);
   }
 
-  function handleRemove() {
+  function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
     onRemove?.(reservation);
   }
 
